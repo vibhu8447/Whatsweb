@@ -1,0 +1,57 @@
+{
+  "name": "WhatZapp: Schedule Message in Web WhatsApp",
+  "version": "2.4.6",
+  "description": "Schedule Message and Followup features inside Web WhatsApp",
+  "permissions": ["tabs", "storage", "https://web.whatsapp.com/*"],
+  "background": {
+    "scripts": ["assets/js/background.js"],
+    "persistance": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://web.whatsapp.com/*"],
+      "js": ["assets/js/content.js", "assets/js/xlsx.full.min.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    "popup.html",
+    "price.html",
+    "infoTab.html",
+    "assets/js/datetime.js",
+    "assets/css/datetime.css",
+    "datetime.html",
+    "assets/css/popup.css",
+    "assets/img/premium.png",
+    "assets/img/update.png",
+    "assets/js/wapi.js",
+    "assets/js/gscript.js",
+    "assets/css/bootstrap.min.css",
+    "assets/js/mid.js",
+    "whatsAppIcon.svg",
+    "demouser.png",
+    "assets/icons/star-icon.png",
+    "assets/icons/bin_white.png",
+    "assets/icons/bin_red.png",
+    "assets/icons/star-icon.png",
+    "assets/icons/tick-icon.png",
+    "assets/icons/b_price.png",
+    "check.svg",
+    "calender.svg",
+    "filter.svg",
+    "plus.png",
+    "b_price.png",
+    "upload.svg",
+    "edit-solid.svg",
+    "expanded.html",
+    "/assets/icons/icon.png"
+  ],
+  "browser_action": {
+    "default_title": "WhatsApp Spammer",
+    "default_popup": "popup1.html"
+  },
+  "icons": {
+    "128": "/assets/icons/icon.png"
+  },
+  "manifest_version": 2,
+  "content_security_policy": "script-src 'self' https://ajax.googleapis.com; object-src 'self' script-src 'self' https://ssl.google-analytics.com; object-src 'self' "
+}

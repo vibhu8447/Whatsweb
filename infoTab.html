@@ -1,0 +1,226 @@
+<div class="tab">
+  <div
+    class="content"
+    id="infoTabChat"
+    style="
+      display: none;
+      position: absolute;
+      z-index: 111;
+      top: 59px;
+      left: 66%;
+      padding: 13px;
+      width: 332px;
+      height: fit-content;
+      background: white;
+      color: black;
+      border: 3px solid #ccc;
+    "
+  >
+    <div style="margin-top: 0px">
+      <div
+        style="
+          display: none;
+          position: fixed;
+          top: 89%;
+          right: 16px;
+          z-index: 1;
+          display: flex;
+          column-gap: 8px;
+        "
+      >
+        <p id="fixedP" style="display: none">Add user</p>
+        <img
+          style="
+            display: none;
+            width: 54px;
+            box-shadow: 2px 2px 8px rgb(0 0 0 / 20%);
+          "
+          role="button"
+          id="addingNewUser"
+          src=""
+          alt=""
+        />
+      </div>
+
+      <center>
+        <div class="row logo">
+          <center>
+            <div>
+              <div
+                style="
+                  display: block;
+                  grid-template-columns: max-content 177px 1fr;
+
+                  grid-column-gap: 34px;
+                "
+              >
+                <div style="display: none; grid-column: 1/2">
+                  <img id="demouser" src="" alt="sd" />
+                </div>
+                <div>
+                  <input
+                    id="username"
+                    placeholder="Name"
+                    autocomplete="off"
+                    value="Customer"
+                  />
+
+                  <p
+                    style="
+                      display: none;
+                      font-size: small;
+                      color: grey;
+                      margin-bottom: 0px;
+                    "
+                    id="phonenumber"
+                  >
+                    +919234578609
+                  </p>
+                </div>
+              </div>
+              <div>
+                <div>
+                  <div id="form-full">
+                    <div>
+                      <div style="display: flex">
+                        <div
+                          id="all-custom-tags"
+                          style="
+                            display: flex;
+                            flex-wrap: wrap;
+                            margin-top: 17px;
+                            flex-basis: 90%;
+                            margin-bottom: 0px;
+                          "
+                        ></div>
+                        <img
+                          style="display: none"
+                          id="editTags"
+                          src=""
+                          role="button"
+                          alt=""
+                        />
+                      </div>
+
+                      <div
+                        id="tagInterestSection"
+                        style="
+                          display: flex;
+                          justify-content: space-around;
+                          margin-top: 8px;
+                          margin-bottom: 17px;
+                        "
+                      >
+                        <div
+                          style="
+                            display: flex;
+                            justify-content: space-between;
+                            flex-direction: column;
+                            column-gap: 12px;
+                          "
+                        >
+                          <div>
+                            <input
+                              id="custom-tag-input"
+                              placeholder="Label"
+                              autocomplete="off"
+                              class="inputcrm"
+                              list="customertaglist"
+                              type="text"
+                              value=""
+                            />
+                            <i class="arrow down"></i>
+                          </div>
+                        </div>
+
+                        <div
+                          style="
+                            display: flex;
+                            justify-content: space-between;
+                            flex-direction: column;
+                          "
+                        >
+                          <div></div>
+                          <div>
+                            <select
+                              id="Interest-level"
+                              class="inputcrm"
+                              required
+                            >
+                              <i class="fa fa-caret-down">New</i>
+                              <option value="" disabled selected>
+                                Interest
+                              </option>
+                              <option value="High">High</option>
+                              <option value="Very High">Very High</option>
+                              <option value="Low">Low</option>
+                              <option value="Very Low">Very Low</option>
+                            </select>
+                            <i class="arrow down"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div id="form-info-crm-down">
+                      <!-- <p  class ="form-info-crm fontsettings">Note for Today: </p> -->
+                      <div style="display: flex">
+                        <input
+                          id="noteinfo"
+                          autocomplete="off"
+                          placeholder="Add a note and a followupdate.."
+                          type="text"
+                        />
+                        <input
+                          id="followupDate"
+                          title="Followup Date"
+                          name="followup-date"
+                          placeholder="Next FollowupDate"
+                          type="date"
+                        />
+                      </div>
+
+                      <div
+                        readonly
+                        id="notesInfo"
+                        class="notesInfo"
+                        name="notesName"
+                      ></div>
+
+                      <div
+                        style="
+                          display: flex;
+                          justify-content: space-evenly;
+                          margin-top: 17px;
+                        "
+                      >
+                        <button type="button" id="deleteCrmData">Delete</button>
+
+                        <button type="button" id="submitCrmData">Save</button>
+                      </div>
+
+                      <p
+                        class="form-info-crm fontsettings"
+                        style="
+                          display: none;
+                          text-align: left;
+                          margin-bottom: 2px;
+                          margin-left: 11px;
+                        "
+                      >
+                        Notes
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div></div>
+            </div>
+            <div></div>
+          </center>
+        </div>
+      </center>
+    </div>
+  </div>
+</div>

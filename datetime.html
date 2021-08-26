@@ -1,0 +1,179 @@
+<body>
+  <div style="width: 100%; font-size: 1.3rem; padding: 8px; margin-left: 20px">
+    <p>Schedule Message to <span class="contactDisplayName"></span></p>
+  </div>
+  <div>
+    <div class="calendar">
+      <div class="calendar-header">
+        <span class="month-picker" id="month-picker">February</span>
+        <div class="year-picker">
+          <span class="year-change" id="prev-year">
+            <pre><</pre>
+          </span>
+          <span id="year">2021</span>
+          <span class="year-change" id="next-year">
+            <pre>></pre>
+          </span>
+        </div>
+      </div>
+      <div class="calendar-body">
+        <div class="calendar-week-day">
+          <div>Sun</div>
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
+        </div>
+        <div class="calendar-days"></div>
+      </div>
+      <div class="calendar-footer">
+        <div class="toggle">
+          <span>Dark Mode</span>
+          <div class="dark-mode-switch">
+            <div class="dark-mode-switch-ident"></div>
+          </div>
+        </div>
+      </div>
+      <div class="month-list"></div>
+    </div>
+  </div>
+  <div>
+    <div class="timepicker" style="margin-top: -24%">
+      <div style="display: flex; flex-direction: column">
+        <p>Select Time</p>
+        <input
+          type="time"
+          style="
+            background: transparent;
+            width: 90%;
+            border: 0px;
+            border-bottom: 1px solid;
+            font-size: 1.3rem;
+          "
+          id="selectTime"
+        />
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; margin-top: 20px">
+      <div style="display: flex; column-gap: 23px">
+        <input
+          id="customRecurrence"
+          style="height: 18px; width: 18px; margin-top: 6px"
+          type="checkbox"
+        />
+        <label style="font-size: 19px" for="">Custom Recurrence</label>
+      </div>
+
+      <div
+        id="repeatTime"
+        style="
+          display: flex;
+          visibility: hidden;
+          flex-direction: row;
+          margin-top: 16px;
+          column-gap: 13px;
+          width: 71%;
+        "
+      >
+        <label style="width: 60%; margin-top: 10px" for="">Repeat Every</label>
+        <input
+          style="
+            width: 30%;
+            border: 0;
+            border-bottom: 1px solid;
+            font-weight: 600;
+            text-align: center;
+          "
+          type="text"
+        />
+        <select
+          style="
+            border: 0;
+            border-bottom: 1px solid;
+            width: 50%;
+            text-align-last: center;
+          "
+          name=""
+          id=""
+        >
+          <option value="Hour">Hour</option>
+          <option value="Minute">Minute</option>
+          <option value="Day">Day</option>
+          <option value="Month">Month</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div
+    id="scheduleTextSection"
+    style="width: 70%; margin-top: 1.2rem; margin-left: -15%; font-size: 1rem"
+  >
+    <!-- <p style="margin-bottom: 0.5rem">Message:</p> -->
+    <textarea
+      style="font-size: 1rem"
+      class="form-control"
+      placeholder="Type your message here..."
+      id="scheduletext"
+      required
+    ></textarea>
+  </div>
+
+  <div
+    class="footer-schedule"
+    style="
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      width: 78%;
+      margin-top: 1rem;
+      font-size: 1rem;
+    "
+  >
+    <button id="cancelSchedule">Cancel</button>
+    <button id="scheduleSend">Schedule Send</button>
+  </div>
+
+  <!-- <script src="app.js"></script> -->
+</body>
+
+<!-- <link rel="stylesheet" href="style.css" />
+ <head>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+</head>
+
+<body>
+  <div class="containerobj1">
+    <div class="calendarobj1">
+      <div class="monthobj1">
+        <i class="fas fa-angle-left prevobj1"></i>
+        <div class="dateobj1">
+          <h1></h1>
+          <p></p>
+        </div>
+        <i class="fas fa-angle-right nextobj1"></i>
+      </div>
+      <div class="weekdaysobj1">
+        <div>Sun</div>
+        <div>Mon</div>
+        <div>Tue</div>
+        <div>Wed</div>
+        <div>Thu</div>
+        <div>Fri</div>
+        <div>Sat</div>
+      </div>
+      <div class="daysobj1"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script> 
+</body> -->
