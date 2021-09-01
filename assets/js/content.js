@@ -2330,12 +2330,12 @@ function findnumber() {
    
     campainBtn.addEventListener("click",function()
       {
-        chat_id="919911747454@c.us"
-        id="919911747454@c.us"
-      window.postMessage(
-        { id: id, cmd: "openChat", direction: "from-content-script" },
-        "*"
-      );
+      //   chat_id="919911747454@c.us"
+      //   id="919911747454@c.us"
+      // window.postMessage(
+      //   { id: id, cmd: "openChat", direction: "from-content-script" },
+      //   "*"
+      // );
 
       // window.postMessage(
       //   {
@@ -2377,9 +2377,9 @@ function findnumber() {
 
 
 
-        // document.getElementById("campain").style.display= "block";
-        // document.getElementsByClassName("scheduleOverlay")[0].style.display ="block";
-        // setTheJavascriptincampainPage();       
+        document.getElementById("campain").style.display= "block";
+        document.getElementsByClassName("scheduleOverlay")[0].style.display ="block";
+        setTheJavascriptincampainPage();       
 
       })
 
@@ -2878,8 +2878,7 @@ function display_price()
 {
   console.log("display_price is clicked");
   document.getElementById("PremiumPopup").style.display = "block";
-  // document.getElementById("PremiumPopup").style="height:90%";
-  document.getElementById("PremiumPopup").style.height="90%";
+  document.getElementById("PremiumPopup").style.height="94%";
   document.getElementById("PremiumPopup").style.overflow="scroll";
   document.getElementById("PremiumPopup").style.position="position: sticky;";    
   document.getElementsByClassName("scheduleOverlay")[0].style.display =
@@ -2974,10 +2973,10 @@ function display_price()
       
       card.id="card";
       card.className="card";
-      card.style=" margin-left: 25px; margin-bottom:24px ;margin-right: 2px;  display:   flex; align-items: center; flex-direction: column; border:   1px solid #546fff; border-radius: 5px; height: 500px; width: 270px;"
+      card.style=" margin-left: 25px; margin-bottom:24px ;margin-right: 2px;  display:   flex; align-items: center; flex-direction: column; border:   1px solid #546fff; border-radius: 5px; height: 515px; width: 270px;"
       if(i==2)
       {
-        card.style=" margin-left: 25px; margin-bottom:24px ;margin-right: 2px;  display:   flex; align-items: center; flex-direction: column; border:   1px solid #546fff; border-radius: 5px; height: 500px; width: 270px;background-color:#546fff"
+        card.style=" margin-left: 25px; margin-bottom:24px ;margin-right: 2px;  display:   flex; align-items: center; flex-direction: column; border:   1px solid #546fff; border-radius: 5px; height: 515px; width: 270px;background-color:#546fff"
         
       }
       
@@ -4651,7 +4650,19 @@ function setTheJavascriptincampainPage()
       
     }
 
-    //  create new List 
+    //  create new List
+    document.getElementById("create_new_list").addEventListener("mouseenter",function()
+    {
+      document.getElementById("create_new_list").style.color="black";
+      
+    })
+    //  create new List
+    document.getElementById("create_new_list").addEventListener("mouseleave",function()
+    {
+      document.getElementById("create_new_list").style.color="white";
+      
+    })
+
     document.getElementById("create_new_list").addEventListener("click",function()
     {
       var name=document.getElementById("input_list_name").value;
