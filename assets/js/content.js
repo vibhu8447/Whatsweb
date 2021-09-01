@@ -26,6 +26,8 @@ var customerTags = [
   "Visitor",
   "Employee",
 ];
+
+var AllContacts;
 // active_chat_id is the chat id which is openend currently by the user
 var active_chat_id;
 // list of all scheduled messages
@@ -239,9 +241,10 @@ function postTheTagsOFCustomer(no_user, no_customer, chat_id) {
         }
       });
       if (ffs) {
-        document.getElementById("PremiumPopup").style.display = "block";
+        // document.getElementById("PremiumPopup").style.display = "block";
         console.log("premium pop up__1");
-        document.getElementsByClassName("scheduleOverlay")[0].style.display =
+        display_price();
+        // document.getElementsByClassName("scheduleOverlay")[0].style.display =
           "block";
         return;
       }
@@ -642,6 +645,7 @@ function getFollowUpPendingList(object1) {
         //adding event listeners to the customer object which is basically the customer-card
         customerObject.addEventListener("click", function () {
           this.classList.toggle("active");
+          console.log("cutomer is clicked");
 
           var customer_no = element.customer_mobile;
           var chat_id = customer_no + "@c.us";
@@ -1348,7 +1352,8 @@ function getCustomerList(object) {
     });
 
     customerDescObject.addEventListener("click", function () {
-      var customer_no = element.customer_mobile;
+      
+      var customer_no = element.user_mobile;
       var chat_id = customer_no + "@c.us";
       openChat(chat_id);
       setTimeout(() => {
@@ -1357,8 +1362,11 @@ function getCustomerList(object) {
     });
 
     customerImgObject.addEventListener("click", function () {
-      var customer_no = element.customer_mobile;
+      console.log(element);
+      var customer_no = element.user_mobile;
       var chat_id = customer_no + "@c.us";
+      // console.log(chat_id);
+      
       openChat(chat_id);
       setTimeout(() => {
         customerInfoFinder();
@@ -1393,9 +1401,11 @@ function getTheDefaultTags(customer_no) {
   if (document.getElementById("followupDateBox"))
     document.getElementById("followupDateBox").style.display = "none";
 }
+// console.log(document.getElementsByClassName("_23P3O")[0].insertBefore(document.getElementById("editTags"),document.getElementsByClassName("_23P3O")[0].childNodes[2]));
 
 // setting the infosection of the chat by filling the details
 function getTheTagsOFCustomer(customer) {
+  console.log("getTheTagsOFCustomer is clicked ");
   var tagexist = 0;
   var interestexist = 0;
   var followupdateexist = 0;
@@ -1407,8 +1417,16 @@ function getTheTagsOFCustomer(customer) {
   document.getElementById("followupDateNew").src =
     chrome.runtime.getURL("calender.svg");
   console.log(customer.tags,"vibhu ");
+  console.log(document.getElementById("editTags"));
+  console.log("fetching the tags of customer");
+
+  document.getElementsByClassName("_23P3O")[0].insertBefore(document.getElementById("editTags"),document.getElementsByClassName("_23P3O")[0].childNodes[2]);
+  document.getElementById("editTags").style.marginRight="30px";
+
+  element=customer;
+  // console.log(element.TagName,"tags of customer");
   customer.tags.forEach((element) => {
-    // console.log(element.TagName);
+    
     var span1 = document.createElement("span");
     var p1 = document.createElement("p");
     var button1 = document.createElement("button");
@@ -1428,22 +1446,6 @@ function getTheTagsOFCustomer(customer) {
      
      
     
-  //   class=
-  // document.getElementsByClassName("x-small-button"  ).addEventListener("click",function(){
-  //   console.log("x-small-button is clicked");
-  // });
-
-// console.log(chat_id.tags);
-  // document.getElementsByClassName(".x-small-button")
-  // .forEach((element) => {
-  //   element.addEventListener("click", function () {
-  //     removeTheTag(customer.customer_mobile, this.previousSibling);
-  //     this.previousSibling.previousSibling.remove();
-  //     this.previousSibling.remove();
-  //     this.remove();
-  //   });
-  // });
-
 
     if (p1.innerHTML.length > 0) {
       document.getElementById("all-custom-tags").appendChild(span1);
@@ -1451,34 +1453,16 @@ function getTheTagsOFCustomer(customer) {
       button1.value=p1.innerHTML;
       document.getElementById("all-custom-tags").append(p1, button1);
       tagexist = 1;
-      new_div.append(span1);
-      new_div.append(p1,button1);
-      new_div.id=p1.innerHTML;
-      new_div.className="tagsofcutomer"
+    
     }
-    console.log(document.getElementsByClassName("_23P3O")[0].insertBefore(new_div,document.getElementsByClassName("_23P3O")[0].childNodes[2]));
+    console.log(document.getElementsByClassName("_23P3O")[0].insertBefore(document.getElementById("all-custom-tags"),document.getElementsByClassName("_23P3O")[0].childNodes[2]));
     
 
   });
 
 
-
-  // console.log(document.getElementsByClassName("tagsofcutomer"));
-  // document.getElementsByClassName("tagsofcutomer").addEventListener("click",function(event){
-  //   console.log("tag is clicked ",event)
-  // })
-
-  console.log(document.getElementsByClassName("x-small-button"));
-  var all_tags=document.getElementsByClassName("x-small-button");
   
   
-  for(var i=0; i<all_tags.length;i++)
-  {
-    all_tags[i].addEventListener("click",function(element){
-      console.log("x_button is clicked ",element.path,all_tags[i]);
-    });
-  }
-
   if (customer.interest_Level != "") {
     document.getElementById("Interest-level").value = customer.interest_Level;
     var span1 = document.createElement("span");
@@ -1646,10 +1630,49 @@ function crmFormFunction() {
 
         deleteTheUserCustomer(customer_no, phoneString);
       });
+      document.getElementById("tagInterestSection").style.marginRight="40px";
+      document.getElementsByClassName("_23P3O")[0].insertBefore(document.getElementById("tagInterestSection"),document.getElementsByClassName("_23P3O")[0].childNodes[2]);
 
+      
+      document.getElementById("tagInterestSection").style.marginRight="36px";
+      var info_chat_visibility=false;
     document
       .getElementById("editTags")
       .addEventListener("click", function (params) {
+        console.log(document.getElementsByClassName("_23P3O")[0].insertBefore(document.getElementById("editTags"),document.getElementsByClassName("_23P3O")[0].childNodes[5]));
+        document.getElementById("editTags").style.marginRight="34px";
+        document.getElementById("editTags").style.fontSize="40px"
+
+        console.log("edit_tag is clicked");
+        info_chat_visibility=!info_chat_visibility;
+        console.log(document.getElementById("infoTabChat"));
+        if(info_chat_visibility)
+        {
+          // document.getElementById("infoTabChat").style.display="block";
+          console.log("infotab chat is vissible");
+        }
+        else
+        {
+          // document.getElementById("infoTabChat").style.display="none";
+          console.log("infotab chat is not vissible");
+        }
+        // document.getElementById("tagInterestSection").style.display == "block";
+        // infoButton=document.getElementsByClassName("us699");
+        // console.log(infoButton,"ius699");
+        // if (!document.getElementById("activeSvg")) {
+        //   document.getElementById("infoTabChat").style.display = "block";
+        //   // infoButton.getElementsByClassName("us699")[0].innerHTML =
+        //     // "<svg class='MuiSvgIcon-root ' id='activeSvg' focusable='false' viewBox='0 0 24 24' aria-hidden='true' style='color: white;fill:white;'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 12l-4-4h8l-4 4z'></path></svg><span class='MuiBadge-root'><span style='padding: 8px;color:white;'>Info</span><span class='MuiBadge-badge MuiBadge-anchorOriginTopRightRectangle MuiBadge-colorPrimary MuiBadge-invisible'></span></span>";
+        // } else {
+          
+        //   document.getElementById("infoTabChat").style.display = "none";
+        //   // infoButton.innerHTML =
+        //     // "<div role='button' id='infoSection' style='    background: #0074fc; border-radius: 12px; color: white;' class='_VDboCREG'><div><div class='us699'><svg style='fill:white' class='MuiSvgIcon-root' focusable='false' viewBox='0 0 24 24' aria-hidden='true'><path d='M7 14l5-5 5 5H7z'></path></svg><span class='MuiBadge-root'><span style='padding: 8px;color:white;'>Info</span><span class='MuiBadge-badge MuiBadge-anchorOriginTopRightRectangle MuiBadge-colorPrimary MuiBadge-invisible'></span></span></div></div></div>";
+        // }
+
+
+
+
         if (
           document.getElementById("tagInterestSection").style.display == "none"
         )
@@ -1839,7 +1862,7 @@ function openChat(id) {
   //   });
 
   //   chrome.runtime.sendMessage({ manageMischief: true });
-  console.log("opening chat from content");
+  console.log("opening chat from content",id);
   window.postMessage(
     { id: id, cmd: "openChat", direction: "from-content-script" },
     "*"
@@ -1880,7 +1903,8 @@ window.customerInfoFinder = function customerInfoFinder() {
             if (element.status == 0) {
               fugo = 1;
               console.log("premium popup 2 ");
-              document.getElementById("pricing__").style.display="block";
+              display_price();
+              // document.getElementById("pricing__").style.display="block";
               // document.getElementById("PremiumPopup").style.display = "block";
               // document.getElementById("PremiumPopup").style.backgroundImage.src=chrome.runtime.getURL("b_price.png");
               
@@ -2024,6 +2048,7 @@ window.customerInfoFinder = function customerInfoFinder() {
       });
 
     infoButton.addEventListener("click", function (params) {
+      console.log("info button is clicked");
       if (!document.getElementById("activeSvg")) {
         document.getElementById("infoTabChat").style.display = "block";
         infoButton.getElementsByClassName("us699")[0].innerHTML =
@@ -2264,7 +2289,18 @@ function findnumber() {
   followupList.title = "List of Customers";
   followupList.innerHTML =
     "<div class='' style='padding:8px;color: #0074fc;display:flex;flex-direction:column;' title='List of Followups'><svg class='MuiSvgIcon-root' focusable='false' viewBox='0 0 24 24' aria-hidden='true'><path d='M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z'></path></svg><div class ='underline'></div></div>";
-
+  var campainBtn=document.createElement("div");
+  campainBtn.role="button";
+  campainBtn.style="padding:8px;";
+  campainBtn.title="campain";
+  span=document.createElement("span");
+  span.className="material-icons";
+  span.style="font-size: 30px;  padding-top: 5px;  color: blue;"
+  span.innerHTML="campaign";
+  campainBtn.append(span);
+  // campainBtn.innerHTML=    "<span class=`material-icons`>  campaign  </span>";
+  // campainBtn.innerHTML="<svg class='MuiSvgIcon-root' focusable='false' viewBox='0 0 24 24' aria-hidden='true' style=''></svg>"
+  // document.getElementById("side").style.width="400px";
   document
     .getElementsByClassName("_1QVfy _3UaCz")[0]
     .getElementsByTagName("span")[0]
@@ -2276,6 +2312,74 @@ function findnumber() {
         .getElementsByTagName("span")[0].firstChild
     );
 
+    document
+    .getElementsByClassName("_1QVfy _3UaCz")[0]
+    .getElementsByTagName("span")[0]
+    .insertBefore(
+      campainBtn,
+
+      document
+        .getElementsByClassName("_1QVfy _3UaCz")[0]
+        .getElementsByTagName("span")[0].firstChild
+    );
+  
+   
+    campainBtn.addEventListener("click",function()
+      {
+        chat_id="919911747454@c.us"
+        id="919911747454@c.us"
+      window.postMessage(
+        { id: id, cmd: "openChat", direction: "from-content-script" },
+        "*"
+      );
+
+      // window.postMessage(
+      //   {
+      //     cmd: "findUserId",
+      //     direction: "from-content-script",
+      //   },
+      //   "*"
+      // );
+
+      // window.postMessage(
+      //   { cmd: "getContactId", direction: "from-content-script" },
+      //   "*"
+      // );
+
+
+      // window.postMessage(
+      //   { id: id, cmd: "getContact", direction: "from-content-script" },
+      //   "*"
+      // );
+
+      //   message="hello";
+      // window.postMessage(
+      //   {
+      //     id: chat_id,
+      //     text: message,
+      //     cmd: "sendMessage",
+      //     direction: "from-content-script",
+      //     message: "Message from the page",
+      //   },
+      //   "*"
+      // )
+
+
+
+
+
+
+
+
+
+
+        // document.getElementById("campain").style.display= "block";
+        // document.getElementsByClassName("scheduleOverlay")[0].style.display ="block";
+        // setTheJavascriptincampainPage();       
+
+      })
+
+    
   document
     .getElementsByClassName("_1QVfy _3UaCz")[0]
     .getElementsByTagName("span")[0]
@@ -2335,6 +2439,7 @@ function findnumber() {
     getCustomerList(customerListArray);
   });
 
+  
   scheduledList.addEventListener("click", function (params) {
     document.getElementById("scheduled-list").style.display = "block";
     document.getElementById("tab-4").checked = true;
@@ -2382,15 +2487,18 @@ function findnumber() {
   console.log("premium pop up__3");
 
   var premiumPopup = document.getElementById("PremiumPopup");
-  // premiumPopup.style.backgroundImage.src=chrome.runtime.getURL("b_price.png");
+
 
   var updatePopup = document.getElementById("updatePopup");
   document.getElementById("updateImg").src = chrome.runtime.getURL(
     "assets/img/update.png"
   );
+
+  campain=document.getElementById("campain");
+
   document
     .getElementById("app")
-    .append(scheduleOverlay, premiumPopup, updatePopup);
+    .append(scheduleOverlay, premiumPopup, campain, updatePopup);
 
   scheduleOverlay.addEventListener("click", function (params) {
     document.getElementById("scheduleSectionFull").style.display = "none";
@@ -2705,7 +2813,8 @@ function findnumber() {
       // document.getElementsByClassName("scheduleOverlay")[0].style.display =
       //   "block";
     });
-
+    
+  
   document
     .getElementById("sendMessageAll")
     .addEventListener("click", function (params) {
@@ -2765,7 +2874,8 @@ function display_price()
 {
   console.log("display_price is clicked");
   document.getElementById("PremiumPopup").style.display = "block";
-  // document.getElementById("PremiumPopup").style.height="fit-content";
+  // document.getElementById("PremiumPopup").style="height:90%";
+  document.getElementById("PremiumPopup").style.height="90%";
   document.getElementById("PremiumPopup").style.overflow="scroll";
   document.getElementById("PremiumPopup").style.position="position: sticky;";    
   document.getElementsByClassName("scheduleOverlay")[0].style.display =
@@ -2777,6 +2887,23 @@ function display_price()
       monthly_button=document.getElementById("monthly_button");
       yearly_button=document.getElementById("yearly_button");
 
+      let datam=[]
+      let datay=[]
+      for(var i=0;i<data.length;i++)
+      {
+        if(data[i].isMonthly)
+        {
+          datam.push(data[i]);
+        }
+        else
+        {
+          datay.push(data[i]);
+        }
+
+      }
+
+      console.log("datam",datam);
+      console.log("datay",datay);
       monthly_button.addEventListener("click",function()
       {
         monthly_button.style.background="#546fff";
@@ -2789,7 +2916,13 @@ function display_price()
         for(let j=0;j<all_span_price.length;j++)
         {
           console.log(all_span_price[j]);
-          all_span_price[j].innerHTML=data[j].amount_monthly;
+          all_span_price[j].innerHTML=datam[j].amount;
+        }
+        var all_span_duration=document.getElementsByClassName("span_price_duration");
+
+        for(var j=0;j<all_span_duration.length;j++)
+        {
+          all_span_duration[j].innerHTML=" /mo";
         }
 
       });
@@ -2807,14 +2940,24 @@ function display_price()
           for(let j=0;j<all_span_price.length;j++)
           {
             console.log(all_span_price[j]);
-            all_span_price[j].innerHTML=data[j].amount_yearly;
+            all_span_price[j].innerHTML=datay[j].amount;
           }
+
+          var all_span_duration=document.getElementsByClassName("span_price_duration");
+
+          console.log(all_span_duration);
+          for(var j=0;j<all_span_duration.length;j++)
+          {
+            all_span_duration[j].innerHTML=" /year";
+          }
+
 
       })
            
     document.getElementById("card").style.display="none";
-      for(var i=0;i<data.length;i++)
+      for(var i=0;i<datam.length;i++)
     {
+      
       
     
       // console.log(div);
@@ -2827,18 +2970,34 @@ function display_price()
       
       card.id="card";
       card.className="card";
-      card.style=" margin-left: 25px; margin-bottom:24px ;margin-right: 2px;  display:   flex; align-items: center; flex-direction: column; border:   1px solid #546fff; border-radius: 5px; height: 500px; width: 300px;"
+      card.style=" margin-left: 25px; margin-bottom:24px ;margin-right: 2px;  display:   flex; align-items: center; flex-direction: column; border:   1px solid #546fff; border-radius: 5px; height: 500px; width: 270px;"
+      if(i==2)
+      {
+        card.style=" margin-left: 25px; margin-bottom:24px ;margin-right: 2px;  display:   flex; align-items: center; flex-direction: column; border:   1px solid #546fff; border-radius: 5px; height: 500px; width: 270px;background-color:#546fff"
+        
+      }
       
+      premium_span=document.createElement("div");
+
+      premium_span.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"width="50" height="50" viewBox="0 0 172 172"style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="#3498db"></path><g fill="#ffffff"><path d="M44.72,6.88c-1.90232,0 -3.44,1.54112 -3.44,3.44v151.36c0,1.23152 0.65688,2.3708 1.72672,2.98313c1.06984,0.61232 2.38376,0.60576 3.44672,-0.01344l39.54656,-23.06547l39.54656,23.06547c0.5332,0.31304 1.13488,0.47031 1.73344,0.47031c0.59168,0 1.18352,-0.15072 1.71328,-0.45687c1.06984,-0.61232 1.72672,-1.75161 1.72672,-2.98313v-47.58219l-6.88,4.40078v37.195l-36.10656,-21.06328c-0.5332,-0.31304 -1.13488,-0.47031 -1.73344,-0.47031c-0.59856,0 -1.20024,0.15727 -1.73344,0.47031l-36.10656,21.06328v-141.9336h75.68v31.66547l1.18922,-3.1175l1.04141,-1.0414c0.7568,-0.7568 2.40977,-2.17032 4.65609,-3.02344v-27.92313c0,-1.89888 -1.53768,-3.44 -3.44,-3.44zM134.375,44.41094c-1.376,0 -2.752,1.032 -3.44,1.72l-8.25735,21.67469l-23.04531,1.37734c-1.376,0 -2.75335,1.02931 -3.09735,2.40531c-0.344,1.376 0.00135,3.09465 1.37735,3.78265l17.54265,14.45203l-5.85203,22.36c-0.344,1.376 0.34535,3.09465 1.37735,3.78266c0.688,0.344 1.37465,0.68531 2.06265,0.68531c0.69144,0 1.38482,-0.34131 2.06938,-0.68531l19.26265,-12.38266l19.26265,12.72531c1.032,1.032 2.75066,0.688 3.78266,0c1.376,-1.032 1.72134,-2.40666 1.37734,-3.78265l-5.84531,-22.36l17.88531,-14.44531c1.032,-1.032 1.37869,-2.41338 1.03469,-3.78938c-0.344,-1.376 -1.72135,-2.40531 -3.09735,-2.40531l-23.05203,-1.37735l-8.25062,-21.66797c-0.344,-1.032 -1.72135,-2.06938 -3.09735,-2.06938zM134.375,57.48563l5.50265,15.48c0.688,1.032 1.72135,2.06265 3.09735,2.06265l16.51469,1.03469l-12.73203,10.32c-1.032,0.688 -1.37197,2.064 -1.02797,3.44l4.12531,15.82266l-13.76,-8.94266c-0.344,-0.344 -1.032,-0.69203 -1.72,-0.69203c-0.69144,0 -1.37465,0.34938 -2.06265,0.34938l-13.76,8.94265l4.12531,-15.82265c0.344,-1.032 0.00403,-2.752 -1.02797,-3.44l-12.73203,-10.32l16.51469,-0.69203c1.376,-0.344 2.40934,-1.02931 3.09734,-2.40531z"></path></g></g></svg>`
       plan_name.className="plan_name";
       plan_name.id="plan_name";
       plan_name.style="margin-top: 26px; margin-bottom: 16px;";
+      if(i==2)
+      {
+        plan_name.style.color="#FFF";
+      }
       span_plan_name.style="color: #546fff; font-size: 26px;";
-      span_plan_name.innerHTML=data[i].plan_name;
+      if(i==2)
+      {
+        span_plan_name.style.color="#FFF";
+      }
+      span_plan_name.innerHTML=datam[i].plan_name;
       plan_name.append(span_plan_name);
 
       ratting.className="ratting";
       ratting.id="ratting";
-      ratting.style="font-size: 26px; margin-bottom:20px;"
+      ratting.style="font-size: 26px; margin-bottom:0px;"
       
 
       var no_of_star=data[i].star;
@@ -2846,6 +3005,10 @@ function display_price()
       {
         var span_ratting=document.createElement("span");
         span_ratting.style="color: #546fff;";
+        if(i==2)
+        {
+          span_ratting.style.color="#FFF";
+        }
         span_ratting.className="material-icons";
         span_ratting.innerHTML="star_rate";
         ratting.append(span_ratting);
@@ -2855,23 +3018,38 @@ function display_price()
     price.className='price';
     
     span_price$=document.createElement("span");
-    span_price$.style="color: #546fff; font-size: 20px;"
+    span_price$.style="color: #546fff; font-size: 29px;"
+    if(i==2)
+    {
+      span_price$.style.color="#FFF";
+    }
     span_price$.innerHTML="$";
 
     span_price_amount=document.createElement("span");
-    span_price_amount.innerHTML=data[i].amount_monthly;
+    span_price_amount.innerHTML=datam[i].amount;
+
     span_price_amount.className="span_price_amount";
     span_price_amount.style="color :#546fff";
-
+    if(i==2)
+    {
+      span_price_amount.style.color="#FFF";
+    }
+    span_price_amount.style.fontSize="43px";
+    
     span_price_duration=document.createElement("span");
+    span_price_duration.className="span_price_duration";
     span_price_duration.style="color: #546fff; font-size: 18px;"
+    if(i==2)
+    {
+      span_price_duration.style.color="#FFF";
+    }
     span_price_duration.innerHTML=" /mo";
 
     price.append(span_price$,span_price_amount,span_price_duration);
     
     feature.id="feature";
     feature.className="feature"
-    feature.style="display:  flex; align-items: baseline;  justify-content: center; flex-direction: column;"
+    feature.style="display:  flex; align-items: baseline;  justify-content: center; flex-direction: column; align-self:start ;margin-left:20px";
 
     for(let j=0;j<data[i].offerings.length;j++)
     {
@@ -2886,9 +3064,13 @@ function display_price()
       span_statement.style=" margin-left: 15px; margin-top: 0px; color: #546fff;";
       span_statement.innerHTML="done";
       p=document.createElement("p");
-      p.style="margin-left: 15px; color: #546fff; font-size:10px ;margin-top:10px";
-      p.innerHTML=data[i].offerings[j];
-      statement.append(span_statement,p);
+      p.style="margin-left: 15px; color: #546fff; font-size:14px ;margin-top:2px ;text-align:start";
+      if(i==2)
+      {
+        p.style.color="#FFF";
+      }
+      p.innerHTML=datam[i].offerings[j];
+      statement.append(p);
     
 
     }
@@ -2903,7 +3085,7 @@ function display_price()
 
     pay.append(pay_button);
     
-    if(data[i].amount_monthly>0)
+    if(data[i].amount>0)
     {
       card.append(plan_name,ratting,price,feature,pay);  
     }
@@ -2923,15 +3105,25 @@ function broadcastMessages(arr, message) {
   if (isExpired) {
     if (arr.length >= 5) {
       console.log("premium pop up__6");
-
-      document.getElementById("PremiumPopup").style.display = "block";
-      document.getElementsByClassName("scheduleOverlay")[0].style.display =
-        "block";
+        display_price();
+      // document.getElementById("PremiumPopup").style.display = "block";
+      // document.getElementsByClassName("scheduleOverlay")[0].style.display =
+      //   "block";
       isRunning = false;
     } else {
+      console.log(arr);
+
       var i = 0;
       var BroadcastInterval = setInterval(() => {
         var chat_id = arr[i].chat_id;
+        if(arr[i].chat_id)
+        {
+          chat_id = arr[i].chat_id;
+        }
+        else
+        {
+          chat_id = arr[i];
+        }
 
         window.postMessage(
           {
@@ -2958,6 +3150,15 @@ function broadcastMessages(arr, message) {
     var i = 0;
     var BroadcastInterval = setInterval(() => {
       var chat_id = arr[i].chat_id;
+      
+      if(arr[i].chat_id)
+      {
+        chat_id = arr[i].chat_id;
+      }
+      else
+      {
+        chat_id = arr[i];
+      }
       console.log("sending broadcast", chat_id);
       window.postMessage(
         {
@@ -4318,3 +4519,308 @@ function addingGoogleAnalytics() {
 // setInterval(() => {
 //   settingHover();
 // }, 5000);
+
+
+
+// global varible of Show_Selected button
+function setTheJavascriptincampainPage()
+{
+  
+  console.log("setTheJavascriptincampainPage");
+  	// global varible of Show_Selected button
+    var Show=false;
+
+		// selected user list
+    var  user_List=[];
+    // All contacts List;
+    var AllContacts;
+
+    window.addEventListener("message", function (event) {
+      if ( event.source == window && event.data &&  event.data.direction == "from-page-script" )
+      {
+        if(event.data.res="AllContacts")
+        {
+          // console.log(event.data.AllContacts);
+          
+          AllContacts=event.data.AllContacts;
+          setuptable_(AllContacts);
+          document.getElementById("total_contacts").innerHTML=AllContacts.length;
+
+        }
+      }
+    })
+
+    
+    window.postMessage(
+      {
+        cmd: "getAllContacts",
+        direction: "from-content-script",
+      },
+      "*"
+    );
+    // fetching the list data 
+    console.log(phoneString);
+    fetch(`https://eazybe.com/api/v1/whatzapp/getCampaignInfo?userMobile=${phoneString}`)
+    .then((response) => response.json())
+    .then((json) => {
+      console.log(json);
+      set_contacts_lists(json.campaignDetails.chatID_list);
+      
+    });
+    // setting up the fetched list  name and contacts detail
+    function set_contacts_lists(contacts_list)
+    {   
+        console.log(contacts_list);
+        // contacts_list.map((element)=>
+        // {
+          
+        //   // console.log(element);
+        // })
+        Object.entries(contacts_list).map(entry => {
+          let key = entry[0];
+          let value = entry[1];
+          console.log( document.getElementById("list_drop_down"));
+          p=document.createElement("p");
+          p.innerHTML=key;
+          p.id="list_drop-down_p"
+          p.style="text-align: start;font-size: 21px;font-family:Montserrat  Alternates;margin-left: 18px;"
+          // p.style="text-align: start;padding-top: 10px;font-size: 21px;font-family: "Montserrat Alternates";padding-left: 18px;height: 45px;"
+          document.getElementById("list_drop_down").append(p);
+          console.log(key, value);
+      });
+        for(var i=0;i<contacts_list.length;i++)
+        {
+          console.log(contacts_list[i]);
+          entry=contacts_list[i];
+          let key = entry[0];
+          let value = entry[1];
+          console.log(key, value);
+        }
+    }
+
+    function setuptable_()
+    {
+      document.getElementById("Selected_contacts").innerHTML=0;
+      console.log(table =document.getElementById("table_body"));
+      console.log(AllContacts);
+      for(var i=0;i<AllContacts.length;i++)
+      {
+        // console.log(AllContacts[i].id);
+
+        // console.log(AllContacts[i].id.user);
+        table_row=document.createElement("tr");
+        table_row.id=AllContacts[i].id._serialized;
+        table_row.style="background: white; display: table-row;"
+        table_row.value=AllContacts[i].name;
+        td1=document.createElement("td");
+        td1.innerHTML=AllContacts[i].name;
+
+        td2=document.createElement("td");
+        td2.innerHTML=AllContacts[i].pushname;
+
+        td3=document.createElement("td");
+        td3.innerHTML=AllContacts[i].user;
+
+        td4=document.createElement("td");
+        td4.innerHTML=AllContacts[i].name;
+        table_row.append(td1,td2,td3,td4)
+        // console.log(table_row);
+        document.getElementById("table_body").append(table_row);
+      }
+    
+      console.log(document.getElementById("table_body"));
+
+
+      row=document.getElementsByTagName("tr");
+      // console.log(row);
+      for(let i=1;i<row.length;i++)
+      {
+        // console.log(row[i],"is clicked");
+        row[i].addEventListener("click",function()
+        {
+          console.log(row[i]);
+          clicked(row[i]);
+  
+        });
+        
+      }
+      
+    }
+
+    //  create new List 
+    document.getElementById("create_new_list").addEventListener("click",function()
+    {
+      var name=document.getElementById("input_list_name").value;
+      
+      
+    })
+
+    document.getElementById("send_btn").addEventListener("click",function()
+    {
+      // if (message.value != "" && user_List.length>0) {
+    
+
+      console.log(user_List);
+      message="There??";
+        broadcastMessages(user_List, message);
+    // }
+    
+  });
+
+
+			var table=document.getElementById("contact_table");
+				var row=table.getElementsByTagName("tr");
+        // console.log(table);
+        // console.log(row);			
+
+      document.getElementById("total_contacts").innerHTML=row.length-1;
+
+			function remove_file()
+			{
+				console.log("file is removed");
+				console.log(document.getElementById("myfile").repalceWith(" "));
+			}
+	
+
+
+  //  change to list page 
+  document.getElementById("List").addEventListener("click",function()
+  {
+		document.getElementById('List__').style.display="block";
+		document.getElementById('Template__').style.display="none";
+		document.getElementById('Campains__').style.display="none";
+  });    
+	
+  //  chageToTemplatePage >
+
+  document.getElementById("Template").addEventListener("click",function()
+  {
+    document.getElementById('Campains__').style.display="none";
+    	document.getElementById('Template__').style.display="block";
+    	document.getElementById('List__').style.display="none";
+  });
+	
+  //  change yo Campains page
+
+  document.getElementById("Campains").addEventListener("click",function()
+  {
+
+    document.getElementById('Campains__').style.display="block";
+		document.getElementById('Template__').style.display="none";
+		document.getElementById('List__').style.display="none";
+  });
+	
+  //  campain cross button
+  document.getElementById("campain-cancel-button").addEventListener("click",function()
+  {
+    console.log("campain croos button is clicked");
+    document.getElementById("campain").style.display="none";
+    document.getElementsByClassName("scheduleOverlay")[0].style.display ="none";
+
+
+  });
+
+		//  funtion of implement show selected button
+    document.getElementById("flexSwitchCheckChecked").addEventListener("click",function()
+    {
+      console.log("flexSwitchCheckChecked is trigered");
+      Show_Selected();
+    })
+
+		function Show_Selected()
+		{
+			Show=!Show;
+			if(Show==true)
+			{
+        // document.getElementById("table-body");
+        // console.log(document.getElementById("table-body"));
+        // console.log(document.getElementById("table_body"));
+        // document.getElementById("table_body").innerHTML="";
+        
+				console.log("Show_Selected is trigered",Show);
+				var table=document.getElementById("contact_table");
+				var row=table.getElementsByTagName("tr");
+				for (i=1; i < row.length; i++) {
+	    			const index=user_List.findIndex((element)=> element==row[i].id);
+	    			if(index<0)
+	    			{
+						document.getElementById(row[i].id).style.display="none";
+	    			}
+
+
+					}				
+			}
+			else
+			{
+				
+				var table=document.getElementById("contact_table");
+				var row=table.getElementsByTagName("tr");
+				console.log(row);
+				for(i=1;i<row.length;i++)
+				{
+						document.getElementById(row[i].id).style.display="table-row";				
+				}
+			}
+
+
+		}
+
+    console.log(document.getElementById("myInput"));
+    document.getElementById("myInput").addEventListener("keydown" ,function()
+    {
+      myFunction();
+    })
+
+		// funtion to implement a search 
+
+		function myFunction() {
+		  // console.log("vibhu");
+		  var input, filter, table, tr, td, i, txtValue;
+		  input = document.getElementById("myInput");
+		  filter = input.value.toUpperCase();
+		  table = document.getElementById("contact_table");
+		  tr = table.getElementsByTagName("tr");
+		  for (i = 0; i < tr.length; i++) {
+		    td = tr[i].getElementsByTagName("td")[0];
+		    if (td) {
+		      txtValue = td.textContent || td.innerText;
+		      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+		        tr[i].style.display = "";
+		      } else {
+		        tr[i].style.display = "none";
+		      }
+		    }       
+		  }
+		}
+
+		// funtion to implement onclick funtion on row
+  
+   
+
+		function clicked( event)
+		{
+      console.log(event);
+			// console.log(event,document.getElementById(event).style.background)
+			if((event).style.background=="skyblue")
+			{
+				(event).style.background="white";
+				const index=user_List.findIndex((element)=> element==event.id)
+				user_List.splice(index,1);
+				console.log(event.id._serialized,"unselected");
+        document.getElementById("Selected_contacts").innerHTML=user_List.length;
+			}
+			else
+			{
+				(event).style.background="skyblue";
+				user_List.push(event.id);
+				console.log(event.id,"selected");
+        document.getElementById("Selected_contacts").innerHTML=user_List.length;
+
+      }
+
+			console.log(user_List);
+				
+		}
+
+
+}

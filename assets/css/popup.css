@@ -1,9 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@1,100&display=swap');
+/* @import url(https://raw.github.com/FortAwesome/Font-Awesome/master/docs/assets/css/font-awesome.min.css); */
 p {
   font-family: "Poppins", sans-serif;
 }
 #greet {
   background-color: white;
   height: 76px;
+}
+#list_drop-down_p:hover{
+  background-color:#ddd;
 }
 
 *:focus {
@@ -19,6 +24,15 @@ a:hover {
 }
 pre {
   margin-bottom: 0;
+}
+span#create_new_list {
+  border-radius: 50%;
+}
+#create_new_list:hover
+{
+  box-shadow: rgba(0, 116, 251, 0.35) 0px 5px 15px;
+  /* background-color: red!important; */
+
 }
 
 [list]::-webkit-calendar-picker-indicator {
@@ -66,12 +80,12 @@ pre {
   display: none;
   z-index: 1111;
   position: fixed;
-  left: 20%;
+  left: 5%;
   align-items: c;
   border: 1px solid black;
-  top: 15%;
-  height: 72%;
-  width: 66%;
+  top: 5%;
+  height: 90%;
+  width: 90%;
   padding-bottom: 20px;
   background: white;
   border: 4px solid #002ffc5e;
@@ -87,6 +101,21 @@ pre {
   border: 1px solid black;
   top: 15%;
   width: 45%;
+  padding-bottom: 20px;
+  background: white;
+  border: 4px solid #002ffc5e;
+  box-shadow: 2px 2px 45px #101010f5;
+}
+#campain
+{
+  display: none;
+  z-index: 1111;
+  position: fixed;
+  left: 5%;
+  align-items: c;
+  border: 1px solid black;
+  top: 8%;
+  width: 90%;
   padding-bottom: 20px;
   background: white;
   border: 4px solid #002ffc5e;

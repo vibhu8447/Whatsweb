@@ -57,8 +57,19 @@ window.addEventListener("message", function (event) {
 
       // console.log("chatOpen");
     } else if (event.data.cmd == "getAllContacts") {
-      var ContactsArr = WWebJS.getContacts();
-      console.log(ContactsArr);
+      console.log("getAllContacts is trigered");
+      var contacts= window.WAPI.getAllContacts();
+      console.log("getAllContacts is trigered");
+
+      window.postMessage(
+        {
+          AllContacts : contacts,
+          res : "AllContacts",
+          direction: "from-page-script",
+        },
+        "*"
+      )
+
     } else if (event.data.cmd == "getContact") {
       var contact = window.Store.Contact.get(event.data.id);
       console.log(contact);
@@ -387,6 +398,7 @@ window.WAPI.leaveGroup = function (groupId) {
 };
 
 window.WAPI.getAllContacts = function (done) {
+  
   const contacts = window.Store.Contact.map((contact) =>
     WAPI._serializeContactObj(contact)
   );
@@ -406,6 +418,7 @@ window.WAPI.getMyContacts = function (done) {
     (contact) => contact.isMyContact === true
   ).map((contact) => WAPI._serializeContactObj(contact));
   if (done !== undefined) done(contacts);
+  console.log(contacts);
   return contacts;
 };
 
@@ -433,6 +446,7 @@ window.WAPI.getAllChats = function (done) {
   const chats = window.Store.Chat.map((chat) => WAPI._serializeChatObj(chat));
 
   if (done !== undefined) done(chats);
+  console.log(chats);
   return chats;
 };
 
@@ -461,6 +475,7 @@ window.WAPI.getAllChatIds = function (done) {
   );
 
   if (done !== undefined) done(chatIds);
+  console.log(chatIds);
   return chatIds;
 };
 
@@ -474,6 +489,7 @@ window.WAPI.getAllGroups = function (done) {
   const groups = window.Store.Chat.filter((chat) => chat.isGroup);
 
   if (done !== undefined) done(groups);
+  console.log(groups);
   return groups;
 };
 
