@@ -1421,7 +1421,10 @@ function getTheTagsOFCustomer(customer) {
   console.log("fetching the tags of customer");
 
   document.getElementsByClassName("_23P3O")[0].insertBefore(document.getElementById("editTags"),document.getElementsByClassName("_23P3O")[0].childNodes[2]);
-  document.getElementById("editTags").style.marginRight="30px";
+  document.getElementById("editTags").style.marginRight="30px";      
+    document.getElementById("editTags").style="width:auto ;height:26px ; margin-right:34px";
+
+  
 
   element=customer;
   // console.log(element.TagName,"tags of customer");
@@ -1641,6 +1644,7 @@ function crmFormFunction() {
       .addEventListener("click", function (params) {
         console.log(document.getElementsByClassName("_23P3O")[0].insertBefore(document.getElementById("editTags"),document.getElementsByClassName("_23P3O")[0].childNodes[5]));
         document.getElementById("editTags").style.marginRight="34px";
+        document.getElementById("editTags").style="width:auto ;height:26px ; margin-right:34px";
         document.getElementById("editTags").style.fontSize="40px"
 
         console.log("edit_tag is clicked");
