@@ -4590,11 +4590,12 @@ function setTheJavascriptincampainPage()
       
     });    
 
-    var selected_List
+    var selected_List="";
+    var selected_Template="";
     // setting up the fetched templates 
     function set_up_template_list (template_list) {
       console.log(template_list);
-      // document.getElementsByClassName("template_dropdown_content").innerHTML="";
+
       document.getElementById("template_dropdown_content").innerHTML="";
       for(var i=0;i<template_list.length;i++)
       {
@@ -4606,8 +4607,36 @@ function setTheJavascriptincampainPage()
         document.getElementById("template_dropdown_content").append(p);
       }
       var templates=document.getElementsByClassName("template_drop-down_p");
-      console.log(templates);
+      // console.log(templates);
+      for(let i=0;i<templates.length;i++)
+      {
+        templates[i].addEventListener(("click"),function()
+        {
+          document.getElementById("template_list_name").value=templates[i].innerHTML;
+          selected_Template=templates[i].innerHTML;
+          set_up_selected_template(template_list,selected_Template);
+        })
+      }
+    
     }
+    function set_up_selected_template(template_list,selected_Template )
+    {
+      // console.log(templates_list);
+      for(let i=0;i<template_list.length;i++)
+      {
+        if(template_list[i].template_name==selected_Template)
+        {
+          document.getElementById("exampleFormControlTextarea1").value=template_list[i].template_message;
+        }
+      }
+
+    }
+
+  
+
+    document.getElementById("exampleFormControlTextarea1").addEventListener("input" ,function(){
+      console.log(document.getElementById("exampleFormControlTextarea1").value);
+    })
 
 
     // fetching the list data 
@@ -4931,7 +4960,7 @@ setuptable_(AllContacts)
 		}
 
     console.log(document.getElementById("myInput"));
-    document.getElementById("myInput").addEventListener("keydown" ,function()
+    document.getElementById("myInput").addEventListener("input",function()
     {
       myFunction();
     })
