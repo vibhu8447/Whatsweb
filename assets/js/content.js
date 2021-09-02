@@ -4581,17 +4581,27 @@ function setTheJavascriptincampainPage()
 
 
     // fetching the template data
- 
+    let All_lists=[]
+    let All_templates=[]
+    function fetch_template()
+    {
+
+    
     fetch(`https://eazybe.com/api/v1/whatzapp/getCampaignTemplates?user_mobile=${phoneString}`)
     .then((response) => response.json())
     .then((json) => {
       console.log(json);
+      All_templates=json.campaignTemplates
       set_up_template_list(json.campaignTemplates);
       
     });    
-
+  }
+  fetch_template();
     var selected_List="";
     var selected_Template="";
+    var selected_Template_id="";
+
+
     // setting up the fetched templates 
     function set_up_template_list (template_list) {
       console.log(template_list);
@@ -4605,6 +4615,10 @@ function setTheJavascriptincampainPage()
         p.className="template_drop-down_p"
         p.style="text-align: start;padding-top: 10px;font-size: 21px;font-family: Montserrat Alternates ;padding-left: 18px;height: 45px;"
         document.getElementById("template_dropdown_content").append(p);
+        s=document.createElement("option");
+        s.innerHTML=template_list[i].template_name;
+        document.getElementById("inputGroupSelect023").append(s);
+        // document.getElementById("campain_list_select marg").append(p);
       }
       var templates=document.getElementsByClassName("template_drop-down_p");
       // console.log(templates);
@@ -4627,6 +4641,7 @@ function setTheJavascriptincampainPage()
         if(template_list[i].template_name==selected_Template)
         {
           document.getElementById("exampleFormControlTextarea1").value=template_list[i].template_message;
+          selected_Template_id=template_list[i].id;
         }
       }
 
@@ -4635,16 +4650,36 @@ function setTheJavascriptincampainPage()
   
 
     document.getElementById("exampleFormControlTextarea1").addEventListener("input" ,function(){
+      console.log(selected_Template_id);
+      console.log(selected_Template);
       console.log(document.getElementById("exampleFormControlTextarea1").value);
+  
+      fetch("https://eazybe.com/api/v1/whatzapp/updateCampaignTemplate",{
+        method:'POST',
+        body:JSON.stringify({
+          "id":selected_Template_id,
+          "template_name":selected_Template,
+          "template_message":document.getElementById("exampleFormControlTextarea1").value
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+
+
+      })
+      fetch_template();
+
+    
     })
 
 
     // fetching the list data 
 
-    fetch(`https://eazybe.com/api/v1/whatzapp/getCampaignInfo?userMobile=${phoneString}`)
+    fetch(`https://eazybe.com/api/v1/whatzapp/getCampaignChatIdListInfo?userMobile=${phoneString}`)
     .then((response) => response.json())
     .then((json) => {
       console.log(json);
+      All_lists=json.campaignDetails;
       set_contacts_lists(json.campaignDetails);
     });
     // setting up the fetched list  name and contacts detail
@@ -4657,12 +4692,16 @@ function setTheJavascriptincampainPage()
         for(var i=0;i<contacts_list.length;i++)
           {
             console.log(contacts_list[i].listName);
-                      p=document.createElement("p");
+           p=document.createElement("p");
+
           p.innerHTML=contacts_list[i].listName;
           p.className="list_drop-down_p"
           p.style="text-align: start;padding-top: 10px;font-size: 21px;font-family: Montserrat Alternates ;padding-left: 18px;height: 45px;"
           document.getElementById("list_drop_down").append(p);
-          } 
+          s=document.createElement("option");
+          s.innerHTML=contacts_list[i].listName;
+          document.getElementById("inputGroupSelect022").append(s)
+        } 
           
           var list_name=document.getElementsByClassName("list_drop-down_p");
           console.log(document.getElementsByClassName("list_drop-down_p"));
@@ -5036,6 +5075,11 @@ setuptable_(AllContacts)
       
 				
 		}
+    set_up_campain_page();
+    function set_up_campain_page()
+    {
+      console.log(document.getElementById("inputGroupSelect022").innerHTML);
+      console.log(document.getElementById("inputGroupSelect023").);
 
-
+    }
 }
