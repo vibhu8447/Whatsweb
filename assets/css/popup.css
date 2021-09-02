@@ -7,10 +7,14 @@ p {
   background-color: white;
   height: 76px;
 }
-#list_drop-down_p:hover{
+.list_drop-down_p:hover{
   background-color:#ddd;
 }
+.template_drop-down_p:hover
+{
+  background-color:#ddd;
 
+}
 *:focus {
   outline: 0;
 }

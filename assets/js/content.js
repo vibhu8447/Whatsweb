@@ -42,6 +42,7 @@ var presentDate = "";
 var phoneString = "";
 var prevTextinfo = "";
 var followupDateTime;
+var contact_name="";
 
 //setting up script of wwebjs
 // we append this script again and again
@@ -108,7 +109,9 @@ function listeningtomessages(params) {
           event.data.contact;
         if (document.getElementById("username")) {
           document.getElementById("username").value = event.data.contact;
+          contact_name=event.data.contact;
         }
+
         console.log(event.data.contact);
       } else if (event.data.res == "contactId") {
         //this is to set the latest acitve chat id
@@ -2330,8 +2333,8 @@ function findnumber() {
    
     campainBtn.addEventListener("click",function()
       {
-      //   chat_id="919911747454@c.us"
-      //   id="919911747454@c.us"
+        chat_id="919911747454@c.us"
+        id="919911747454@c.us"
       // window.postMessage(
       //   { id: id, cmd: "openChat", direction: "from-content-script" },
       //   "*"
@@ -2368,10 +2371,24 @@ function findnumber() {
       //   "*"
       // )
 
+      // window.addEventListener("message", function (event) {
+      //   if (
+      //     event.source == window &&
+      //     event.data &&
+      //     event.data.direction == "from-page-script"
+      //   )
+      //   {
+      //     if(event.data.res == "contactInfo")
+      //     {
+      //       contact_name=event.data.contact;
+      //       console.log(contact_name);
+      //     }
+      //   }
+      // });
 
-
-
-
+      //   getContactsName(id);
+      
+        // console.log(contact_name);
 
 
 
@@ -4532,7 +4549,7 @@ function setTheJavascriptincampainPage()
   console.log("setTheJavascriptincampainPage");
   	// global varible of Show_Selected button
     var Show=false;
-
+    var s_list_name
 		// selected user list
     var  user_List=[];
     // All contacts List;
@@ -4561,48 +4578,181 @@ function setTheJavascriptincampainPage()
       },
       "*"
     );
+
+
+    // fetching the template data
+ 
+    fetch(`https://eazybe.com/api/v1/whatzapp/getCampaignTemplates?user_mobile=${phoneString}`)
+    .then((response) => response.json())
+    .then((json) => {
+      console.log(json);
+      set_up_template_list(json.campaignTemplates);
+      
+    });    
+
+    var selected_List
+    // setting up the fetched templates 
+    function set_up_template_list (template_list) {
+      console.log(template_list);
+      // document.getElementsByClassName("template_dropdown_content").innerHTML="";
+      document.getElementById("template_dropdown_content").innerHTML="";
+      for(var i=0;i<template_list.length;i++)
+      {
+        
+        p=document.createElement("p");
+        p.innerHTML=template_list[i].template_name;
+        p.className="template_drop-down_p"
+        p.style="text-align: start;padding-top: 10px;font-size: 21px;font-family: Montserrat Alternates ;padding-left: 18px;height: 45px;"
+        document.getElementById("template_dropdown_content").append(p);
+      }
+      var templates=document.getElementsByClassName("template_drop-down_p");
+      console.log(templates);
+    }
+
+
     // fetching the list data 
-    console.log(phoneString);
+
     fetch(`https://eazybe.com/api/v1/whatzapp/getCampaignInfo?userMobile=${phoneString}`)
     .then((response) => response.json())
     .then((json) => {
       console.log(json);
-      set_contacts_lists(json.campaignDetails.chatID_list);
-      
+      set_contacts_lists(json.campaignDetails);
     });
     // setting up the fetched list  name and contacts detail
+
+
     function set_contacts_lists(contacts_list)
     {   
         console.log(contacts_list);
-        // contacts_list.map((element)=>
-        // {
-          
-        //   // console.log(element);
-        // })
-        Object.entries(contacts_list).map(entry => {
-          let key = entry[0];
-          let value = entry[1];
-          console.log( document.getElementById("list_drop_down"));
-          p=document.createElement("p");
-          p.innerHTML=key;
-          p.id="list_drop-down_p"
-          p.style="text-align: start;font-size: 21px;font-family:Montserrat  Alternates;margin-left: 18px;"
-          // p.style="text-align: start;padding-top: 10px;font-size: 21px;font-family: "Montserrat Alternates";padding-left: 18px;height: 45px;"
-          document.getElementById("list_drop_down").append(p);
-          console.log(key, value);
-      });
+        document.getElementById("list_drop_down").innerHTML="";
         for(var i=0;i<contacts_list.length;i++)
-        {
-          console.log(contacts_list[i]);
-          entry=contacts_list[i];
-          let key = entry[0];
-          let value = entry[1];
-          console.log(key, value);
-        }
-    }
+          {
+            console.log(contacts_list[i].listName);
+                      p=document.createElement("p");
+          p.innerHTML=contacts_list[i].listName;
+          p.className="list_drop-down_p"
+          p.style="text-align: start;padding-top: 10px;font-size: 21px;font-family: Montserrat Alternates ;padding-left: 18px;height: 45px;"
+          document.getElementById("list_drop_down").append(p);
+          } 
+          
+          var list_name=document.getElementsByClassName("list_drop-down_p");
+          console.log(document.getElementsByClassName("list_drop-down_p"));
+          for(let i=0;i<list_name.length;i++)
+          {
+            list_name[i].addEventListener("click",function()
+            {
+              
+            console.log(list_name[i].innerHTML);
+            selected_List=list_name[i].innerHTML;
+            s_list_name=selected_List;
+            document.getElementById("input_list_name").value=s_list_name;
+            document.getElementById("Selected_contacts").innerHTML=contacts_list.length;
+            set_up_fected_list(contacts_list,selected_List);
 
-    function setuptable_()
+          
+            });
+
+
+          }
+
+
+
+          
+    }
+function set_up_fected_list( c_list,s_list_name)
+{
+
+ 
+
+  let selected_list_contacts
+  console.log(c_list,s_list_name);
+  document.getElementById("table_body").innerHTML="";
+  for(var i=0;i<c_list.length;i++)
+  {
+    // console.log(c_list[i].listName)
+    if(c_list[i].listName==s_list_name)
     {
+      selected_list_contacts=c_list[i].chatID_list;
+      user_List=selected_list_contacts;
+      for(let i=0;i<selected_list_contacts.length;i++)
+      {
+        console.log(selected_list_contacts[i]);
+       
+        // row=document.getElementsByTagName("tr");
+        // console.log(row);
+        
+        var find=false;
+        for(let j=0;j<AllContacts.length;j++)
+        {
+        
+          // console.log(AllContacts);
+          if(AllContacts[j].id._serialized==selected_list_contacts[i])
+          {
+            find=true;
+            console.log("yes");
+            table_row=document.createElement("tr");
+        table_row.id=AllContacts[j].id._serialized;
+        table_row.style="background: skyblue; display: table-row;"
+        table_row.value=AllContacts[j].name;
+        td1=document.createElement("td");
+        td1.innerHTML=AllContacts[j].name;
+
+        td2=document.createElement("td");
+        td2.innerHTML=AllContacts[j].pushname;
+
+        td3=document.createElement("td");
+        td3.innerHTML=AllContacts[j].user;
+
+        td4=document.createElement("td");
+        td4.innerHTML=AllContacts[j].name;
+        table_row.append(td1,td2,td3,td4)
+        // console.log(table_row);
+        document.getElementById("table_body").append(table_row);
+        AllContacts.splice(i,1);
+          }
+          // if(row[j].id==selected_list_contacts[i])
+          // {
+          //   find=true;
+          //   row[j].style.backgroundColor="skyblue";
+          // }
+          
+        }
+        
+        if(find==false)
+        {
+          table_row=document.createElement("tr");
+        table_row.id=selected_list_contacts[i];
+        table_row.style="background: skyblue; display: table-row;"
+        table_row.value=selected_list_contacts[i];
+        td1=document.createElement("td");
+        mobile_no=selected_list_contacts[i];
+        td1.innerHTML=mobile_no.substring(2,12);
+        td2=document.createElement("td");
+        td2.innerHTML="";
+
+        td3=document.createElement("td");
+        td3.innerHTML="";
+
+        td4=document.createElement("td");
+        td4.innerHTML="";
+        table_row.append(td1,td2,td3,td4)
+        console.log(table_row);
+        document.getElementById("table_body").insertBefore(table_row,document.getElementById("table_body").childNodes[0] );
+
+        }
+        
+      
+      }
+    }
+  }
+setuptable_(AllContacts)
+
+}
+
+    function setuptable_(AllContacts)
+    {
+    
+
       document.getElementById("Selected_contacts").innerHTML=0;
       console.log(table =document.getElementById("table_body"));
       console.log(AllContacts);
@@ -4833,7 +4983,28 @@ function setTheJavascriptincampainPage()
 
       }
 
+      console.log(phoneString);
+      console.log(s_list_name)
 			console.log(user_List);
+      if(s_list_name!=undefined)
+      {
+        fetch("https://eazybe.com/api/v1/whatzapp/updateCampaign",{
+        method:'POST',
+        body:JSON.stringify({
+          "user_mobile":phoneString,
+          "listName":s_list_name,
+          "chatID_list":user_List
+
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+        
+
+
+      })
+      }
+      
 				
 		}
 

@@ -82,6 +82,7 @@ window.addEventListener("message", function (event) {
       }
       if (contactName === undefined || contactName == "[object, Object]") {
         contactName = contact.__x_formattedName;
+      
       }
       window.postMessage(
         {
