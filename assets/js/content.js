@@ -4607,6 +4607,7 @@ function setTheJavascriptincampainPage()
       console.log(template_list);
 
       document.getElementById("template_dropdown_content").innerHTML="";
+      document.getElementById("inputGroupSelect023").innerHTML="" ;
       for(var i=0;i<template_list.length;i++)
       {
         
@@ -4617,6 +4618,7 @@ function setTheJavascriptincampainPage()
         document.getElementById("template_dropdown_content").append(p);
         s=document.createElement("option");
         s.innerHTML=template_list[i].template_name;
+        s.className="campain_template_option";
         document.getElementById("inputGroupSelect023").append(s);
         // document.getElementById("campain_list_select marg").append(p);
       }
@@ -4647,7 +4649,28 @@ function setTheJavascriptincampainPage()
 
     }
 
-  
+  document.getElementById("template_list_name").addEventListener("input",function()
+  {
+    // console.log(selected_Template_id);
+    // console.log(selected_Template);
+    // console.log(document.getElementById("exampleFormControlTextarea1").value);
+
+    fetch("https://eazybe.com/api/v1/whatzapp/updateCampaignTemplate",{
+      method:'POST',
+      body:JSON.stringify({
+        "id":selected_Template_id,
+        "template_name":selected_Template,
+        "template_message":document.getElementById("exampleFormControlTextarea1").value
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+
+
+    })
+
+    fetch_template();
+  })
 
     document.getElementById("exampleFormControlTextarea1").addEventListener("input" ,function(){
       console.log(selected_Template_id);
@@ -4667,6 +4690,7 @@ function setTheJavascriptincampainPage()
 
 
       })
+
       fetch_template();
 
     
@@ -4674,7 +4698,10 @@ function setTheJavascriptincampainPage()
 
 
     // fetching the list data 
+    fetch_chatid_list();
+    function fetch_chatid_list(){
 
+    
     fetch(`https://eazybe.com/api/v1/whatzapp/getCampaignChatIdListInfo?userMobile=${phoneString}`)
     .then((response) => response.json())
     .then((json) => {
@@ -4682,13 +4709,62 @@ function setTheJavascriptincampainPage()
       All_lists=json.campaignDetails;
       set_contacts_lists(json.campaignDetails);
     });
+  }
     // setting up the fetched list  name and contacts detail
 
+    document.getElementById("create_new_list").addEventListener("click",function()
+    {
+      if(document.getElementById("input_list_name").value=="")
+      {
+        alert("Please Enter the Name");
+      }
+      else{
+        console.log(phoneString,document.getElementById("input_list_name").value,[]);
+        fetch("https://eazybe.com/api/v1/whatzapp/createCampaignChatIdList",{
+          method:"POST",
+          body:JSON.stringify({
+            "user_mobile":phoneString,
+            "listName":document.getElementById("input_list_name").value,
+            "chatID_list":[]
+          }),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+          },
+          
+        })
 
+        fetch_chatid_list();
+      }
+    })
+    document.getElementById("create_new_template").addEventListener("click" ,function(){
+      if(document.getElementById("template_list_name").value=="")
+      {
+        alert("Please Enter the Name");
+      }
+      else
+      {
+        fetch("https://eazybe.com/api/v1/whatzapp/createCampaignTemplate",{
+          method:"POST",
+          body:JSON.stringify({
+            "user_mobile":phoneString,
+            "template_name":document.getElementById("template_list_name").value,  
+            "template_message":""
+          }),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+          },
+          
+        })
+      }
+      fetch_template();
+    } )
+
+let s_selected_list_id=""
     function set_contacts_lists(contacts_list)
     {   
         console.log(contacts_list);
         document.getElementById("list_drop_down").innerHTML="";
+        document.getElementById("inputGroupSelect022").innerHTML="";
         for(var i=0;i<contacts_list.length;i++)
           {
             console.log(contacts_list[i].listName);
@@ -4699,6 +4775,7 @@ function setTheJavascriptincampainPage()
           p.style="text-align: start;padding-top: 10px;font-size: 21px;font-family: Montserrat Alternates ;padding-left: 18px;height: 45px;"
           document.getElementById("list_drop_down").append(p);
           s=document.createElement("option");
+          s.className="campain_list_option";
           s.innerHTML=contacts_list[i].listName;
           document.getElementById("inputGroupSelect022").append(s)
         } 
@@ -4740,8 +4817,12 @@ function set_up_fected_list( c_list,s_list_name)
     // console.log(c_list[i].listName)
     if(c_list[i].listName==s_list_name)
     {
+      
       selected_list_contacts=c_list[i].chatID_list;
       user_List=selected_list_contacts;
+      s_selected_list_id=c_list[i].id;
+      
+
       for(let i=0;i<selected_list_contacts.length;i++)
       {
         console.log(selected_list_contacts[i]);
@@ -4816,7 +4897,7 @@ function set_up_fected_list( c_list,s_list_name)
 setuptable_(AllContacts)
 
 }
-
+var AllContacts
     function setuptable_(AllContacts)
     {
     
@@ -4888,17 +4969,6 @@ setuptable_(AllContacts)
       
     })
 
-    document.getElementById("send_btn").addEventListener("click",function()
-    {
-      // if (message.value != "" && user_List.length>0) {
-    
-
-      console.log(user_List);
-      message="There??";
-        broadcastMessages(user_List, message);
-    // }
-    
-  });
 
 
 			var table=document.getElementById("contact_table");
@@ -5056,9 +5126,10 @@ setuptable_(AllContacts)
 			console.log(user_List);
       if(s_list_name!=undefined)
       {
-        fetch("https://eazybe.com/api/v1/whatzapp/updateCampaign",{
+        fetch("https://eazybe.com/api/v1/whatzapp/updateCampaignChatIdList",{
         method:'POST',
         body:JSON.stringify({
+          "id":s_selected_list_id,
           "user_mobile":phoneString,
           "listName":s_list_name,
           "chatID_list":user_List
@@ -5075,11 +5146,92 @@ setuptable_(AllContacts)
       
 				
 		}
+    document.getElementById("input_list_name").addEventListener("input",function()
+    {
+      console.log(document.getElementById("input_list_name").value);
+      if(s_list_name!=undefined)
+      {
+        fetch("https://eazybe.com/api/v1/whatzapp/updateCampaignChatIdList",{
+        method:'POST',
+        body:JSON.stringify({
+          "id":s_selected_list_id,
+          "user_mobile":phoneString,
+          "listName":document.getElementById("input_list_name").value,
+          "chatID_list":user_List
+
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+        
+
+
+      })
+      }
+    })
     set_up_campain_page();
     function set_up_campain_page()
     {
-      console.log(document.getElementById("inputGroupSelect022").innerHTML);
-      console.log(document.getElementById("inputGroupSelect023").);
+      var s_list
+      var s_chat_list
+      var s_temp
+      var s_temp_message
+      document.getElementById("inputGroupSelect022").addEventListener("input",function()
+      {
+        s_list=document.getElementById("inputGroupSelect022").value;
+        console.log(s_list,s_temp);
+        
 
+      })
+      
+
+      document.getElementById("inputGroupSelect023").addEventListener("input",function()
+      {
+        s_temp=document.getElementById("inputGroupSelect023").value;
+        
+        console.log(s_list,s_temp);
+      })
+      
+      
+      document.getElementById("send_btn").addEventListener("click",function()
+      {
+        // if (message.value != "" && user_List.length>0) {
+        for(var i=0;i<All_lists.length;i++)
+        {
+          if(All_lists[i].listName==s_list)
+          {
+            user_List=All_lists[i].chatID_list;
+          }
+        }
+
+        for(var i=0;i<All_templates.length;i++)
+        {
+          if(All_templates[i].template_name==s_temp)
+          {
+            message=All_templates[i].template_message;
+          }
+        }
+        console.log(user_List, message);
+        // console.log(All_lists);
+        // console.log(All_templates);
+          broadcastMessages(user_List, message)
+          // .then((res)=>res.json)
+          // .then(console.log("completed"));
+      // }
+      console.log(s_list,s_temp,document.getElementById("campain_input").value);
+      fetch("https://eazybe.com/api/v1/whatzapp/createRunningCampaignData",{
+        method:'POST',
+        body:JSON.stringify({
+          "user_mobile":phoneString,
+          "campaign_name":document.getElementById("campain_input").value,
+          "campaign_chatIdList_name":s_list,
+          "campaign_template_name":s_temp
+
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      })
+    });
     }
 }
