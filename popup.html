@@ -1212,9 +1212,9 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
 
    <div clas="header_container">
 		<div class="header">
-			<button class="tablink" id="List"  value="List" > List</button>
+			<button class="tablink" id="List" style="background-color: #F6F6F6;" value="List" > List</button>
 			<button class="tablink" id="Template" value="Templates" >Templates</button>
-			<button class="tablink" id="Campains" value="changepage" >Campains</button>
+			<button class="tablink" id="Campains" value="changepage" >Campaigns</button>
 
 		<!-- cancel button -->
 
@@ -1254,7 +1254,7 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
 			<!-- <button  style=" outline: none; border: none; border-radius: 6px;font-size: 25px; margin-right: 10px;background-color: #0074fc;height: 36px;margin-top: 1px;">
          <span class="material-icons"  id ="create_new_list"  style="color: #FFF; background-color: #0074fc; font-size: 36px;">add</span>
          </button>  -->
-         <button class="btn btn-primary" id ="create_new_list"  style="margin-right: 10px; margin-top: 1px; height: 36px; display: flex;align-items: center; justify-items: center; font-size: 24px;font-weight: bolder;">+</button>  
+         <button class="btn btn-primary" id ="create_new_list"  style="margin-right: 10px; margin-top: 1px; height: 36px; display: flex;align-items: center; justify-items: center; font-size: 24px;font-weight: bolder;">New List</button>  
 		</div>	
 	</div>
 
@@ -1357,11 +1357,11 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
 					  <textarea class="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
 				</div>	
 
-				<div style="display:flex; justify-content: space-between; margin-top: 50px;" >
+				<!-- <div style="display:flex; justify-content: space-between; margin-top: 50px;" >
 					
 					<input  type="file" style="height: 36px; width: 300px;" id="myfile"  name="myfile"  style="margin:0px;"></input><br><br>
 					<button class="btn btn-primary"  onclick="remove_file()" style="height: 36px; margin-right:50px" > remove </button>
-				</div>
+				</div> -->
 
 
 
@@ -1386,7 +1386,7 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
 <!-- Campains page code starts here  -->
 	<div id="Campains__" style="padding-bottom: 10px;padding-top: 26px; height: 600px; background-color: #F6F6F6; display: flex; flex-direction: column; justify-content: center;">
 		<h2 style=" background-color:#F6F6F6;text-align: center;  ">
-			Campains Page 
+			Campaigns Page 
 		</h2>
 
 <div class="campain_card"  style=" margin-bottom: 20px;   display: flex; flex-direction: column; background-color: #FFF; width: 80%; margin-left: 10%;height: 300px">
@@ -1394,7 +1394,7 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
 
 	<div >
 		<div style=" display: flex; flex-direction: row ; margin-left: 24px;"  >
-			<div class="input-group mb-3" style="width: 250px;  margin-left: 10px; margin-right: 20px;" id="inputGroupSelect02">
+			<div class="input-group mb-3" style="width: 300px;margin-left: 10px;margin-right: 20px;" id="inputGroupSelect02">
 				<select class="form-select" id="inputGroupSelect022">
 				  <option selected>Select List...</option>
 				
@@ -1404,7 +1404,7 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
             <span class="material-icons" style="color:#546FFF;" >
                people
                </span>
-               <span id="selected_list_size"></span>
+               <span id="selected_list_size" style="font-size: 20px;margin-left: 0px;color: #546FFF;"> </span>
            </div>
          </div>
 			  <div class="input-group mb-3" style="width: 250px; " id="campain_template_select">
@@ -1416,7 +1416,9 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
 			   
 		</div>
 	</div>
-
+<div id="estimated_time_container" style="margin-left: 15px;font-size: 30px;">
+<h4>Estimated Time : <span id="estimated_time"> </span></h4>
+</div>
    <div id="send_btn"  >
       <button class="btn btn-primary" style="float: right;   width: 150px;   height: 50px;   margin-top: 50px;   margin-right: 49px">
          send

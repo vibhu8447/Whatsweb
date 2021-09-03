@@ -2298,16 +2298,18 @@ function findnumber() {
     "<div class='' style='padding:8px;color: #0074fc;display:flex;flex-direction:column;' title='List of Followups'><svg class='MuiSvgIcon-root' focusable='false' viewBox='0 0 24 24' aria-hidden='true'><path d='M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z'></path></svg><div class ='underline'></div></div>";
   var campainBtn=document.createElement("div");
   campainBtn.role="button";
-  campainBtn.style="padding:8px;";
+  campainBtn.style="padding:8px; ";
   campainBtn.title="campain";
   span=document.createElement("span");
   span.className="material-icons";
-  span.style="font-size: 30px;  padding-top: 5px;  color: blue;"
+  span.style="font-size: 30px;  padding-top: 5px;  color: #0074FC;"
   span.innerHTML="campaign";
   campainBtn.append(span);
   // campainBtn.innerHTML=    "<span class=`material-icons`>  campaign  </span>";
   // campainBtn.innerHTML="<svg class='MuiSvgIcon-root' focusable='false' viewBox='0 0 24 24' aria-hidden='true' style=''></svg>"
   // document.getElementById("side").style.width="400px";
+
+
   document
     .getElementsByClassName("_1QVfy _3UaCz")[0]
     .getElementsByTagName("span")[0]
@@ -2319,18 +2321,12 @@ function findnumber() {
         .getElementsByTagName("span")[0].firstChild
     );
 
-    document
-    .getElementsByClassName("_1QVfy _3UaCz")[0]
-    .getElementsByTagName("span")[0]
-    .insertBefore(
-      campainBtn,
-
-      document
-        .getElementsByClassName("_1QVfy _3UaCz")[0]
-        .getElementsByTagName("span")[0].firstChild
-    );
+ 
+    // document.getElementsByClassName("_1QVfy _3UaCz")[0].getElementsByTagName("span")[0].insertBefore(campainBtn,document.getElementById("_1QVfy _3UaCz")[0].getElementsByTagName("span")[0].childNodes[0]);
   
-   
+   // document
+        // .getElementsByClassName("_1QVfy _3UaCz")[0]
+        // .getElementsByTagName("span")[0].firstChild
     campainBtn.addEventListener("click",function()
       {
         chat_id="919911747454@c.us"
@@ -2422,7 +2418,16 @@ function findnumber() {
         .getElementsByClassName("_1QVfy _3UaCz")[0]
         .getElementsByTagName("span")[0].firstChild
     );
-
+    document
+    .getElementsByClassName("_1QVfy _3UaCz")[0]
+    .getElementsByTagName("span")[0]
+    .insertBefore(
+      campainBtn,
+  
+      document
+        .getElementsByClassName("_1QVfy _3UaCz")[0]
+        .getElementsByTagName("span")[0].childNodes[0]
+    );
   scheduleSectionPopup();
   console.log(document.getElementsByClassName("_1ljzS pnYZD")[0]);
 
@@ -4596,6 +4601,19 @@ function setTheJavascriptincampainPage()
       
     });    
   }
+  function convertHMS(value) {
+    const sec = parseInt(value, 10); // convert value to number if it's string
+    let hours   = Math.floor(sec / 3600); // get hours
+    let minutes = Math.floor((sec - (hours * 3600)) / 60); // get minutes
+    let seconds = sec - (hours * 3600) - (minutes * 60); //  get seconds
+    // add 0 if value < 10; Example: 2 => 02
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    return hours+':'+minutes+':'+seconds; // Return is HH : MM : SS
+}
+
+
   fetch_template();
     var selected_List="";
     var selected_Template="";
@@ -4608,6 +4626,13 @@ function setTheJavascriptincampainPage()
 
       document.getElementById("template_dropdown_content").innerHTML="";
       document.getElementById("inputGroupSelect023").innerHTML="" ;
+      
+      s=document.createElement("option");
+      s.innerHTML="Select Template..";
+      s.id="select_Template";
+      s.className="campain_template_option";
+      s.value="select_Template";
+      document.getElementById("inputGroupSelect023").append(s);
       for(var i=0;i<template_list.length;i++)
       {
         
@@ -4615,9 +4640,12 @@ function setTheJavascriptincampainPage()
         p.innerHTML=template_list[i].template_name;
         p.className="template_drop-down_p"
         p.style="text-align: start;padding-top: 10px;font-size: 21px;font-family: Montserrat Alternates ;padding-left: 18px;height: 45px;"
+        p.id=template_list[i].id;
         document.getElementById("template_dropdown_content").append(p);
         s=document.createElement("option");
         s.innerHTML=template_list[i].template_name;
+        s.id=template_list[i].id;
+        s.value=template_list[i].id;
         s.className="campain_template_option";
         document.getElementById("inputGroupSelect023").append(s);
         // document.getElementById("campain_list_select marg").append(p);
@@ -4630,17 +4658,18 @@ function setTheJavascriptincampainPage()
         {
           document.getElementById("template_list_name").value=templates[i].innerHTML;
           selected_Template=templates[i].innerHTML;
-          set_up_selected_template(template_list,selected_Template);
+          selected_Template_id=templates[i].id;
+          set_up_selected_template(template_list,selected_Template,selected_Template_id);
         })
       }
     
     }
-    function set_up_selected_template(template_list,selected_Template )
+    function set_up_selected_template(template_list,selected_Template,selected_Template_id )
     {
-      // console.log(templates_list);
+      console.log(template_list,selected_Template_id);
       for(let i=0;i<template_list.length;i++)
       {
-        if(template_list[i].template_name==selected_Template)
+        if(template_list[i].id==selected_Template_id)
         {
           document.getElementById("exampleFormControlTextarea1").value=template_list[i].template_message;
           selected_Template_id=template_list[i].id;
@@ -4651,15 +4680,15 @@ function setTheJavascriptincampainPage()
 
   document.getElementById("template_list_name").addEventListener("input",function()
   {
-    // console.log(selected_Template_id);
-    // console.log(selected_Template);
-    // console.log(document.getElementById("exampleFormControlTextarea1").value);
+    console.log(selected_Template_id);
+    console.log(document.getElementById("template_list_name").value);
+    console.log(document.getElementById("exampleFormControlTextarea1").value);
 
     fetch("https://eazybe.com/api/v1/whatzapp/updateCampaignTemplate",{
       method:'POST',
       body:JSON.stringify({
         "id":selected_Template_id,
-        "template_name":selected_Template,
+        "template_name":document.getElementById("template_list_name").value,
         "template_message":document.getElementById("exampleFormControlTextarea1").value
       }),
       headers: {
@@ -4765,6 +4794,10 @@ let s_selected_list_id=""
         console.log(contacts_list);
         document.getElementById("list_drop_down").innerHTML="";
         document.getElementById("inputGroupSelect022").innerHTML="";
+        s.innerHTML="Select List..";
+        s.id="xyz";
+        s.value="xyz";
+        document.getElementById("inputGroupSelect022").append(s)
         for(var i=0;i<contacts_list.length;i++)
           {
             console.log(contacts_list[i].listName);
@@ -4777,6 +4810,8 @@ let s_selected_list_id=""
           s=document.createElement("option");
           s.className="campain_list_option";
           s.innerHTML=contacts_list[i].listName;
+          s.id=contacts_list[i].id;
+          s.value=contacts_list[i].id;
           document.getElementById("inputGroupSelect022").append(s)
         } 
           
@@ -4992,6 +5027,10 @@ var AllContacts
 		document.getElementById('List__').style.display="block";
 		document.getElementById('Template__').style.display="none";
 		document.getElementById('Campains__').style.display="none";
+
+    document.getElementById("List").style="background-color: #F6F6F6";
+    document.getElementById("Template").style="background-color: #EDEDED";
+    document.getElementById("Campains").style="background-color: #EDEDED";
   });    
 	
   //  chageToTemplatePage >
@@ -5001,6 +5040,10 @@ var AllContacts
     document.getElementById('Campains__').style.display="none";
     	document.getElementById('Template__').style.display="block";
     	document.getElementById('List__').style.display="none";
+
+      document.getElementById("List").style="background-color:#EDEDED ";
+      document.getElementById("Template").style="background-color: #F6F6F6";
+      document.getElementById("Campains").style="background-color: #EDEDED";
   });
 	
   //  change yo Campains page
@@ -5011,6 +5054,10 @@ var AllContacts
     document.getElementById('Campains__').style.display="block";
 		document.getElementById('Template__').style.display="none";
 		document.getElementById('List__').style.display="none";
+
+    document.getElementById("List").style="background-color: #EDEDED";
+    document.getElementById("Template").style="background-color: #EDEDED";
+    document.getElementById("Campains").style="background-color: #F6F6F6";
   });
 	
   //  campain cross button
@@ -5149,6 +5196,8 @@ var AllContacts
     document.getElementById("input_list_name").addEventListener("input",function()
     {
       console.log(document.getElementById("input_list_name").value);
+      console.log(s_selected_list_id);
+
       if(s_list_name!=undefined)
       {
         fetch("https://eazybe.com/api/v1/whatzapp/updateCampaignChatIdList",{
@@ -5166,59 +5215,84 @@ var AllContacts
         
 
 
-      })
+      });
+       // fetch list data;
+      fetch_chatid_list();
+      
+
       }
     })
     set_up_campain_page();
     function set_up_campain_page()
     {
+      var s_list_id
       var s_list
-      var s_chat_list
+      var s_temp_id
       var s_temp
       var s_temp_message
       document.getElementById("inputGroupSelect022").addEventListener("input",function()
       {
-        s_list=document.getElementById("inputGroupSelect022").value;
-        console.log(s_list,s_temp);
-        
+        s_list_id=document.getElementById("inputGroupSelect022").value;
+        console.log(s_list_id);
+        for(var i=0;i<All_lists.length;i++)
+        {
+          if(All_lists[i].id==s_list_id)
+          {
+            document.getElementById("selected_list_size").innerHTML=All_lists[i].chatID_list.length;
+            user_List=All_lists[i].chatID_list;
+            document.getElementById("estimated_time").innerHTML=convertHMS(7*All_lists[i].chatID_list.length);
+          }
+        }
 
+        
       })
       
 
       document.getElementById("inputGroupSelect023").addEventListener("input",function()
       {
-        s_temp=document.getElementById("inputGroupSelect023").value;
-        
-        console.log(s_list,s_temp);
-      })
+        s_temp_id=document.getElementById("inputGroupSelect023").value;
+        console.log(s_temp_id); 
       
+      })
+ 
       
       document.getElementById("send_btn").addEventListener("click",function()
       {
         // if (message.value != "" && user_List.length>0) {
         for(var i=0;i<All_lists.length;i++)
         {
-          if(All_lists[i].listName==s_list)
+          if(All_lists[i].id==s_list_id)
           {
+            s_list=All_lists[i].listName;
             user_List=All_lists[i].chatID_list;
           }
         }
 
         for(var i=0;i<All_templates.length;i++)
         {
-          if(All_templates[i].template_name==s_temp)
+          if(All_templates[i].id==s_temp_id)
           {
+            s_temp=All_templates[i].template_name
+            console.log("yes");
             message=All_templates[i].template_message;
           }
         }
         console.log(user_List, message);
         // console.log(All_lists);
         // console.log(All_templates);
-          broadcastMessages(user_List, message)
-          // .then((res)=>res.json)
-          // .then(console.log("completed"));
+        if(user_List==undefined || message==undefined)
+        {
+          alert("Please List and template before sending ")
+        }
+        else{
+
+          // broadcastMessages(user_List, message)
+
+        }
+  
       // }
       console.log(s_list,s_temp,document.getElementById("campain_input").value);
+      // console.log(message);
       fetch("https://eazybe.com/api/v1/whatzapp/createRunningCampaignData",{
         method:'POST',
         body:JSON.stringify({
@@ -5232,6 +5306,7 @@ var AllContacts
           "Content-type": "application/json; charset=UTF-8",
         },
       })
+
     });
     }
 }
