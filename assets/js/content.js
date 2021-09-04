@@ -246,6 +246,8 @@ function postTheTagsOFCustomer(no_user, no_customer, chat_id) {
       if (ffs) {
         // document.getElementById("PremiumPopup").style.display = "block";
         console.log("premium pop up__1");
+            // document.getElementById("card_container").innerHTML="";
+
         display_price();
         // document.getElementsByClassName("scheduleOverlay")[0].style.display =
           "block";
@@ -1910,6 +1912,7 @@ window.customerInfoFinder = function customerInfoFinder() {
             if (element.status == 0) {
               fugo = 1;
               console.log("premium popup 2 ");
+                  // document.getElementById("card_container").innerHTML="";
               display_price();
               // document.getElementById("pricing__").style.display="block";
               // document.getElementById("PremiumPopup").style.display = "block";
@@ -2830,6 +2833,8 @@ function findnumber() {
     .getElementsByClassName("rechargeButton")[1]
     .addEventListener("click", function (params) {
       console.log("premium pop up__5");
+      // document.getElementById("card_container").innerHTML="";
+
       display_price();
 
       // document.getElementById("PremiumPopup").style.display = "block";
@@ -2899,12 +2904,16 @@ function findnumber() {
 function display_price()
 {
   console.log("display_price is clicked");
+  console.log(document.getElementById("card_container"));
   document.getElementById("PremiumPopup").style.display = "block";
+  // document.getElementById("PremiumPopup").style.backgroundImage=url("https://images.pexels.com/photos/40661/tiger-snow-growling-zoo-40661.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500");
   document.getElementById("PremiumPopup").style.height="94%";
   document.getElementById("PremiumPopup").style.overflow="scroll";
   document.getElementById("PremiumPopup").style.position="position: sticky;";    
   document.getElementsByClassName("scheduleOverlay")[0].style.display =
     "block";
+    // if(document.getElementById("card_container").innerHTML=="")    {
+
     fetch("https://eazybe.com/api/v1/whatzapp/planList").then((response) => response.json())
     .then((json) => {
       var data=json.plan_list
@@ -2965,7 +2974,7 @@ function display_price()
           for(let j=0;j<all_span_price.length;j++)
           {
             console.log(all_span_price[j]);
-            all_span_price[j].innerHTML=datay[j].amount;
+            all_span_price[j].innerHTML=datay[j].amount/12;
           }
 
           var all_span_duration=document.getElementsByClassName("span_price_duration");
@@ -2973,13 +2982,15 @@ function display_price()
           console.log(all_span_duration);
           for(var j=0;j<all_span_duration.length;j++)
           {
-            all_span_duration[j].innerHTML=" /year";
+            all_span_duration[j].innerHTML=" /mo";
           }
 
 
       })
            
-    document.getElementById("card").style.display="none";
+    document.getElementById("card_container").innerHTML="";
+    
+    // document.getElementById("card").style.display="none";
       for(var i=0;i<datam.length;i++)
     {
       
@@ -3017,6 +3028,10 @@ function display_price()
       {
         span_plan_name.style.color="#FFF";
       }
+      // var delete_button__ = document.createElement("img");
+
+      // delete_button__.src = chrome.runtime.getURL("assets/icons/bin_white.png");
+     
       span_plan_name.innerHTML=datam[i].plan_name;
       plan_name.append(span_plan_name);
 
@@ -3043,7 +3058,7 @@ function display_price()
     price.className='price';
     
     span_price$=document.createElement("span");
-    span_price$.style="color: #546fff; font-size: 29px;"
+    span_price$.style="color: #546fff; font-size: 43px;"
     if(i==2)
     {
       span_price$.style.color="#FFF";
@@ -3059,11 +3074,11 @@ function display_price()
     {
       span_price_amount.style.color="#FFF";
     }
-    span_price_amount.style.fontSize="43px";
+    span_price_amount.style.fontSize="64px";
     
     span_price_duration=document.createElement("span");
     span_price_duration.className="span_price_duration";
-    span_price_duration.style="color: #546fff; font-size: 18px;"
+    span_price_duration.style="color: #546fff; font-size: 28px;"
     if(i==2)
     {
       span_price_duration.style.color="#FFF";
@@ -3074,7 +3089,7 @@ function display_price()
     
     feature.id="feature";
     feature.className="feature"
-    feature.style="display:  flex; align-items: baseline;  justify-content: center; flex-direction: column; align-self:start ;margin-left:20px";
+    feature.style="font-family: 'Poppins', sans-serif;display:  flex; align-items: baseline;  justify-content: center; flex-direction: column; align-self:start ;margin-left:20px";
 
     for(let j=0;j<data[i].offerings.length;j++)
     {
@@ -3105,8 +3120,20 @@ function display_price()
     pay.className="pay"
     pay.style="display: flex;  justify-content: center; margin-top: auto; margin-bottom: 15px; height: 26px;"
     pay_button=document.createElement("button");
-    pay_button.style= "width: 100px; bottom: 15px; border-radius: 5px; background-color: black; color:#546fff;";
+    pay_button.style= "width: 100px; bottom: 15px; border-radius: 5px; background-color: #546fff; color:#fff;";
+      if(i==2)
+      {
+        pay_button.style= "width: 100px; bottom: 15px; border-radius: 5px; background-color: #fff;color: #546fff;";
+
+      }
+      if(i==3)
+      {
+        pay_button.style= "width: 100px; bottom: 15px; border-radius: 5px; background-color: #546fff; color:#fff;margin-top: -28px;";
+      }
     pay_button.innerHTML="Pay Now"
+    pay_button.addEventListener("click",function(){
+     window.open('https://eazybe.com/checkout','_blank');
+    })
 
     pay.append(pay_button);
     
@@ -3115,14 +3142,14 @@ function display_price()
       card.append(plan_name,ratting,price,feature,pay);  
     }
     else{
-      card.append(plan_name,ratting,price,feature);
+      card.append(plan_name,ratting,price,feature,pay);
     
     }
     document.getElementById("card_container").append(card);
     }
     });    
+  // }
 
-    
 }
 
 //
@@ -3130,6 +3157,8 @@ function broadcastMessages(arr, message) {
   if (isExpired) {
     if (arr.length >= 5) {
       console.log("premium pop up__6");
+      // document.getElementById("card_container").innerHTML="";
+
         display_price();
       // document.getElementById("PremiumPopup").style.display = "block";
       // document.getElementsByClassName("scheduleOverlay")[0].style.display =
@@ -4596,10 +4625,22 @@ function setTheJavascriptincampainPage()
     .then((response) => response.json())
     .then((json) => {
       console.log(json);
-      All_templates=json.campaignTemplates
-      set_up_template_list(json.campaignTemplates);
+      if(json.campaignTemplates=="no tempalte found with this user number")
+      {
+        console.log("not template found");
+        
+      }
+      else{
+        All_templates=json.campaignTemplates
+        
+        set_up_template_list(json.campaignTemplates);
+      }
+    
       
-    });    
+    })
+    .catch(console.log("not template found"));
+
+       
   }
   function convertHMS(value) {
     const sec = parseInt(value, 10); // convert value to number if it's string
@@ -4950,16 +4991,41 @@ var AllContacts
         table_row.style="background: white; display: table-row;"
         table_row.value=AllContacts[i].name;
         td1=document.createElement("td");
+        td1.style="width:25%"
         td1.innerHTML=AllContacts[i].name;
+        if(AllContacts[i].name==undefined)
+        {
+          td1.innerHTML=AllContacts[i].id.user;
+        }
+        else
+        {
+          td1.innerHTML=AllContacts[i].name;
 
+        }
         td2=document.createElement("td");
-        td2.innerHTML=AllContacts[i].pushname;
+        if(AllContacts[i].pushname==undefined)
+        {
+          td2.innerHTML="";
+        }
+    else{
+      td2.innerHTML=AllContacts[i].pushname;
+
+      }
 
         td3=document.createElement("td");
-        td3.innerHTML=AllContacts[i].user;
+        td3.innerHTML==""
 
         td4=document.createElement("td");
-        td4.innerHTML=AllContacts[i].name;
+        if(AllContacts[i].name==undefined)
+        {
+          td4.innerHTML=""
+        }
+        else{
+          td4.innerHTML=AllContacts[i].id.user;
+        }
+        td2.style="width:25%";
+        td3.style="width:25%";
+        td4.style="width:25%";
         table_row.append(td1,td2,td3,td4)
         // console.log(table_row);
         document.getElementById("table_body").append(table_row);
@@ -5225,6 +5291,9 @@ var AllContacts
     set_up_campain_page();
     function set_up_campain_page()
     {
+
+
+
       var s_list_id
       var s_list
       var s_temp_id
@@ -5309,4 +5378,104 @@ var AllContacts
 
     });
     }
+
+    // fetch(`https://eazybe.com/api/v1/whatzapp/getCampaignTemplates?user_mobile=${phoneString}`)
+    // .then((response) => response.json())
+    // .then((json) => {
+    //   console.log(json);
+    //   if(json.campaignTemplates=="no tempalte found with this user number")
+    //   {
+    //     console.log("not template found");
+        
+    //   }
+    //   else{
+    //     All_templates=json.campaignTemplates
+        
+    //     set_up_template_list(json.campaignTemplates);
+    //   }
+    
+      
+    // })
+
+    fetch(`https://eazybe.com/api/v1/whatzapp/getRunningCampaignData?user_mobile=${phoneString}`)
+    .then((response) => response.json())
+    .then((json)=>{
+      // console.log(json);
+      set_up_campaign_history(json.message);
+
+    })
+
+    function set_up_campaign_history(campain_history)
+    {
+      document.getElementById("Campains___").innerHTML="";
+    for(let i=0;i<campain_history.length;i++)
+    {
+
+        
+        campian_card_=document.createElement("div");
+        campian_card_.style="margin-bottom: 20px;   display: flex; flex-direction: column; background-color: #FFF; width: 80%; margin-left: 10%;height: 270px";
+        if(i==campain_history.length-1)
+        {
+          campian_card_.style="margin-bottom: 50px;   display: flex; flex-direction: column; background-color: #FFF; width: 80%; margin-left: 10%;height: 270px";
+        }
+        card_name=document.createElement("input");
+        card_name.style="margin-bottom: 40px; color: black ; font-weight: 500;align-self: center; margin-top: 10px;"
+        card_name.type="text";
+        card_name.className="form__filed"
+        card_name.id="campain_input"
+        card_name.value=campain_history[i].campaign_name;
+        card_name.disabled = true;
+        
+        main_selector_div=document.createElement("div");
+        main_selector_div.style=" display: flex; flex-direction: row ; margin-left: 24px;"
+        first_input_div=document.createElement("div");
+        first_input_div.className="input-group mb-3";
+        first_input_div.style="width: 300px;margin-left: 10px;margin-right: 20px;" 
+        first_input_div.id="inputGroupSelect02";
+        select1=document.createElement("select");
+        select1.className="form-select";
+        select1.id="inputGroupSelect022";
+        option1=document.createElement("option");
+        option1.innerHTML=campain_history[i].campaign_chatIdList_name;
+        option1.selected=true
+        select1.append(option1);
+        select1.disabled=true
+        select1.style ="font-weight: bold;";
+        first_input_div.append(select1);
+        
+        first_input_div2=document.createElement("div");
+        first_input_div2.className="input-group mb-3";
+        first_input_div2.style="width: 300px;margin-left: 10px;margin-right: 20px;" 
+        first_input_div2.id="inputGroupSelect02";
+        select2=document.createElement("select");
+        select2.className="form-select";
+        select2.id="inputGroupSelect022";
+        option2=document.createElement("option");
+        option2.innerHTML=campain_history[i].campaign_template_name;
+        option2.selected=true
+        select2.append(option2);
+        select2.style ="font-weight: bold;";
+        select2.disabled=true
+        first_input_div2.append(select2);
+        main_selector_div.append(first_input_div,first_input_div2);
+        // <div id="send_btn"  >
+        // <button class="btn btn-primary" style="float: right;   width: 150px;   height: 50px;   margin-top: 50px;   margin-right: 49px">
+        //    send
+        // </button>
+
+    //  </div>
+      
+      
+      button=document.createElement("button");
+      button.style="float: right;   width: 150px;   height: 50px;   margin-top: 5px;   margin-right: 49px ;margin-bottom:15px;margin-left:70% "
+      button.className= "btn btn-secondary"; 
+      button.style.background="gray";
+      button.disabled=true
+        
+      button.innerHTML="Sended"
+      // button_div.disabled=true;
+        campian_card_.append(card_name,main_selector_div,button);
+        document.getElementById("Campains___").append(campian_card_);
+    }  
+  }
 }
