@@ -1,296 +1,15 @@
-<!-- <link rel="stylesheet" href="assets/css/bootstrap.min.css"> -->
 <head>
-   <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">    -->
-   <!-- <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> --> -->
+ 
    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
-<style>
-
-.list_conatiner
-	{
-		  object-fit: contain;
-		display: flex;
-		background-color: #F6F6F6;
-		padding-top: 10px;
-		/*background-color: red;*/
-	}
-	.List
-	{
-		order: 0;
-		flex-grow: 5;
-		justify-content: center;
-		align-content: center;
-		display: flex;
-
-	}
-	.List>input
-	{
-		width: 50%;
-		/*border-style*/
-		height: 40px;
-
-	}
-	.List>input:hover
-	{
-		border-bottom: 2px solid black;
-	}
-	.form__filed
-	{
-		font-family: inherit;
-	  width: 50%;
-	  border:none;
-	  border-bottom: 2px solid #D1D1D1;
-	 
-	  outline: 0;
-	  font-size: 1.3rem;
-	  color: white;
-	  padding: 7px 0;
-	  background: transparent;
-	  transition: border-color 0.2s;
-	  font-size: 34px;
-	  text-align: center;
-	}
-	.main_contact-container
-	{
-		/*margin-top: 25px;*/
-		padding-top: 25px;
-		display: flex;
-
-	align-content: center;
-	justify-content: center;
-	background-color:#F6F6F6 ;
-	}
-	.contact-container
-	{
-
-	background-color: #FFFFFF;
-	padding-top: 25px;
-	width: 95%;
-
-	height: 100vh;
-	bottom: 0;
-	}
-	.contact-container_header
-	{
-		display: flex;
-		flex-wrap: nowrap;
-		margin-left: 24px;
-		margin-right: 24px;
-
-
-	}
-	.search_div
-	{
-
-		border-style: groove;
-		border-radius: 15px;
-		height: 34px;
-		width: 300px;
-		min-width: 120px;
-
-
-	}
-	.search_div>input
-	{
-		border: none;
-		border-style: none;
-		outline: none;
-		width: 75%;
-		text-overflow: hidden;
-		margin-right: 4px;
-
-
-
-	}
-	.search_div>i
-	{
-		margin-left: 4px;
-		cursor: pointer;
-		color: grey;
-
-	}
-	
-	.contact-container_header>span
-	{
- 		margin-right: 25%;
- 		font-size: 40px;
- 		font-weight: 600px;
-
- 		/*background-color: red;*/
- 		background-color: #FFFFFF;
-
-
-
-	}
-	tr
-	{
-		background: white;
-		font-weight: 600;
-	}
-
-	.form-check
-	{
-		margin-left: 5%;
-	}
-	tbody>tr
-	{
-		cursor: pointer;
-	}
-	tbody>tr:hover
-	{
-
-		/*background-color: skyblue!important;*/
-		box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-	}
-	.tbody
-	{
-	display: block;
-    overflow: auto;
-		
-	}
-		.header_container
-		{
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-		.header{
-			display: flex;
-			flex-wrap: nowrap;
-
-		  background-color:#EDEDED;
-		}
-		.tablink {
-		  /*color: #5F5F5F;*/
-		  float: left;
-		  /*border: none;*/
-		  outline: "red";
-		  border-style: hidden;
-		  cursor: pointer;
-		  padding: 14px 16px;
-		  font-size: 20px;
-		  width: 15%;
-		  overflow-x: hidden;
-
-		}
-		
-		.tablink:active
-		{
-			/*color: red;*/
-		}
-		.List-Container
-		{
-			display: flex;
-			flex-wrap: nowrap;
-			flex-direction: row;
-			flex-flow: row;
-			flex-grow: all;
-
-
-		}
-
-		.cancel-button-container
-		{
-			
-			float: right;		
-
-			
-		}
-
-		.cancel-button
-		{
-			margin-top:8px;
-			margin-left: 15px;
-			border-radius: 25px;
-			width: 60px;
-			height: 60px;
-			float: right;
-			outline: none;
-			border: none;
-			font-size: 30px;
-		}
-		.cancel-button:hover
-		{
-			/*background-color: red;*/
-box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
-		}
-
-
-
-		.btn {
-  background-color: #2196F3;
-
-  color: white;
-  padding: 16px;
-  font-size: 16px;
-  border: none;
-  outline: none;
-}
-
-.dropdown {
-  position: absolute;
-  display: inline-block;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f1f1f1;
-  min-width: 160px;
-  z-index: 1;
-}
-
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-
-.dropdown-content a:hover {background-color: #ddd}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-.btn:hover, .dropdown:hover .btn {
-  background-color: #0b7dda;
-}
-body{
-	position: fixed;
-}
-
-   .card {
-     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-     transition: 0.3s;
-     width: 40%;
-   }
-
-   .card:hover {
-     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-   }
-   .paynow:hover
-   {
-     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-     
-   }
-   .paynow:active {
-            transform: scale(0.98);
-            /* Scaling button to 0.98 to its original size */
-            box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24);
-            /* Lowering the shadow */
-        }
-     /* body{
-       background-image: url('b_price.png');
-       background-repeat: no-repeat;
-     background-attachment: fixed;
-     background-size: cover;
-     } */
-
-
-
-   </style>
+<div>  
+   <dialog id="myFirstDialog" style="width:50%;background-color:#F4FFEF;border:1px dotted black;">  
+   <p><q>I am so clever that sometimes I don't understand a single word of what I am saying.   
+   </q> - <cite>Oscar Wilde</cite></p>  
+   <button id="hide">Close</button>  
+   </dialog>  
+   <button id="show">Show Dialog</button>  
+   </div>  
 <div id= "whatzappp" style="font-family: 'Poppins', sans-serif;">
 
 <div >
@@ -1059,26 +778,33 @@ z-index: 1100;">
   </div>
 
 
-  <div id="PremiumPopup" style="display: none;  height: 80% ;" height: fit-content ;  >
+  <div id="PremiumPopup" style="z-index: 9999; display: none;  height: 80% ;" height: fit-content ;  >
 
 
       <div class="Pricing" style="font-family: 'Lato', sans-serif; margin-top: 15px;height: 100%;background-repeat: no-repeat;background-attachment: fixed; background-size: cover; display: flow-root;">
  
      
        <div style="display: flex; align-content: center;justify-content: center;">
-          <h2 style=" font-family: 'Poppins', sans-serif; font-size: 38px;">Subscription Plans</h2>
+          <h2 style=" font-family: 'Poppins', sans-serif; font-size: 38px; text-align: center;margin-left: 15%;flex-grow: 1;">Subscription Plans</h2>
+            <div id="help_div" class="help_div" style="display: flex;align-items: center;justify-content: center;margin-right: 20px;">
+               <img  style="height: 40px;" src="https://img.icons8.com/color/48/000000/whatsapp--v5.png"/>
+               <h3 style="font-size: 20px; margin-left: 4px;"> Whatsapp us</h3>
+
+            </div>
        </div>
        
-       <div style="display: flex; justify-content: center; font-size: 26px; margin-bottom: 26px; transition: all 0.3s ease 0s;">
+       <div style="display: flex; justify-content: center; font-size: 26px; margin-bottom: 10px; transition: all 0.3s ease 0s;">
          <div style="display: flex; border: 1px solid rgb(84, 111, 255); border-radius: 6px; justify-content: center; margin-bottom: 16px; padding: 2px; width: 208px; height: 46px; font-size: 14px;">
-             <div role="group" id="monthly_button"  style="color: rgb(84, 111, 255); background: rgb(255, 255, 255); border-radius: 6px; height: 38px; width: 103px; align-items: center; display: flex; justify-content: center; margin-right: 2.5px;" type="button" value ="monthly" aria_pressed="true">
+             
+            <div role="group" id="monthly_button"  style="color: rgb(255, 255, 255); border-radius: 6px;background: rgb(84, 111, 255); height: 38px; width: 103px; align-items: center; display: flex; justify-content: center; margin-right: 2.5px;" type="button" value ="monthly" aria_pressed="true">
                 <span>
                    <span style="text-align: right;">Monthly</span>
                 </span>
                 <span></span>
      
              </div>
-             <div id="yearly_button" role="group" type="button" style="color: rgb(255, 255, 255); border-radius: 6px; padding: 5px 5px 5px 15px; background: rgb(84, 111, 255); width: 93px; height: 38px; display: flex; align-items: center; margin-left: 2.5px; justify-content: center;" value ="Yearly" aria_pressed="true">
+             
+             <div id="yearly_button" role="group" type="button" style=" color: rgb(84, 111, 255);background: rgb(255, 255, 255); border-radius: 6px; padding: 5px 5px 5px 15px;  width: 93px; height: 38px; display: flex; align-items: center; margin-left: 2.5px; justify-content: center;" value ="Yearly" aria_pressed="true">
                 <span>
                    <span>Yearly</span>
                 </span>
@@ -1088,7 +814,7 @@ z-index: 1100;">
           </div>
           </div>
   
-       <div class="container"  id="card_container" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center;">
+       <div class="container"  id="card_container" style="display: flex; align-items: center; justify-content: center;">
         
  
          </div>
@@ -1171,15 +897,15 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
 <!--  div for capmain -->
 
 
-
+<!-- font-family: 'Montserrat Alternates', sans-serif;  -->
    
-<div id="campain" style="display: none; font-family: 'Montserrat Alternates', sans-serif;    min-width: 800px;" >
+<div id="campain" style="display: none; font-family: 'Poppins', sans-serif;   min-width: 800px;" >
 
    <div clas="header_container">
-		<div class="header">
-			<button class="tablink" id="List" style="background-color: #F6F6F6;" value="List" > List</button>
-			<button class="tablink" id="Template" value="Templates" >Templates</button>
-			<button class="tablink" id="Campains" value="changepage" >Campaigns</button>
+		<div class="header" style="font-family: 'Poppins', sans-serif;;">
+			<button class="tablink" id="List" style="background-color: rgb(11, 125, 218);  opacity: 0.5;" value="List" > Lists</button>
+			<button class="tablink" id="Template" value="Templates" style="opacity: 0.5;" >Templates</button>
+			<button class="tablink" id="Campains" value="changepage" style=" opacity: 0.5;">Campaigns</button>
 
 		<!-- cancel button -->
 
@@ -1195,22 +921,55 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
 
 
 	<!-- List Page code starts from here -->
-
+ 
 <div id="list" style="display:block;">
 	
+   <div id="List__p" style="height: 1000px; display: block; background-color: #F6F6F6;" >
+      <div id="list_p_container" style="  display: flex;flex-direction: row;height: 65vh;align-content: center;align-items: center;justify-content: center;">
+ 
+
+         <div id="new" style="display: none;display: flex;flex-direction: column;width: -webkit-fill-available;float: right;right: 0;">
+            <div id="new_input" style="align-self: center;">
+               <input type="text" class="form__filed" id="input_list_name_"  style="order: 0 ; color: black ; font-weight: 500;    width: 358px;margin-right: 36px;    margin-top: 77px;margin-left: 27px;" placeholder="Enter New List Name"  required  autocomplete="off">	
+
+            </div>
+            <div id="new_button" style="align-self: center;">
+               <button class="btn btn-primary"  style="margin-top: 48px;" id="create_new_list">Create New List</button>
+
+            </div>
+         </div>
+         <div style=" margin-left: 4%; font-family: 'Poppins', sans-serif;display: flex; align-content: center;justify-content: center; align-items: center;    margin-top: 4%; margin-right: 4%;font-size: 26px; ">
+            <span >Or</span>
+         </div>
+
+         <div id="old" style=" left: 0;width: -webkit-fill-available;
+     ">
+            <h2 style="margin-bottom: 25px;text-align:start; margin-top: 10px;font-family: 'Poppins', sans-serif; font-size: 41px; margin-left: 21px;">Select from Lists</h2>
+            <div class="input-group mb-3" style="width: 350px; margin-left: 20px;" id="inputGroupSelect02h">
+               <select class="form-select" id="inputGroupSelect022h">
+                 <option selected>Select List...</option>
+               
+               </select>
+   
+               
+              </div>
+            </div>
+      </div>
+   </div>
 	<div id="List__">
 
 
 			
 	<div class="list_conatiner">
 		<div class="List">
-			<input type="text" class="form__filed" id="input_list_name"  style="order: 0 ; color: black ; font-weight: 500;" placeholder="Enter a name"  required  autocomplete="off">	
-			<div class="dropdown" style="display: flex;flex-direction: row;order: 1;position: inherit;height: 36px;width: 40px;" >
+			<input type="text" class="form__filed" id="input_list_name"  style="order: 0 ; color: black ; font-weight: 500; position: fixed;" placeholder="Enter a name"  required  autocomplete="off">	
+			<button class="button" id="next_list" style=" height: 54px;display: flex; justify-content: center;   align-items: center; width: 175px;background-color: #7CB5E4;   margin-left: 77%; font-size: 18px; " ><span>Save & Next</span> </button>
+         <div class="dropdown" style="  display: flex;display: none;flex-direction: row;order: 1;position: inherit;height: 36px;width: 40px;" >
 			  <button class="btn" style="border-left:1px solid #0d8bf2;height: 36px;width: 40px;display: flex;align-items: center;justify-content: center;">
 			   
              <span class="material-icons"> arrow_drop_down</span>
 			  </button>
-			  <div class="dropdown-content" id="list_drop_down">
+			  <div class="dropdown-content" id="list_drop_down" style="height: 300px; overflow: scroll;">
 			  </div>
 			</div>
 		</div>
@@ -1219,7 +978,7 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
 			<!-- <button  style=" outline: none; border: none; border-radius: 6px;font-size: 25px; margin-right: 10px;background-color: #0074fc;height: 36px;margin-top: 1px;">
          <span class="material-icons"  id ="create_new_list"  style="color: #FFF; background-color: #0074fc; font-size: 36px;">add</span>
          </button>  -->
-         <button class="btn btn-primary" id ="create_new_list"  style="margin-right: 10px; margin-top: 1px; height: 36px; display: flex;align-items: center; justify-items: center; font-size: 24px;font-weight: bolder;">New List</button>  
+         <button class="btn btn-primary" id ="create_new_list"  style="margin-right: 10px; margin-top: 1px; height: 36px; display: flex;align-items: center; justify-items: center; font-size: 24px;font-weight: bolder;display: none; ">New List</button>  
 		</div>	
 	</div>
 
@@ -1251,7 +1010,7 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
 
 				</div>
 				<div style="color: blue; margin-left: 10px ; display: flex; flex-wrap: nowrap; align-content: center;">
-					<span id="Selected_contacts"></span>
+					<span id="Selected_contacts">0</span>
 					<span>/</span>
 					<span id="total_contacts"></span>
 
@@ -1265,9 +1024,9 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
 				<thead >
 					<tr>
 						<th scope="col"> Contacts</th>
-						<th scope="col"> First </th>
-						<th scope="col"> Last</th>
-						<th scope="col">  xyz</th>
+						<th scope="col">  </th>
+						<th scope="col"></th>
+						<th scope="col">  Number</th>
 					</tr>
 				</thead>
 				<tbody  style="overflow:scroll" id="table_body">
@@ -1288,16 +1047,51 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
 
 <!-- tempalte page code  start here  -->
 	<div id="Template__" style= " display: none; background-color:#F6F6F6; height: 600px; ">
-			
+		
+      <div id="Template__p" style="height: 1000px; display: block;" >
+         <div id="templat_p_container" style="  display: flex;flex-direction: row;height: 65vh;align-content: center;align-items: center;justify-content: center;">
+
+      
+            <div id="new" style="display: flex;flex-direction:column ;width: -webkit-fill-available;float: right;right: 0;">
+               <div id="new_input" style="align-self: center;">
+                  <input type="text" class="form__filed" id="Template_list_name_"  style="order: 0 ; color: black ; font-weight: 500;    width: 358px;margin-right: 36px; margin-top: 77px;margin-left: 27px;" placeholder="Enter New Template Name "  required  autocomplete="off">	
+   
+               </div>
+               <div id="new_button" style="align-self: center; ">
+                  <button class="btn btn-primary" style="margin-top: 48px;"  id="create_new_template">Create  New Template</button>
+   
+               </div>
+            </div>
+            <div style=" margin-left: 4%;  font-family: 'Poppins', sans-serif;display: flex; align-content: center;justify-content: center; align-items: center;    margin-top: 4%; margin-right: 4%;font-size: 26px; ">
+               <span >Or</span>
+            </div>
+            <div id="old" style="
+            left: 0;
+            width: -webkit-fill-available;
+        ">
+               <h2 style="margin-bottom: 25px;text-align: start; margin-top: 10px;    margin-left: 26px;  font-size: 41px;">Select  Template</h2>
+               <div class="input-group mb-3" style="width: 350px; margin-left: 20px;" id="inputGroupSelect03h">
+                  <select class="form-select" id="inputGroupSelect023h">
+                    <option selected>Select List...</option>
+                  
+                  </select>
+      
+                  
+                 </div>
+               </div>
+         </div>
+      </div>
       <div class="list_conatiner">
          <div class="List">
-            <input type="text" class="form__filed" id ="template_list_name"style="order: 0 ; color: black ; font-weight: 500;" placeholder="Enter a name"  required  autocomplete="off">	
-            <div class="dropdown" style="display: flex;flex-direction: row;order: 1;position: inherit;height: 36px;width: 40px;" >
+            <input type="text" class="form__filed" id ="template_list_name"style=" order: 0 ; color: black ; font-weight: 500;position:fixed;" placeholder="Enter a name"  required  autocomplete="off">	
+            <button class="button"  id="next_template" style="  height: 54px;display: flex; justify-content: center;   align-items: center; width: 175px;background-color: #7CB5E4;   margin-left: 77%; font-size: 18px; " ><span> Save & Next</span> </button>
+
+            <div class="dropdown" style="display: flex; display: none; flex-direction: row;order: 1;position: inherit;height: 36px;width: 40px;" >
               <button class="btn" style="border-left:1px solid #0d8bf2;height: 36px;width: 40px;display: flex;align-items: center;justify-content: center;">
                
                 <span class="material-icons"> arrow_drop_down</span>
               </button>
-              <div class="dropdown-content" id="template_dropdown_content">
+              <div class="dropdown-content" id="template_dropdown_content" style="width: 300px; overflow: scroll;">
 
 
             </div>
@@ -1305,10 +1099,8 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
          </div>
    
          <div>
-            <!-- <button  style=" outline: none; border: none; border-radius: 6px;font-size: 25px; margin-right: 10px;background-color: #0074fc;height: 36px;margin-top: 1px;">
-               <span class="material-icons"  id ="create_new_list"  style="color: #FFF; background-color: #0074fc; font-size: 36px;">add</span>
-               </button>   -->
-               <button class="btn btn-primary" id ="create_new_template"  style="margin-right: 10px; margin-top: 1px; height: 36px; display: flex;align-items: center; justify-items: center;font-size: 24px;font-weight: bolder;">+</button>  
+           
+               <button class="btn btn-primary" id ="create_new_template"  style="margin-right: 10px; margin-top: 1px; height: 36px; display: flex;align-items: center; justify-items: center;font-size: 24px;font-weight: bolder; display: none;">Create New</button>  
           
          </div>	
       </div>
@@ -1351,11 +1143,11 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
 <!-- Campains page code starts here  -->
 	<div id="Campains__" style="padding-bottom: 10px;padding-top: 26px; height: 600px; background-color: #F6F6F6; display: flex; flex-direction: column; justify-content: center; overflow: scroll;">
 		<h2 style=" background-color:#F6F6F6;text-align: center;  ">
-			Campaigns Page 
+			Campaigns 
 		</h2>
 
 <div class="campain_card"  style=" margin-bottom: 20px;   display: flex; flex-direction: column; background-color: #FFF; width: 80%; margin-left: 10%;height: 300px">
-   <input type="text" class="form__filed"  id="campain_input" style="margin-bottom: 40px; color: black ; font-weight: 500;align-self: center;" placeholder="Enter a name"  required  autocomplete="off"> 	
+   <input type="text" class="form__filed"  id="campain_input" style="margin-bottom: 40px; color: black ; font-weight: 500;align-self: center;" placeholder="Campaign Name "  required  autocomplete="off"> 	
 
 	<div >
 		<div style=" display: flex; flex-direction: row ; margin-left: 24px;"  >
@@ -1365,15 +1157,15 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
 				
 				</select>
 			  
-           <div id="person_icon" style="margin-left: 2px;">
-            <span class="material-icons" style="color:#546FFF;" >
+           <div id="person_icon" style="margin-left: 2px; display: flex; align-items: center;">
+            <span class="material-icons" style="color:#546FFF; margin-left: 2px;" >
                people
                </span>
-               <span id="selected_list_size" style="font-size: 20px;margin-left: 0px;color: #546FFF;"> </span>
+               <span id="selected_list_size" style="font-size: 17px;margin-left: 2px;color: #546FFF;"> </span>
            </div>
          </div>
 
-			  <div class="input-group mb-3" style="width: 250px; " id="campain_template_select">
+			  <div class="input-group mb-3" style="width: 275px; margin-left:55px; " id="campain_template_select">
 				<select class="form-select" id="inputGroupSelect023">
 				  <option selected>Select Template...</option>
 				  
@@ -1383,11 +1175,15 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
 		</div>
 	</div>
 <div id="estimated_time_container" style="margin-left: 15px;font-size: 30px;">
-<h4>Estimated Time : <span id="estimated_time"> </span></h4>
+<h4 style="font-size: 16px;margin-left: 35px;" >Estimated Time : <span id="estimated_time"> </span></h4>
 </div>
-   <div id="send_btn"  >
-      <button class="btn btn-primary" style="float: right;   width: 150px;   height: 50px;   margin-top: 20px;   margin-right: 49px">
-         send
+   <div class="progress" id="send_btn_progress_bar_div" style="display: none;height: 33px; width: 33%; align-self:center;position: relative;margin-right: 26px; ">
+      <div class="progress-bar" id="send_btn_progress_bar" role="progressbar" style="width: 0%;font-size: 20px; position: absolute; text-align: start; padding-left: 10px;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+      <h1 style="z-index: 999;position: absolute;font-size: 26px; text-align: center;margin-left: 38%; color: #FFF;" >sending</h1>
+   </div>
+   <div id="send_btn" style="align-self: center;"  >
+      <button class="btn btn-primary " id="send_btn_btn" style="float: right;   width: 300px;   height: 50px;   margin-top: 20px;   margin-right: 49px">
+         Send Message
       </button>
 
    </div>
@@ -1396,7 +1192,7 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
 
 <!--  ****************************************   javacript ***************************** -->
 
-<h2 style="margin-bottom: 25px;text-align: center; margin-top: 10px;font-family: 'Josefin Sans', sans-serif;font-size: 46px;">Previous Campaigns:</h2>
+<h2 style="margin-bottom: 25px;text-align: center; margin-top: 10px;font-size: 32px;">Previous Campaigns:</h2>
 <div id="Campains___">
 
 </div>

@@ -17,6 +17,7 @@ var customerPendingArray = [];
 var customerListArray = [];
 // it is full list of customers of the user in the pending followup section
 var customerFollowupList = [];
+var Plan_id=1
 // it is used to store the latest set of tags
 // whenever we add/remove tags of any customer we call settinguptags and update it
 var customerTags = [
@@ -60,6 +61,7 @@ var interValId17 = setInterval(() => {
   }
 }, 1000);
 
+
 //we first find the user mobile no by repeteadly sending post message to wapi
 // once we get user mobile no we end this interval in listeningtomessages function
 var interValId8 = setInterval(() => {
@@ -84,7 +86,7 @@ function listeningtomessages(params) {
       if (event.data.res == "userId") {
         if (count == 0) {
           var userId = event.data.id;
-
+          console.log(userId);
           phoneString = userId;
           window.clearInterval(interValId8);
 
@@ -217,7 +219,12 @@ function postTheTagsOFCustomer(no_user, no_customer, chat_id) {
   var srcImage = document.getElementById("demouser").src;
   var emailOfCustomer = "user@gmail.com";
   validityChecker();
-
+  console.log(customerArray);
+  if(customerArray.length>=3 && (Plan_id==1 || Plan_id==6) )
+  {
+    display_price();
+    return ;
+  }
   const customer_no = String(no_customer);
   var notes;
   if (noteText && followupDate) {
@@ -255,7 +262,7 @@ function postTheTagsOFCustomer(no_user, no_customer, chat_id) {
       }
     }
   }
-
+  console.log(  tagText,    notes,     followupDate,     object2,     nameInfo,     srcImage,     emailOfCustomer,);
   fetch(
     "https://eazybe.com/api/v1/whatzapp/userCustomerPostInfo?" +
       new URLSearchParams({
@@ -296,6 +303,7 @@ function postTheTagsOFCustomer(no_user, no_customer, chat_id) {
     )
       .then((resp) => resp.json())
       .then(function (response) {
+        console.log("response of  cutomerInfoList",response.data);
         var object = response.data;
         customerListArray = object;
         customerArray = customerListArray;
@@ -641,7 +649,8 @@ function getFollowUpPendingList(object1) {
         customerObject.append(
           customerImgObject,
           customerDescObject,
-          customerFollowupObject
+          customerFollowupObject,
+          customerStatusObject
         );
 
         // appending the customer card to the customer-pending-list one by one
@@ -1385,13 +1394,14 @@ function getTheDefaultTags(customer_no) {
   document.getElementById("all-custom-tags").innerHTML = "";
   document.getElementById("Interest-level").value = "";
   document.getElementById("deleteCrmData").style.display = "none";
+  document.getElementById("followupDateNew").style.display="none";
   document.getElementById("followupDateNew").src =
     chrome.runtime.getURL("calender.svg");
 
   document.getElementById("notesInfo").innerHTML = "";
   document.getElementById("notesInfo").style.display = "none";
 
-  document.getElementById("followupDateNew").style.display = "block";
+  document.getElementById("followupDateNew").style.display = "none";
 
   // document.getElementById("form-info-crm-down").style.display = "block";
   // document.getElementById("noteInfo").innerHTML = "";
@@ -1419,15 +1429,16 @@ function getTheTagsOFCustomer(customer) {
   document.getElementById("followupDate").value = "";
   document.getElementById("all-custom-tags").innerHTML = "";
   document.getElementById("notesInfo").innerHTML = "";
+  document.getElementById("followupDateNew").style.display="none";
   document.getElementById("followupDateNew").src =
     chrome.runtime.getURL("calender.svg");
   console.log(customer.tags,"vibhu ");
   console.log(document.getElementById("editTags"));
   console.log("fetching the tags of customer");
-
-  document.getElementsByClassName("_23P3O")[0].insertBefore(document.getElementById("editTags"),document.getElementsByClassName("_23P3O")[0].childNodes[2]);
   document.getElementById("editTags").style.marginRight="30px";      
-    document.getElementById("editTags").style="width:auto ;height:26px ; margin-right:34px";
+    document.getElementById("editTags").style="width:auto ;height:21px ; margin-right:0px";
+  document.getElementsByClassName("_23P3O")[0].insertBefore(document.getElementById("editTags"),document.getElementsByClassName("_23P3O")[0].childNodes[2]);
+
 
   
 
@@ -1647,10 +1658,14 @@ function crmFormFunction() {
     document
       .getElementById("editTags")
       .addEventListener("click", function (params) {
-        console.log(document.getElementsByClassName("_23P3O")[0].insertBefore(document.getElementById("editTags"),document.getElementsByClassName("_23P3O")[0].childNodes[5]));
-        document.getElementById("editTags").style.marginRight="34px";
-        document.getElementById("editTags").style="width:auto ;height:26px ; margin-right:34px";
+        document.getElementById("editTags").style.marginRight="0px";
+        document.getElementById("editTags").style="width:auto ;height:22px ; margin-right:0px";
         document.getElementById("editTags").style.fontSize="40px"
+        console.log(document.getElementById("all-custom-tags").visibility);
+        console.log(document.getElementsByClassName("_23P3O")[0].insertBefore(document.getElementById("all-custom-tags"),document.getElementsByClassName("_23P3O")[0].childNodes[3]));
+
+        console.log(document.getElementsByClassName("_23P3O")[0].insertBefore(document.getElementById("editTags"),document.getElementsByClassName("_23P3O")[0].childNodes[5]));
+
 
         console.log("edit_tag is clicked");
         info_chat_visibility=!info_chat_visibility;
@@ -1671,12 +1686,12 @@ function crmFormFunction() {
         // if (!document.getElementById("activeSvg")) {
         //   document.getElementById("infoTabChat").style.display = "block";
         //   // infoButton.getElementsByClassName("us699")[0].innerHTML =
-        //     // "<svg class='MuiSvgIcon-root ' id='activeSvg' focusable='false' viewBox='0 0 24 24' aria-hidden='true' style='color: white;fill:white;'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 12l-4-4h8l-4 4z'></path></svg><span class='MuiBadge-root'><span style='padding: 8px;color:white;'>Info</span><span class='MuiBadge-badge MuiBadge-anchorOriginTopRightRectangle MuiBadge-colorPrimary MuiBadge-invisible'></span></span>";
+        //     // "<svg class='MuiSvgIcon-root ' id='activeSvg' focusable='false' viewBox='0 0 24 24' aria-hidden='true' style='color: white;fill:white;'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 12l-4-4h8l-4 4z'></path></svg><span class='MuiBadge-root'><span style='padding: 8px;color:white;'>Followup</span><span class='MuiBadge-badge MuiBadge-anchorOriginTopRightRectangle MuiBadge-colorPrimary MuiBadge-invisible'></span></span>";
         // } else {
           
         //   document.getElementById("infoTabChat").style.display = "none";
         //   // infoButton.innerHTML =
-        //     // "<div role='button' id='infoSection' style='    background: #0074fc; border-radius: 12px; color: white;' class='_VDboCREG'><div><div class='us699'><svg style='fill:white' class='MuiSvgIcon-root' focusable='false' viewBox='0 0 24 24' aria-hidden='true'><path d='M7 14l5-5 5 5H7z'></path></svg><span class='MuiBadge-root'><span style='padding: 8px;color:white;'>Info</span><span class='MuiBadge-badge MuiBadge-anchorOriginTopRightRectangle MuiBadge-colorPrimary MuiBadge-invisible'></span></span></div></div></div>";
+        //     // "<div role='button' id='infoSection' style='    background: #0074fc; border-radius: 12px; color: white;' class='_VDboCREG'><div><div class='us699'><svg style='fill:white' class='MuiSvgIcon-root' focusable='false' viewBox='0 0 24 24' aria-hidden='true'><path d='M7 14l5-5 5 5H7z'></path></svg><span class='MuiBadge-root'><span style='padding: 8px;color:white;'>Followup</span><span class='MuiBadge-badge MuiBadge-anchorOriginTopRightRectangle MuiBadge-colorPrimary MuiBadge-invisible'></span></span></div></div></div>";
         // }
 
 
@@ -1998,11 +2013,11 @@ window.customerInfoFinder = function customerInfoFinder() {
     var infoTabChat = document.createElement("div");
 
     infoButton.innerHTML =
-      "<div role='button' id='infoSection' style='    background: #0074fc; border-radius: 12px; color: white;' class='_VDboCREG'><div><div class='us699'><svg style='fill:white' class='MuiSvgIcon-root' focusable='false' viewBox='0 0 24 24' aria-hidden='true'><path d='M7 14l5-5 5 5H7z'></path></svg><span class='MuiBadge-root'><span style='padding: 8px;color:white;'>Info</span><span class='MuiBadge-badge MuiBadge-anchorOriginTopRightRectangle MuiBadge-colorPrimary MuiBadge-invisible'></span></span></div></div></div>";
+      "<div role='button' id='infoSection' style='    background: #0074fc; border-radius: 12px; color: white;' class='_VDboCREG'><div><div class='us699' style='display:flex'><svg  xmlns='http://www.w3.org/2000/svg' x='0px' y='0px'width='48' height='48'viewBox='0 0 172 172'style='fill:#000000;height:25px;/* margin-left: 4px; */width: 25px;margin-left: 4px;'><g fill='none' fill-rule='nonzero' stroke='none' stroke-width='1' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' font-family='none' font-weight='none' font-size='none' text-anchor='none' style='mix-blend-mode: normal'><path d='M0,172v-172h172v172z' fill='none'></path><g fill='#ffffff'><path d='M44.79167,21.5c-12.79944,0 -23.29167,10.49222 -23.29167,23.29167v82.41667c0,12.79944 10.49222,23.29167 23.29167,23.29167h82.41667c12.79944,0 23.29167,-10.49222 23.29167,-23.29167v-82.41667c0,-12.79944 -10.49222,-23.29167 -23.29167,-23.29167zM44.79167,32.25h82.41667c6.98772,0 12.54167,5.55394 12.54167,12.54167v5.375h-107.5v-5.375c0,-6.98772 5.55394,-12.54167 12.54167,-12.54167zM32.25,60.91667h107.5v66.29167c0,6.98772 -5.55394,12.54167 -12.54167,12.54167h-82.41667c-6.98772,0 -12.54167,-5.55394 -12.54167,-12.54167zM55.54167,75.25c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833zM86,75.25c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833zM116.45833,75.25c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833zM55.54167,107.5c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833zM86,107.5c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833z'></path></g></g></svg><span class='MuiBadge-root'><span style='padding: 8px;color:white;'>Followup</span><span class='MuiBadge-badge MuiBadge-anchorOriginTopRightRectangle MuiBadge-colorPrimary MuiBadge-invisible'></span></span></div></div></div>";
 
     var fb312 = document.createElement("div");
-    fb312.innerHTML = "<img  id = 'followupDateNew' src='' alt=''>";
-
+    fb312.innerHTML = "<img  id = 'followupDateNew'  src='' alt=''>";
+    fb312.style.display="none";
     infosection.insertBefore(infoButton, infosection.firstChild);
     infosection.insertBefore(fb312, infosection.firstChild);
     var noteToRemember = document.createElement("div");
@@ -2061,12 +2076,14 @@ window.customerInfoFinder = function customerInfoFinder() {
       console.log("info button is clicked");
       if (!document.getElementById("activeSvg")) {
         document.getElementById("infoTabChat").style.display = "block";
+        infoButton.getElementsByClassName("us699")[0].style.display="flex";
         infoButton.getElementsByClassName("us699")[0].innerHTML =
-          "<svg class='MuiSvgIcon-root ' id='activeSvg' focusable='false' viewBox='0 0 24 24' aria-hidden='true' style='color: white;fill:white;'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 12l-4-4h8l-4 4z'></path></svg><span class='MuiBadge-root'><span style='padding: 8px;color:white;'>Info</span><span class='MuiBadge-badge MuiBadge-anchorOriginTopRightRectangle MuiBadge-colorPrimary MuiBadge-invisible'></span></span>";
+          "<svg id='activeSvg' xmlns='http://www.w3.org/2000/svg' x='0px' y='0px'width='48' height='48'viewBox='0 0 172 172'style='fill:#000000;height:25px;/* margin-left: 4px; */width: 25px;margin-left: 4px;'><g fill='none' fill-rule='nonzero' stroke='none' stroke-width='1' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' font-family='none' font-weight='none' font-size='none' text-anchor='none' style='mix-blend-mode: normal'><path d='M0,172v-172h172v172z' fill='none'></path><g fill='#ffffff'><path d='M44.79167,21.5c-12.79944,0 -23.29167,10.49222 -23.29167,23.29167v82.41667c0,12.79944 10.49222,23.29167 23.29167,23.29167h82.41667c12.79944,0 23.29167,-10.49222 23.29167,-23.29167v-82.41667c0,-12.79944 -10.49222,-23.29167 -23.29167,-23.29167zM44.79167,32.25h82.41667c6.98772,0 12.54167,5.55394 12.54167,12.54167v5.375h-107.5v-5.375c0,-6.98772 5.55394,-12.54167 12.54167,-12.54167zM32.25,60.91667h107.5v66.29167c0,6.98772 -5.55394,12.54167 -12.54167,12.54167h-82.41667c-6.98772,0 -12.54167,-5.55394 -12.54167,-12.54167zM55.54167,75.25c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833zM86,75.25c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833zM116.45833,75.25c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833zM55.54167,107.5c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833zM86,107.5c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833z'></path></g></g></svg><span class='MuiBadge-root'><span style='padding: 8px;color:white;'>Followup</span><span class='MuiBadge-badge MuiBadge-anchorOriginTopRightRectangle MuiBadge-colorPrimary MuiBadge-invisible'></span></span>";
       } else {
         document.getElementById("infoTabChat").style.display = "none";
+        infoButton.style.display="flex";
         infoButton.innerHTML =
-          "<div role='button' id='infoSection' style='    background: #0074fc; border-radius: 12px; color: white;' class='_VDboCREG'><div><div class='us699'><svg style='fill:white' class='MuiSvgIcon-root' focusable='false' viewBox='0 0 24 24' aria-hidden='true'><path d='M7 14l5-5 5 5H7z'></path></svg><span class='MuiBadge-root'><span style='padding: 8px;color:white;'>Info</span><span class='MuiBadge-badge MuiBadge-anchorOriginTopRightRectangle MuiBadge-colorPrimary MuiBadge-invisible'></span></span></div></div></div>";
+          "<div role='button' id='infoSection' style=' background: #0074fc; border-radius: 12px; color: white;' class='_VDboCREG'><div><div class='us699' style='display:flex' ><svg   xmlns='http://www.w3.org/2000/svg' x='0px' y='0px'width='48' height='48'viewBox='0 0 172 172'style='fill:#000000;height:25px;/* margin-left: 4px; */width: 25px;margin-left: 4px;'><g fill='none' fill-rule='nonzero' stroke='none' stroke-width='1' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' font-family='none' font-weight='none' font-size='none' text-anchor='none' style='mix-blend-mode: normal'><path d='M0,172v-172h172v172z' fill='none'></path><g fill='#ffffff'><path d='M44.79167,21.5c-12.79944,0 -23.29167,10.49222 -23.29167,23.29167v82.41667c0,12.79944 10.49222,23.29167 23.29167,23.29167h82.41667c12.79944,0 23.29167,-10.49222 23.29167,-23.29167v-82.41667c0,-12.79944 -10.49222,-23.29167 -23.29167,-23.29167zM44.79167,32.25h82.41667c6.98772,0 12.54167,5.55394 12.54167,12.54167v5.375h-107.5v-5.375c0,-6.98772 5.55394,-12.54167 12.54167,-12.54167zM32.25,60.91667h107.5v66.29167c0,6.98772 -5.55394,12.54167 -12.54167,12.54167h-82.41667c-6.98772,0 -12.54167,-5.55394 -12.54167,-12.54167zM55.54167,75.25c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833zM86,75.25c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833zM116.45833,75.25c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833zM55.54167,107.5c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833zM86,107.5c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833z'></path></g></g></svg><span class='MuiBadge-root'><span style='padding: 8px;color:white;'>Followup</span><span class='MuiBadge-badge MuiBadge-anchorOriginTopRightRectangle MuiBadge-colorPrimary MuiBadge-invisible'></span></span></div></div></div>";
       }
     });
   }
@@ -2302,15 +2319,13 @@ function findnumber() {
   var campainBtn=document.createElement("div");
   campainBtn.role="button";
   campainBtn.style="padding:8px; ";
-  campainBtn.title="campain";
+  campainBtn.title="campaign";
   span=document.createElement("span");
   span.className="material-icons";
   span.style="font-size: 30px;  padding-top: 5px;  color: #0074FC;"
   span.innerHTML="campaign";
   campainBtn.append(span);
-  // campainBtn.innerHTML=    "<span class=`material-icons`>  campaign  </span>";
-  // campainBtn.innerHTML="<svg class='MuiSvgIcon-root' focusable='false' viewBox='0 0 24 24' aria-hidden='true' style=''></svg>"
-  // document.getElementById("side").style.width="400px";
+
 
 
   document
@@ -2324,16 +2339,11 @@ function findnumber() {
         .getElementsByTagName("span")[0].firstChild
     );
 
- 
-    // document.getElementsByClassName("_1QVfy _3UaCz")[0].getElementsByTagName("span")[0].insertBefore(campainBtn,document.getElementById("_1QVfy _3UaCz")[0].getElementsByTagName("span")[0].childNodes[0]);
-  
-   // document
-        // .getElementsByClassName("_1QVfy _3UaCz")[0]
-        // .getElementsByTagName("span")[0].firstChild
+    setTheJavascriptincampainPage();
     campainBtn.addEventListener("click",function()
       {
-        chat_id="919911747454@c.us"
-        id="919911747454@c.us"
+        // chat_id="919911747454@c.us"
+        // id="919911747454@c.us"
       // window.postMessage(
       //   { id: id, cmd: "openChat", direction: "from-content-script" },
       //   "*"
@@ -2395,9 +2405,9 @@ function findnumber() {
 
         document.getElementById("campain").style.display= "block";
         document.getElementsByClassName("scheduleOverlay")[0].style.display ="block";
-        setTheJavascriptincampainPage();       
+     
 
-      })
+      });
 
     
   document
@@ -2554,6 +2564,7 @@ function findnumber() {
   )
     .then((resp) => resp.json())
     .then(function (response) {
+      Plan_id=response.data[0].plan_id;
       isSignup = true;
       var dateLeft = response.data[0].expiry_date.substr(0, 10);
       var expiryYear = parseInt(dateLeft.substring(0, 4));
@@ -2901,19 +2912,34 @@ function findnumber() {
   return phoneString;
 }
 
+
+
 function display_price()
 {
   console.log("display_price is clicked");
   console.log(document.getElementById("card_container"));
   document.getElementById("PremiumPopup").style.display = "block";
   // document.getElementById("PremiumPopup").style.backgroundImage=url("https://images.pexels.com/photos/40661/tiger-snow-growling-zoo-40661.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500");
-  document.getElementById("PremiumPopup").style.height="94%";
+  document.getElementById("PremiumPopup").style.height="88%";
   document.getElementById("PremiumPopup").style.overflow="scroll";
   document.getElementById("PremiumPopup").style.position="position: sticky;";    
   document.getElementsByClassName("scheduleOverlay")[0].style.display =
     "block";
     // if(document.getElementById("card_container").innerHTML=="")    {
 
+      console.log(document.getElementById("help_div"));
+      document.getElementById("help_div").addEventListener("click",function()
+      {
+        console.log("help_div is clicked");
+        window.postMessage(
+              { id: "919818215182@c.us", cmd: "openChat", direction: "from-content-script" },
+              "*"
+            );
+            document.getElementById("PremiumPopup").style.display = "none";
+            document.getElementsByClassName("scheduleOverlay")[0].style.display ="none";
+
+      
+      });
     fetch("https://eazybe.com/api/v1/whatzapp/planList").then((response) => response.json())
     .then((json) => {
       var data=json.plan_list
@@ -2988,6 +3014,8 @@ function display_price()
 
       })
            
+
+
     document.getElementById("card_container").innerHTML="";
     
     // document.getElementById("card").style.display="none";
@@ -3006,11 +3034,16 @@ function display_price()
       
       card.id="card";
       card.className="card";
-      card.style=" margin-left: 25px; margin-bottom:24px ;margin-right: 2px;  display:   flex; align-items: center; flex-direction: column; border:   1px solid #546fff; border-radius: 5px; height: 515px; width: 270px;"
+      card.style=" margin-left: 25px; margin-bottom:-15px ;margin-right: 2px;  display:   flex; align-items: center; flex-direction: column; border:   1px solid #546fff; border-radius: 5px; height: 420px; width: 270px;"
       if(i==2)
       {
-        card.style=" margin-left: 25px; margin-bottom:24px ;margin-right: 2px;  display:   flex; align-items: center; flex-direction: column; border:   1px solid #546fff; border-radius: 5px; height: 515px; width: 270px;background-color:#546fff"
+        card.style=" margin-left: 25px; margin-bottom:-15px ;margin-right: 2px;  display:   flex; align-items: center; flex-direction: column; border:   1px solid #546fff; border-radius: 5px; height: 420px; width: 270px;background-color:#546fff;"
         
+      }
+      if(i==3)
+      {
+        card.style=" margin-left: 25px; margin-bottom:-15px ;margin-right: 2px;  display:   flex; align-items: center; flex-direction: column; border:   1px solid #546fff; border-radius: 5px; height: 420px; width: 270px; heigth:26px";
+
       }
       
       premium_span=document.createElement("div");
@@ -3018,7 +3051,7 @@ function display_price()
       premium_span.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"width="50" height="50" viewBox="0 0 172 172"style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="#3498db"></path><g fill="#ffffff"><path d="M44.72,6.88c-1.90232,0 -3.44,1.54112 -3.44,3.44v151.36c0,1.23152 0.65688,2.3708 1.72672,2.98313c1.06984,0.61232 2.38376,0.60576 3.44672,-0.01344l39.54656,-23.06547l39.54656,23.06547c0.5332,0.31304 1.13488,0.47031 1.73344,0.47031c0.59168,0 1.18352,-0.15072 1.71328,-0.45687c1.06984,-0.61232 1.72672,-1.75161 1.72672,-2.98313v-47.58219l-6.88,4.40078v37.195l-36.10656,-21.06328c-0.5332,-0.31304 -1.13488,-0.47031 -1.73344,-0.47031c-0.59856,0 -1.20024,0.15727 -1.73344,0.47031l-36.10656,21.06328v-141.9336h75.68v31.66547l1.18922,-3.1175l1.04141,-1.0414c0.7568,-0.7568 2.40977,-2.17032 4.65609,-3.02344v-27.92313c0,-1.89888 -1.53768,-3.44 -3.44,-3.44zM134.375,44.41094c-1.376,0 -2.752,1.032 -3.44,1.72l-8.25735,21.67469l-23.04531,1.37734c-1.376,0 -2.75335,1.02931 -3.09735,2.40531c-0.344,1.376 0.00135,3.09465 1.37735,3.78265l17.54265,14.45203l-5.85203,22.36c-0.344,1.376 0.34535,3.09465 1.37735,3.78266c0.688,0.344 1.37465,0.68531 2.06265,0.68531c0.69144,0 1.38482,-0.34131 2.06938,-0.68531l19.26265,-12.38266l19.26265,12.72531c1.032,1.032 2.75066,0.688 3.78266,0c1.376,-1.032 1.72134,-2.40666 1.37734,-3.78265l-5.84531,-22.36l17.88531,-14.44531c1.032,-1.032 1.37869,-2.41338 1.03469,-3.78938c-0.344,-1.376 -1.72135,-2.40531 -3.09735,-2.40531l-23.05203,-1.37735l-8.25062,-21.66797c-0.344,-1.032 -1.72135,-2.06938 -3.09735,-2.06938zM134.375,57.48563l5.50265,15.48c0.688,1.032 1.72135,2.06265 3.09735,2.06265l16.51469,1.03469l-12.73203,10.32c-1.032,0.688 -1.37197,2.064 -1.02797,3.44l4.12531,15.82266l-13.76,-8.94266c-0.344,-0.344 -1.032,-0.69203 -1.72,-0.69203c-0.69144,0 -1.37465,0.34938 -2.06265,0.34938l-13.76,8.94265l4.12531,-15.82265c0.344,-1.032 0.00403,-2.752 -1.02797,-3.44l-12.73203,-10.32l16.51469,-0.69203c1.376,-0.344 2.40934,-1.02931 3.09734,-2.40531z"></path></g></g></svg>`
       plan_name.className="plan_name";
       plan_name.id="plan_name";
-      plan_name.style="margin-top: 26px; margin-bottom: 16px;";
+      plan_name.style="margin-top: 10px; margin-bottom: 4px;";
       if(i==2)
       {
         plan_name.style.color="#FFF";
@@ -3058,7 +3091,7 @@ function display_price()
     price.className='price';
     
     span_price$=document.createElement("span");
-    span_price$.style="color: #546fff; font-size: 43px;"
+    span_price$.style="color: #546fff; font-size: 34px;"
     if(i==2)
     {
       span_price$.style.color="#FFF";
@@ -3074,7 +3107,7 @@ function display_price()
     {
       span_price_amount.style.color="#FFF";
     }
-    span_price_amount.style.fontSize="64px";
+    span_price_amount.style.fontSize="45px";
     
     span_price_duration=document.createElement("span");
     span_price_duration.className="span_price_duration";
@@ -3104,7 +3137,7 @@ function display_price()
       span_statement.style=" margin-left: 15px; margin-top: 0px; color: #546fff;";
       span_statement.innerHTML="done";
       p=document.createElement("p");
-      p.style="margin-left: 15px; color: #546fff; font-size:14px ;margin-top:2px ;text-align:start";
+      p.style="margin-left: 15px; color: #546fff; font-size:14px ;margin-top:2px ;text-align:start; margin-bottom:2px;";
       if(i==2)
       {
         p.style.color="#FFF";
@@ -3120,19 +3153,20 @@ function display_price()
     pay.className="pay"
     pay.style="display: flex;  justify-content: center; margin-top: auto; margin-bottom: 15px; height: 26px;"
     pay_button=document.createElement("button");
-    pay_button.style= "width: 100px; bottom: 15px; border-radius: 5px; background-color: #546fff; color:#fff;";
+    pay_button.className="btn btn-primary" 
+    pay_button.style= "width: 200px; bottom: 15px; border-radius: 5px; background-color: #546fff; color:#fff;align-self:center";
       if(i==2)
       {
-        pay_button.style= "width: 100px; bottom: 15px; border-radius: 5px; background-color: #fff;color: #546fff;";
+        pay_button.style= "width: 200px; bottom: 15px; border-radius: 5px; background-color: #fff;color: #546fff; align-self:center";
 
       }
-      if(i==3)
-      {
-        pay_button.style= "width: 100px; bottom: 15px; border-radius: 5px; background-color: #546fff; color:#fff;margin-top: -28px;";
-      }
+      // if(i==3)
+      // {
+      //   pay_button.style= "width: 200px; bottom: 15px; border-radius: 5px; background-color: #546fff; color:#fff;";
+      // }
     pay_button.innerHTML="Pay Now"
     pay_button.addEventListener("click",function(){
-     window.open('https://eazybe.com/checkout','_blank');
+     window.open(`https://eazybe.com/home/${phoneString}?`,'_blank');
     })
 
     pay.append(pay_button);
@@ -3142,7 +3176,7 @@ function display_price()
       card.append(plan_name,ratting,price,feature,pay);  
     }
     else{
-      card.append(plan_name,ratting,price,feature,pay);
+      card.append(plan_name,ratting,price,feature);
     
     }
     document.getElementById("card_container").append(card);
@@ -3150,9 +3184,16 @@ function display_price()
     });    
   // }
 
+
+  // console.log(document.getElementsByClassName("pay"));
+
+  // document.getElementById("pay").addEventListener("mouseenter",function(){
+  //   document.getElementById("pay").style.boxShadow="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;";
+  // });
+
 }
 
-//
+
 function broadcastMessages(arr, message) {
   if (isExpired) {
     if (arr.length >= 5) {
@@ -3242,6 +3283,45 @@ var bPercent = 10;
 var count = 0;
 var count2 = 10;
 var noOfSent = 1;
+// function redraw3(){
+//   var p=document.getElementById("send_btn_btn");
+//   p.style.color="black";
+//   console.log("redraw3");
+//   if(isRunning_)
+//   {
+//     console.log(isRunning_);
+//     p.style.background =
+//     "linear-gradient(90deg, #88ff9f " + bPercent + "%, white 0%)";
+
+//   if (count < 1) {
+//     p.innerHTML =
+//       "Sending Message" + " " + "1" + " " + "of" + " " + customerArray.length;
+//   } else {
+//     p.innerHTML =
+//       "Sending Message" +
+//       " " +
+//       noOfSent +
+//       " " +
+//       "of" +
+//       " " +
+//       customerArray.length;
+//   }
+//   count++;
+
+//   if (noOfSent != customerArray.length) noOfSent++;
+
+//   bPercent += 100 / (parseInt(customerArray.length) - 1);
+
+//   setTimeout("redraw3()", 10000);
+//   }
+//   else {
+//     p.style.background =
+//       "linear-gradient(90deg, #0074fc " + "100" + "%, white 0%)";
+//     p.style.color = "white";
+//     getCustomerList(customerListArray);
+//   }
+// }
+
 function redraw2() {
   var p = document.getElementById("sendMessageAll");
   p.style.color = "black";
@@ -4077,14 +4157,114 @@ function getScheduledObject(messageText, dateTime, status) {
   console.log(box);
   return box;
 }
+// const dateInPast = function(firstDate,secondDate) {
+//   // const secondDate=new Date() ;
+//   // const today = new Date();
+//   if (firstDate.setHours(0, 0, 0, 0) <= secondDate.setHours(0, 0, 0, 0)) {
+//     return true;
+//   }
+
+//   return false;
+// };
+
+function dateInPast(time, p)
+{
+  console.log(time,"end");
+  present_year=parseInt(time.substring(0,4));
+  present_month=parseInt(time.substring(5,7));
+  present_date=parseInt(time.substring(8,10));
+  if(p==1)
+  {
+    present_date=present_date-1;
+  }
+  console.log(present_year,present_month,present_date)
+  const today=new Date();
+  today_year=today.getFullYear();
+  today_month=today.getMonth()+1;
+  today_date=today.getDate();
+  console.log(today_year,today_month,today_date)
+  if(present_year<today_year)
+  {
+    return  true;
+  }
+  else if(present_year>today_year)
+  {
+    return false;
+  }
+  else if(present_month<today_month)
+  {
+    return true;
+  }
+  else if(present_month>today_month)
+  {
+    return false;
+  }
+  else if(present_date<today_date)
+  {
+    return true
+
+  }
+  else
+  {
+    return false
+  }
+  
+}
+const timepast= function(firstTime)
+{
+  
+  firsthours=parseInt(firstTime.substring(0,2))
+  firstminute=parseInt(firstTime.substring(3,5))
+  firstsecond=parseInt(firstTime.substring(6,8))
+  // console.log(firsthours,firstminute,fristsecond);
+   var d = new Date();
+  secondhours=parseInt(d.getHours());
+  secondminute=parseInt(d.getMinutes());
+  secondsecond=parseInt(d.getSeconds());
+  
+  if(firsthours<secondhours)
+  {
+    return true
+  }
+  else if(firsthours==secondhours)
+  {
+    if(firstminute<secondminute)
+    {
+      return true
+    }
+    else if(firstminute==secondminute)
+    {
+      if(firstsecond<secondsecond)
+      {
+        return true
+      }
+      else if(firstsecond==secondsecond)
+      {
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
+    else
+    {
+      return false
+    }
+  }
+  else
+  {
+    return false
+  }
+  
+}
 
 //function to set Event Listners of the schedule section popup
 function setEventListenerOfSc(params) {
   document
     .getElementById("scheduleSend")
     .addEventListener("click", function (params) {
-      console.log("hello");
-
+    
       var dateTime;
       var messageText = document.getElementById("scheduletext").value;
       var day = document.getElementById("selectedDay").innerText;
@@ -4168,6 +4348,34 @@ function setEventListenerOfSc(params) {
       else img_src = document.getElementById("demouser").src;
 
       let repeatTime;
+      console.log(dateTime);
+      
+      
+      // console.log(dateTime.substring(0,10)+"end");
+      // console.log(dateTime.substring(11,19)+"end");
+
+      
+      present_date=dateTime.substring(0,10);
+      present_time=dateTime.substring(11,19);
+      // console.log(timepast(present_time));
+      // console.log(dateInPast(present_date));
+      var x=present_date;
+      var date_=dateInPast(present_date,0);
+      var time_=timepast(present_time) 
+      console.log(date_,time_);
+      console.log(x);
+      if(date_==true || (time_==true && dateInPast(x,1)==true ) )
+      {
+        alert('Time has already passed');
+        return ;
+      }
+     
+      else if(document.getElementById("scheduletext").value=="")
+      {
+        alert("Message Can't be blank");
+        return;
+      }
+
 
       if (document.getElementById("customRecurrence").checked == true)
         repeatTime = getInMinutes();
@@ -4368,36 +4576,66 @@ function checkUpdate() {
       console.log(error);
     });
 }
+// var _gaq = _gaq || [];
+    
+    console.log("setting account of google analytics");
+    // _gaq.push(["_setAccount", "UA-207023293-1"]);
+    // _gaq.push(["_trackPageview"]);
 
 setInterval(() => {
   checkUpdate();
 }, 3000);
 
-//google analytics
-function settingUpgoogleanalytics(params) {
-  (function () {
-    var ga = document.createElement("script");
-    ga.type = "text/javascript";
-    ga.async = true;
-    ga.src = "https://ssl.google-analytics.com/ga.js";
-    var s = document.getElementsByTagName("script")[0];
-    s.parentNode.insertBefore(ga, s);
-  })();
 
-  setTimeout(() => {
-    var _gaq = _gaq || [];
-    console.log("setting account of google analytics");
-    _gaq.push(["_setAccount", "G-2ZL95KH1BK"]);
-    _gaq.push(["_trackPageview"]);
-  }, 2000);
-}
-settingUpgoogleanalytics();
+// function trackButton() {
+//   // _gaq.push(["_setAccount", "G-SXPDQ5EKSG"]);
+//   // _gaq.push(["_trackPageview"]);
+//   _gaq.push(['_trackEvent', "button", 'clicked']);
+//   console.log("track button is working")
+  
+//     // var pageTracker = _gap._getTracker('G-SXPDQ5EKSG');
+//     // pageTracker._trackPageView();
+
+// };
+//google analytics
+// function settingUpgoogleanalytics(params) {
+//   (function () {
+//     var ga = document.createElement("script");
+//     ga.type = "text/javascript";
+//     ga.async = true;
+//     ga.src = "https://ssl.google-analytics.com/ga.js";
+//     var s = document.getElementsByTagName("script")[0];
+//     s.parentNode.insertBefore(ga, s);
+//   })();
+
+  
+// }
+// trackButton();
+
+// setTimeout(() => {
+//     for(var i=0;i<3;i++)
+//     {
+//       // trackButton();
+//       ga('send', 'event', 'testing'); // Set page, avoiding rejection due to chrome-extension protocol
+
+//     }
+    
+//   }, 10000);
+
+
+// settingUpgoogleanalytics();
+
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
 
 function addingGoogleAnalytics() {
   var gtagscript = document.createElement("script");
   var gfunctionscript = document.createElement("script");
   gtagscript.async = true;
-  gtagscript.src = "https://www.googletagmanager.com/gtag/js?id=G-7E6GKKYRJT";
+  gtagscript.src = "https://www.googletagmanager.com/gtag/js?id=UA-207023293-1";
 
   document.getElementsByTagName("head")[0].append(gtagscript);
 
@@ -4409,13 +4647,19 @@ function addingGoogleAnalytics() {
   }
   gtag("js", new Date());
 
-  gtag("config", "G-7E6GKKYRJT");
+  gtag("config", "G-SXPDQ5EKSG");
   console.log("Pageview sent");
   gtag("event", "sign_up", {
     event_category: "engagement",
     event_label: "method",
   });
 }
+
+// (function    () {
+//   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+//   ga.src = 'https://ssl.google-analytics.com/ga.js';
+//   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+// })();
 
 // addingGoogleAnalytics();
 //hans work
@@ -4579,7 +4823,7 @@ function addingGoogleAnalytics() {
 // global varible of Show_Selected button
 function setTheJavascriptincampainPage()
 {
-  
+
   console.log("setTheJavascriptincampainPage");
   	// global varible of Show_Selected button
     var Show=false;
@@ -4594,17 +4838,17 @@ function setTheJavascriptincampainPage()
       {
         if(event.data.res="AllContacts")
         {
-          // console.log(event.data.AllContacts);
           
           AllContacts=event.data.AllContacts;
+          console.log(AllContacts);
           setuptable_(AllContacts);
           document.getElementById("total_contacts").innerHTML=AllContacts.length;
 
         }
       }
     })
-
-    
+ fetch_All_contacts();
+   function fetch_All_contacts(){
     window.postMessage(
       {
         cmd: "getAllContacts",
@@ -4613,13 +4857,15 @@ function setTheJavascriptincampainPage()
       "*"
     );
 
+    }
+
 
     // fetching the template data
     let All_lists=[]
     let All_templates=[]
     function fetch_template()
     {
-
+      console.log()
     
     fetch(`https://eazybe.com/api/v1/whatzapp/getCampaignTemplates?user_mobile=${phoneString}`)
     .then((response) => response.json())
@@ -4632,8 +4878,9 @@ function setTheJavascriptincampainPage()
       }
       else{
         All_templates=json.campaignTemplates
-        
+        // console.log(All_templates);
         set_up_template_list(json.campaignTemplates);
+      
       }
     
       
@@ -4642,20 +4889,88 @@ function setTheJavascriptincampainPage()
 
        
   }
-  function convertHMS(value) {
-    const sec = parseInt(value, 10); // convert value to number if it's string
-    let hours   = Math.floor(sec / 3600); // get hours
-    let minutes = Math.floor((sec - (hours * 3600)) / 60); // get minutes
-    let seconds = sec - (hours * 3600) - (minutes * 60); //  get seconds
-    // add 0 if value < 10; Example: 2 => 02
-    if (hours   < 10) {hours   = "0"+hours;}
-    if (minutes < 10) {minutes = "0"+minutes;}
-    if (seconds < 10) {seconds = "0"+seconds;}
-    return hours+':'+minutes+':'+seconds; // Return is HH : MM : SS
+
+  document.getElementById("inputGroupSelect022h").addEventListener("input",function()
+  {
+    s_list_id=document.getElementById("inputGroupSelect022h").value;
+    console.log(s_list_id);
+    document.getElementById("List__p").style.display="none";
+    document.getElementById("List__").style.display="block";
+    document.getElementById("list").style.display="block";
+    
+    for(var i=0;i<All_lists.length;i++)
+    {
+      // console.log(All_lists[i]);
+      if(All_lists[i].id==s_list_id)
+      {
+        
+      
+        document.getElementById("input_list_name").value=All_lists[i].listName;
+       
+        document.getElementById("selected_list_size").innerHTML=All_lists[i].chatID_list.length;
+        user_List=All_lists[i].chatID_list;
+        // document.getElementById("estimated_time").innerHTML=convertHMS(7*All_lists[i].chatID_list.length);
+        set_up_fected_list(All_lists,s_list_id);
+        Show=false;
+        document.getElementById("flexSwitchCheckChecked").checked=false;
+
+      }
+    }
+
+    
+  })
+
+  
+ 
+
+function convertHMS(value) {
+  const sec = parseInt(value, 10); // convert value to number if it's string
+  let hours   = Math.floor(sec / 3600); // get hours
+  let minutes = Math.floor((sec - (hours * 3600)) / 60); // get minutes
+  let seconds = sec - (hours * 3600) - (minutes * 60); //  get seconds
+  if(hours!="00")
+    {
+      if(minutes!="00")
+      {
+        if(seconds!="00")
+          return hours+"hours " + minutes + "min "  +seconds+"sec";
+        else
+          return hours+"hours " + minutes+"min " ;
+
+      }
+      else
+      {
+        if(seconds!="00")
+          return hours+"hours "   +seconds+"sec";
+        else
+          return hours +"hours "  ;
+        
+      }
+    }
+    else
+    {
+    if(minutes!="00")
+      {
+        if(seconds!="00")
+          return   minutes+"min " +seconds +"sec";
+        else
+          return  minutes+"min "  ;
+
+      }
+      else
+      {
+        if(seconds!="00")
+          return seconds +"sec";
+        else
+          return " 0sec";
+      }
+    }
+
 }
 
 
   fetch_template();
+
     var selected_List="";
     var selected_Template="";
     var selected_Template_id="";
@@ -4667,13 +4982,22 @@ function setTheJavascriptincampainPage()
 
       document.getElementById("template_dropdown_content").innerHTML="";
       document.getElementById("inputGroupSelect023").innerHTML="" ;
+      document.getElementById("inputGroupSelect023h").innerHTML="" ;
       
       s=document.createElement("option");
       s.innerHTML="Select Template..";
       s.id="select_Template";
       s.className="campain_template_option";
       s.value="select_Template";
+         
+      sh=document.createElement("option");
+      sh.innerHTML="Select Template..";
+      sh.id="select_Templateh";
+      sh.className="campain_template_optionh";
+      sh.value="select_Template";
       document.getElementById("inputGroupSelect023").append(s);
+      document.getElementById("inputGroupSelect023h").append(sh);
+
       for(var i=0;i<template_list.length;i++)
       {
         
@@ -4688,7 +5012,14 @@ function setTheJavascriptincampainPage()
         s.id=template_list[i].id;
         s.value=template_list[i].id;
         s.className="campain_template_option";
+        sh=document.createElement("option");
+        sh.innerHTML=template_list[i].template_name;
+        sh.id=template_list[i].id;
+        sh.value=template_list[i].id;
+        sh.className="campain_template_optionh";
         document.getElementById("inputGroupSelect023").append(s);
+        document.getElementById("inputGroupSelect023h").append(sh);
+
         // document.getElementById("campain_list_select marg").append(p);
       }
       var templates=document.getElementsByClassName("template_drop-down_p");
@@ -4719,52 +5050,68 @@ function setTheJavascriptincampainPage()
 
     }
 
-  document.getElementById("template_list_name").addEventListener("input",function()
-  {
-    console.log(selected_Template_id);
-    console.log(document.getElementById("template_list_name").value);
-    console.log(document.getElementById("exampleFormControlTextarea1").value);
 
-    fetch("https://eazybe.com/api/v1/whatzapp/updateCampaignTemplate",{
-      method:'POST',
-      body:JSON.stringify({
-        "id":selected_Template_id,
-        "template_name":document.getElementById("template_list_name").value,
-        "template_message":document.getElementById("exampleFormControlTextarea1").value
-      }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-
-
-    })
-
-    fetch_template();
-  })
-
-    document.getElementById("exampleFormControlTextarea1").addEventListener("input" ,function(){
-      console.log(selected_Template_id);
-      console.log(selected_Template);
-      console.log(document.getElementById("exampleFormControlTextarea1").value);
-  
-      fetch("https://eazybe.com/api/v1/whatzapp/updateCampaignTemplate",{
-        method:'POST',
+ 
+  document.getElementById("create_new_template").addEventListener("click" ,function(){
+    console.log(document.getElementById("Template_list_name_").value);
+    if(document.getElementById("Template_list_name_").value=="")
+    {
+      console.log("Please Enter the Name");
+      alert("Please Enter the Name");
+    }
+    else
+    {
+      
+      // console.log(All_templates);
+      if((Plan_id==1 || Plan_id==6 ) && All_templates.length>=5 )
+      {
+        document.getElementById("PremiumPopup").style.zIndex=9999;
+        display_price();
+        return ;
+      }
+      document.getElementById("exampleFormControlTextarea1").value="";
+      fetch("https://eazybe.com/api/v1/whatzapp/createCampaignTemplate",{
+        method:"POST",
         body:JSON.stringify({
-          "id":selected_Template_id,
-          "template_name":selected_Template,
-          "template_message":document.getElementById("exampleFormControlTextarea1").value
+          "user_mobile":phoneString,
+          "template_name":document.getElementById("Template_list_name_").value,  
+          "template_message":""
         }),
         headers: {
           "Content-type": "application/json; charset=UTF-8",
         },
+        
+      }).then((response)=>response.json())
+      .then((res)=>
+      {
+        console.log(res,res.status);
+        if(res.status==false)
+        {
+          alert("Template Name  Must be Unique");
+          console.log("template name must be unique");
+        }
+        else{
+          //  alert("new Template is created");
+          document.getElementById("Template__p").style.display="none";
+          document.getElementById("template_list_name").value=document.getElementById("Template_list_name_").value;
+          selected_Template_id=res.createdCampaignTemplate.id;
+          fetch_template();
 
 
+        }
       })
-
-      fetch_template();
-
-    
-    })
+      // .then((response) => response.json())
+      // .then((json)=>{
+      //   // console.log(json);
+      //   if(json.message!="user does not exist with this number")
+      //   {
+      //     set_up_campaign_history(json.message);
+      //   }
+  
+      // })
+     
+    }
+  } );
 
 
     // fetching the list data 
@@ -4784,64 +5131,86 @@ function setTheJavascriptincampainPage()
 
     document.getElementById("create_new_list").addEventListener("click",function()
     {
-      if(document.getElementById("input_list_name").value=="")
+      if(document.getElementById("input_list_name_").value=="")
       {
         alert("Please Enter the Name");
       }
       else{
-        console.log(phoneString,document.getElementById("input_list_name").value,[]);
+        // name_of_list
+        user_List=[]
+        fetch_All_contacts();
+        document.getElementById("input_list_name").value=document.getElementById("input_list_name_").value;
+        console.log(phoneString,document.getElementById("input_list_name_").value,[]);
+        // document.getElementById("input_list_name").value=document.getElementById("input_list_name").value;
         fetch("https://eazybe.com/api/v1/whatzapp/createCampaignChatIdList",{
           method:"POST",
           body:JSON.stringify({
             "user_mobile":phoneString,
-            "listName":document.getElementById("input_list_name").value,
+            "listName":document.getElementById("input_list_name_").value,
             "chatID_list":[]
           }),
           headers: {
             "Content-type": "application/json; charset=UTF-8",
           },
           
-        })
-
-        fetch_chatid_list();
-      }
-    })
-    document.getElementById("create_new_template").addEventListener("click" ,function(){
-      if(document.getElementById("template_list_name").value=="")
-      {
-        alert("Please Enter the Name");
-      }
-      else
-      {
-        fetch("https://eazybe.com/api/v1/whatzapp/createCampaignTemplate",{
-          method:"POST",
-          body:JSON.stringify({
-            "user_mobile":phoneString,
-            "template_name":document.getElementById("template_list_name").value,  
-            "template_message":""
-          }),
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
-          },
+        }).then((response)=>response.json())
+        .then((res)=>
+        {
+          console.log(res);
+          if(res.status==true)
+          {
+            s_selected_list_id=res.createdChatIdlist.id;
+            console.log(s_selected_list_id);
+            document.getElementById("table_body").innerHTML="";
+            console.log(document.getElementById("List__p").style.display="none");
+            fetch_chatid_list();
+        
+           fetch_All_contacts();
+           Show=false;
+           document.getElementById("flexSwitchCheckChecked").checked=false;
+          }
+          else{
+            alert("ChatId List Name Must be unique");
+          }
+          // selected_Template_id=res.createdCampaignTemplate.id;
           
         })
+      
+        // console.log(document.getElementById("list").style.display="block");
+       
+        // document.getElementById("input_list_name").value=
+        // list
+        // List__p
+        
+
+        
+        
       }
-      fetch_template();
-    } )
+    });
+
 
 let s_selected_list_id=""
     function set_contacts_lists(contacts_list)
     {   
-        console.log(contacts_list);
+        // console.log(contacts_list);
         document.getElementById("list_drop_down").innerHTML="";
         document.getElementById("inputGroupSelect022").innerHTML="";
+        document.getElementById("inputGroupSelect022h").innerHTML="";
+        s=document.createElement("option");
         s.innerHTML="Select List..";
         s.id="xyz";
         s.value="xyz";
+          
+        sh=document.createElement("option");
+        sh.innerHTML="Select List..";
+        sh.id="xyz";
+        sh.value="xyz";
         document.getElementById("inputGroupSelect022").append(s)
+        document.getElementById("inputGroupSelect022h").append(sh)
+
         for(var i=0;i<contacts_list.length;i++)
           {
-            console.log(contacts_list[i].listName);
+            
            p=document.createElement("p");
 
           p.innerHTML=contacts_list[i].listName;
@@ -4853,11 +5222,21 @@ let s_selected_list_id=""
           s.innerHTML=contacts_list[i].listName;
           s.id=contacts_list[i].id;
           s.value=contacts_list[i].id;
-          document.getElementById("inputGroupSelect022").append(s)
+          chatID_list_legth=document.createElement("p");
+          chatID_list_legth.innerHTML=contacts_list[i].chatID_list.length;
+          sh=document.createElement("option");
+          sh.className="campain_list_option";
+          sh.innerHTML=contacts_list[i].listName;
+          sh.id=contacts_list[i].id;
+          sh.value=contacts_list[i].id;
+          s.innerHTML=` ${contacts_list[i].listName}<span style="color:blue; margin-left:50%"> (${contacts_list[i].chatID_list.length})</span>`;
+          document.getElementById("inputGroupSelect022").append(s);
+          document.getElementById("inputGroupSelect022h").append(sh)
+
         } 
           
           var list_name=document.getElementsByClassName("list_drop-down_p");
-          console.log(document.getElementsByClassName("list_drop-down_p"));
+          // console.log(document.getElementsByClassName("list_drop-down_p"));
           for(let i=0;i<list_name.length;i++)
           {
             list_name[i].addEventListener("click",function()
@@ -4868,6 +5247,7 @@ let s_selected_list_id=""
             s_list_name=selected_List;
             document.getElementById("input_list_name").value=s_list_name;
             document.getElementById("Selected_contacts").innerHTML=contacts_list.length;
+            console.log(contacts_list,selected_List);
             set_up_fected_list(contacts_list,selected_List);
 
           
@@ -4880,41 +5260,55 @@ let s_selected_list_id=""
 
           
     }
-function set_up_fected_list( c_list,s_list_name)
+function set_up_fected_list( c_list,s_list_name_id)
 {
 
  
 
   let selected_list_contacts
-  console.log(c_list,s_list_name);
+  console.log(c_list,s_list_name_id);
   document.getElementById("table_body").innerHTML="";
   for(var i=0;i<c_list.length;i++)
   {
     // console.log(c_list[i].listName)
-    if(c_list[i].listName==s_list_name)
+    if(c_list[i].id==s_list_name_id)
     {
       
       selected_list_contacts=c_list[i].chatID_list;
       user_List=selected_list_contacts;
       s_selected_list_id=c_list[i].id;
+      s_list_name=c_list[i].listName;
+
+
+      console.log(AllContacts);
+     
+      document.getElementById("Selected_contacts").innerHTML=selected_list_contacts.length;
+      console.log(document.getElementById("Selected_contacts"));
       
 
+
+           
+      temp=[...AllContacts];
+      console.log(temp);
       for(let i=0;i<selected_list_contacts.length;i++)
       {
         console.log(selected_list_contacts[i]);
        
         // row=document.getElementsByTagName("tr");
         // console.log(row);
-        
+    
         var find=false;
         for(let j=0;j<AllContacts.length;j++)
         {
-        
+            if(find)
+            {
+              break;
+            }
           // console.log(AllContacts);
           if(AllContacts[j].id._serialized==selected_list_contacts[i])
           {
             find=true;
-            console.log("yes");
+            console.log("yes",AllContacts[j].id._serialized,selected_list_contacts[i]);
             table_row=document.createElement("tr");
         table_row.id=AllContacts[j].id._serialized;
         table_row.style="background: skyblue; display: table-row;"
@@ -4923,23 +5317,26 @@ function set_up_fected_list( c_list,s_list_name)
         td1.innerHTML=AllContacts[j].name;
 
         td2=document.createElement("td");
-        td2.innerHTML=AllContacts[j].pushname;
-
+        // td2.innerHTML=AllContacts[j].pushname;
+        td2.innerHTML=""
         td3=document.createElement("td");
-        td3.innerHTML=AllContacts[j].user;
+        // td3.innerHTML=AllContacts[j].user;
+        td3.innerHTML="";
 
         td4=document.createElement("td");
-        td4.innerHTML=AllContacts[j].name;
+        // td4.innerHTML=AllContacts[j].name;
+        td4.innerHTML=AllContacts[j].id.user;
+        // console.log(AllContacts[j].name,AllContacts[])
         table_row.append(td1,td2,td3,td4)
         // console.log(table_row);
         document.getElementById("table_body").append(table_row);
-        AllContacts.splice(i,1);
+        // AllContacts.splice(j,1);
+        temp.splice(j,i);
+      
+      
+        
           }
-          // if(row[j].id==selected_list_contacts[i])
-          // {
-          //   find=true;
-          //   row[j].style.backgroundColor="skyblue";
-          // }
+  
           
         }
         
@@ -4970,45 +5367,46 @@ function set_up_fected_list( c_list,s_list_name)
       }
     }
   }
-setuptable_(AllContacts)
+  
+  console.log(temp,AllContacts);
+setuptable_(temp)
 
 }
 var AllContacts
-    function setuptable_(AllContacts)
+    function setuptable_(AllContacts_)
     {
-    
 
-      document.getElementById("Selected_contacts").innerHTML=0;
-      console.log(table =document.getElementById("table_body"));
-      console.log(AllContacts);
-      for(var i=0;i<AllContacts.length;i++)
+      // document.getElementById("Selected_contacts").innerHTML=0;
+      // console.log(table =document.getElementById("table_body"));
+      console.log(AllContacts_);
+      for(var i=AllContacts_.length-1;i>0;i--)
       {
         // console.log(AllContacts[i].id);
 
         // console.log(AllContacts[i].id.user);
         table_row=document.createElement("tr");
-        table_row.id=AllContacts[i].id._serialized;
+        table_row.id=AllContacts_[i].id._serialized;
         table_row.style="background: white; display: table-row;"
-        table_row.value=AllContacts[i].name;
+        table_row.value=AllContacts_[i].name;
         td1=document.createElement("td");
         td1.style="width:25%"
-        td1.innerHTML=AllContacts[i].name;
-        if(AllContacts[i].name==undefined)
+        td1.innerHTML=AllContacts_[i].name;
+        if(AllContacts_[i].name==undefined)
         {
-          td1.innerHTML=AllContacts[i].id.user;
+          td1.innerHTML=AllContacts_[i].id.user;
         }
         else
         {
-          td1.innerHTML=AllContacts[i].name;
+          td1.innerHTML=AllContacts_[i].name;
 
         }
         td2=document.createElement("td");
-        if(AllContacts[i].pushname==undefined)
+        if(AllContacts_[i].pushname==undefined)
         {
           td2.innerHTML="";
         }
     else{
-      td2.innerHTML=AllContacts[i].pushname;
+      td2.innerHTML=AllContacts_[i].pushname;
 
       }
 
@@ -5016,12 +5414,16 @@ var AllContacts
         td3.innerHTML==""
 
         td4=document.createElement("td");
-        if(AllContacts[i].name==undefined)
+        if(AllContacts_[i].name==undefined)
         {
           td4.innerHTML=""
         }
         else{
-          td4.innerHTML=AllContacts[i].id.user;
+          td4.innerHTML=AllContacts_[i].id.user;
+        }
+        if(AllContacts_[i].id.user.length>15)
+        {
+          td4.innerHTML="";
         }
         td2.style="width:25%";
         td3.style="width:25%";
@@ -5031,7 +5433,7 @@ var AllContacts
         document.getElementById("table_body").append(table_row);
       }
     
-      console.log(document.getElementById("table_body"));
+      // console.log(document.getElementById("table_body"));
 
 
       row=document.getElementsByTagName("tr");
@@ -5041,7 +5443,7 @@ var AllContacts
         // console.log(row[i],"is clicked");
         row[i].addEventListener("click",function()
         {
-          console.log(row[i]);
+        
           clicked(row[i]);
   
         });
@@ -5063,12 +5465,12 @@ var AllContacts
       
     })
 
-    document.getElementById("create_new_list").addEventListener("click",function()
-    {
-      var name=document.getElementById("input_list_name").value;
+    // document.getElementById("create_new_list").addEventListener("click",function()
+    // {
+    //   var name=document.getElementById("input_list_name").value;
       
-      
-    })
+    //   fetch_chatid_list();
+    // })
 
 
 
@@ -5088,34 +5490,109 @@ var AllContacts
 
 
   //  change to list page 
+
   document.getElementById("List").addEventListener("click",function()
   {
-		document.getElementById('List__').style.display="block";
-		document.getElementById('Template__').style.display="none";
+    
+  
+    // fetch_All_contacts();
+
+		document.getElementById("input_list_name_").value="";
+    document.getElementById("List__p").style.display="block";
+    document.getElementById("Template__p").style.display="none";
+
+    document.getElementById('List__').style.display="block";
+    document.getElementById('Template__').style.display="none";
 		document.getElementById('Campains__').style.display="none";
 
-    document.getElementById("List").style="background-color: #F6F6F6";
+    document.getElementById("List").style="background-color: #0b7dda";
     document.getElementById("Template").style="background-color: #EDEDED";
     document.getElementById("Campains").style="background-color: #EDEDED";
+
+    document.getElementById("List").style.opacity="0.5";
+
   });    
 	
   //  chageToTemplatePage >
-
-  document.getElementById("Template").addEventListener("click",function()
+  document.getElementById("next_list").addEventListener("click",function()
   {
-    document.getElementById('Campains__').style.display="none";
+    fetch_template();
+    if(document.getElementById("Selected_contacts").innerHTML==0)
+    {
+      alert("Select contacts to continue");
+      return ;
+    }
+      document.getElementById("Template_list_name_").value="";
+      document.getElementById("Template__p").style.display="block";
+      document.getElementById("List__p").style.display="none";
+
+      document.getElementById('Campains__').style.display="none";
     	document.getElementById('Template__').style.display="block";
     	document.getElementById('List__').style.display="none";
 
       document.getElementById("List").style="background-color:#EDEDED ";
-      document.getElementById("Template").style="background-color: #F6F6F6";
+      document.getElementById("Template").style="background-color: #0b7dda";
       document.getElementById("Campains").style="background-color: #EDEDED";
-  });
+      document.getElementById("Template").style.opacity="0.5";
+  })
+
+  document.getElementById("Template").addEventListener("click",function()
+  {
+    fetch_template();
+   
+      document.getElementById("Template_list_name_").value="";
+      document.getElementById("Template__p").style.display="block";
+      document.getElementById("List__p").style.display="none";
+
+      document.getElementById('Campains__').style.display="none";
+    	document.getElementById('Template__').style.display="block";
+    	document.getElementById('List__').style.display="none";
+
+      document.getElementById("List").style="background-color:#EDEDED ";
+      document.getElementById("Template").style="background-color: #0b7dda";
+      document.getElementById("Campains").style="background-color: #EDEDED";
+      document.getElementById("Template").style.opacity="0.5";
+
+    });
 	
   //  change yo Campains page
-
+    document.getElementById("next_template").addEventListener("click",function(){
+      // if(document.getElementById("exampleFormControlTextarea1").value=="")
+      // {
+      //   alert("Enter the Message ");
+      //   return;
+      // }
+      fetch_template();
+      fetch_chatid_list();
+      document.getElementById("selected_list_size").innerHTML="";
+      document.getElementById("estimated_time").innerHTML="";
+      document.getElementById("List__p").style.display="none";
+      document.getElementById("Template__p").style.display="none";
+  
+      document.getElementById('Campains__').style.display="block";
+      document.getElementById('Template__').style.display="none";
+      document.getElementById('List__').style.display="none";
+  
+      document.getElementById("List").style="background-color: #EDEDED";
+      document.getElementById("Template").style="background-color: #EDEDED";
+      document.getElementById("Campains").style="background-color:#0b7dda";
+  
+      document.getElementById("Campains").style.opacity = "0.5";
+    })
   document.getElementById("Campains").addEventListener("click",function()
   {
+    // if(document.getElementById("exampleFormControlTextarea1").value=="")
+    // {
+    //   alert("Enter The Message");
+    //   return;
+    // }
+
+    fetch_template();
+    fetch_chatid_list();
+    document.getElementById("selected_list_size").innerHTML="";
+    document.getElementById("estimated_time").innerHTML="";
+    document.getElementById("List__p").style.display="none";
+    document.getElementById("Template__p").style.display="none";
 
     document.getElementById('Campains__').style.display="block";
 		document.getElementById('Template__').style.display="none";
@@ -5123,7 +5600,9 @@ var AllContacts
 
     document.getElementById("List").style="background-color: #EDEDED";
     document.getElementById("Template").style="background-color: #EDEDED";
-    document.getElementById("Campains").style="background-color: #F6F6F6";
+    document.getElementById("Campains").style="background-color:#0b7dda";
+
+    document.getElementById("Campains").style.opacity = "0.5";
   });
 	
   //  campain cross button
@@ -5145,19 +5624,21 @@ var AllContacts
 
 		function Show_Selected()
 		{
-			Show=!Show;
+			console.log(Show);
+      Show=!Show;
+      
 			if(Show==true)
 			{
-        // document.getElementById("table-body");
-        // console.log(document.getElementById("table-body"));
-        // console.log(document.getElementById("table_body"));
-        // document.getElementById("table_body").innerHTML="";
-        
+
 				console.log("Show_Selected is trigered",Show);
 				var table=document.getElementById("contact_table");
 				var row=table.getElementsByTagName("tr");
+        console.log(row);
+        console.log(user_List);
 				for (i=1; i < row.length; i++) {
+            
 	    			const index=user_List.findIndex((element)=> element==row[i].id);
+            console.log(row[i].id,index);
 	    			if(index<0)
 	    			{
 						document.getElementById(row[i].id).style.display="none";
@@ -5222,29 +5703,34 @@ var AllContacts
 				(event).style.background="white";
 				const index=user_List.findIndex((element)=> element==event.id)
 				user_List.splice(index,1);
-				console.log(event.id._serialized,"unselected");
+				console.log(event.id,"unselected");
         document.getElementById("Selected_contacts").innerHTML=user_List.length;
 			}
 			else
 			{
+        if((Plan_id==1 ||Plan_id==6) && user_List.length>=10)
+        {
+          display_price();
+          return ;
+        }
 				(event).style.background="skyblue";
 				user_List.push(event.id);
 				console.log(event.id,"selected");
         document.getElementById("Selected_contacts").innerHTML=user_List.length;
 
       }
-
+      console.log(s_selected_list_id)
       console.log(phoneString);
-      console.log(s_list_name)
+      console.log(document.getElementById("input_list_name").value);
 			console.log(user_List);
-      if(s_list_name!=undefined)
+      if(document.getElementById("input_list_name").value!=undefined)
       {
         fetch("https://eazybe.com/api/v1/whatzapp/updateCampaignChatIdList",{
         method:'POST',
         body:JSON.stringify({
           "id":s_selected_list_id,
           "user_mobile":phoneString,
-          "listName":s_list_name,
+          "listName":document.getElementById("input_list_name").value,
           "chatID_list":user_List
 
         }),
@@ -5259,6 +5745,61 @@ var AllContacts
       
 				
 		}
+
+    document.getElementById("inputGroupSelect023h").addEventListener("change", function(){
+      console.log("inputGroupSelect023h is clicked");
+     console.log( document.getElementById("inputGroupSelect023h").value);
+      selected_Template_id= document.getElementById("inputGroupSelect023h").value;
+     console.log(All_templates);
+      if(selected_Template_id!="select_Template"){
+        
+    
+        for(var i=0;i<All_templates.length;i++)
+          {
+              if(All_templates[i].id==selected_Template_id)
+              {
+                console.log(All_templates[i].template_message);
+
+                document.getElementById("exampleFormControlTextarea1").value=All_templates[i].template_message;
+                document.getElementById("template_list_name").value=All_templates[i].template_name;
+              }
+          }
+          document.getElementById("Template__p").style.display="none";
+      }    
+    })
+
+    document.getElementById("exampleFormControlTextarea1").addEventListener("input" ,function(){
+      console.log(selected_Template_id);
+      console.log(document.getElementById("template_list_name").value,);
+      console.log(document.getElementById("exampleFormControlTextarea1").value);
+  
+      fetch("https://eazybe.com/api/v1/whatzapp/updateCampaignTemplate",{
+        method:'POST',
+        body:JSON.stringify({
+          "id":selected_Template_id,
+          "template_name":document.getElementById("template_list_name").value,
+          "template_message":document.getElementById("exampleFormControlTextarea1").value
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+
+
+      })
+
+      fetch_template();
+    
+    })
+    // All_temmplate_h =document.getElementsByClassName("campain_template_optionh");
+    // console.log(All_temmplate_h)
+    //   for(var i=0;i<All_temmplate_h.length;i++)
+    //   {
+    //     console.log(All_temmplate_h[i]);
+    //     All_temmplate_h[i].addEventListener("click",function(){
+    //       console.log(All_temmplate_h[i]);
+    //     })
+    //   }
+
     document.getElementById("input_list_name").addEventListener("input",function()
     {
       console.log(document.getElementById("input_list_name").value);
@@ -5299,6 +5840,7 @@ var AllContacts
       var s_temp_id
       var s_temp
       var s_temp_message
+
       document.getElementById("inputGroupSelect022").addEventListener("input",function()
       {
         s_list_id=document.getElementById("inputGroupSelect022").value;
@@ -5309,14 +5851,17 @@ var AllContacts
           {
             document.getElementById("selected_list_size").innerHTML=All_lists[i].chatID_list.length;
             user_List=All_lists[i].chatID_list;
+
             document.getElementById("estimated_time").innerHTML=convertHMS(7*All_lists[i].chatID_list.length);
           }
         }
 
         
       })
-      
-
+      setInterval(() => {
+        fetch_campain_running_data();
+      }, 2000);
+      fetch_campain_running_data();
       document.getElementById("inputGroupSelect023").addEventListener("input",function()
       {
         s_temp_id=document.getElementById("inputGroupSelect023").value;
@@ -5327,7 +5872,8 @@ var AllContacts
       
       document.getElementById("send_btn").addEventListener("click",function()
       {
-        // if (message.value != "" && user_List.length>0) {
+        
+          
         for(var i=0;i<All_lists.length;i++)
         {
           if(All_lists[i].id==s_list_id)
@@ -5347,19 +5893,37 @@ var AllContacts
           }
         }
         console.log(user_List, message);
-        // console.log(All_lists);
-        // console.log(All_templates);
-        if(user_List==undefined || message==undefined)
+        
+        if(document.getElementById("campain_input").value=="")
+        {
+          alert("Please give a name to Campaign ")
+        }
+        else if(s_list==undefined || s_temp==undefined)
         {
           alert("Please List and template before sending ")
         }
-        else{
-
-          // broadcastMessages(user_List, message)
-
+        else if(message=="")
+        {
+          alert("Template is Empty");
         }
-  
-      // }
+        else if(user_List.length==0)
+        {
+          alert("Selected List is Empty");
+        }
+        else if(isExpired && user_List.length>5)
+        {
+          display_price();
+          
+          document.getElementById("PremiumPopup").style.zIndex=99999;
+        }
+
+        else{
+            
+            // redraw3();
+            document.getElementById("send_btn").style.display="none";
+            console.log(user_List,message);
+          // broadcastMessages(user_List, message);
+              
       console.log(s_list,s_temp,document.getElementById("campain_input").value);
       // console.log(message);
       fetch("https://eazybe.com/api/v1/whatzapp/createRunningCampaignData",{
@@ -5374,41 +5938,118 @@ var AllContacts
         headers: {
           "Content-type": "application/json; charset=UTF-8",
         },
-      })
+      });
+          fetch_campain_running_data();
+          
+            // document.getElementById("send_btn_btn").innerHTML="sending ...";
+            // document.getElementById("send_btn_btn").disabled=true
+            // document.getElementById("send_btn_btn").style.background="gray";
+          parts=100/(7*2*10*user_List.length);
+          cur=0;
+          
+        var   progressbar=  setInterval(() => {
+              document.getElementById("send_btn").style.display=="none";   
+              document.getElementById("send_btn_progress_bar_div").style.display="block"; 
+              document.getElementById("send_btn_progress_bar").innerHTML=Math.round(cur+parts).toFixed(0)+"%";
+              document.getElementById("send_btn_progress_bar").style.width=`${Math.round(cur+parts).toFixed(1)}%`;
+              // document.getElementById("send_btn_progress_bar").style.width="80%";
+              cur+=parts;
+            }, 50);
+            function sayHi() {
+              window.clearInterval(progressbar);
+
+              document.getElementById("send_btn_btn").innerHTML="send";
+              document.getElementById("send_btn_btn").style.background="#0D6EFD";
+              document.getElementById("send_btn").style.display="block";
+              document.getElementById("send_btn_progress_bar_div").style.display="none";
+            }
+            // var interValId17 = setInterval(() => {
+            //   var data = newToolInsertCheck();
+            //   if (data != null) {
+            //     settingUpWWEbjs();
+            //     window.clearInterval(interValId17);
+            //   }
+            // }, 1000);
+            
+            
+            setTimeout(sayHi,7000*user_List.length );
+
+        }
+  
 
     });
+    
+  var bPercent = 10;
+  var count = 0;
+  var count2 = 10;
+  var noOfSent = 1;
+  var isRunning_=true;
+  function redraw3(){
+    var p=document.getElementById("send_btn_btn");
+    p.style.color="black";
+   console.log("redraw3");
+    if(isRunning_)
+    {
+      console.log(isRunning_);
+      p.style.background =
+      "linear-gradient(90deg, #88ff9f " + bPercent + "%, white 0%)";
+  
+    if (count < 1) {
+      p.innerHTML =
+        "Sending Message" + " " + "1" + " " + "of" + " " + customerArray.length;
+    } else {
+      p.innerHTML =
+        "Sending Message" +
+        " " +
+        noOfSent +
+        " " +
+        "of" +
+        " " +
+        user_List.length;
+    }
+    count++;
+  
+    if (noOfSent !=user_List.length) noOfSent++;
+  
+    bPercent += 100 / (parseInt(user_List.length) - 1);
+  
+    setTimeout("redraw3()", 10000);
+    }
+    else {
+      p.style.background =
+        "linear-gradient(90deg, #0074fc " + "100" + "%, white 0%)";
+      p.style.color = "white";
+      getCustomerList(customerListArray);
+    }
+  }
+    setInterval(() => {
+      fetch_campain_running_data();
+      // fetch_chatid_list();
+      // fetch_template();
+    }, 2000);
     }
 
-    // fetch(`https://eazybe.com/api/v1/whatzapp/getCampaignTemplates?user_mobile=${phoneString}`)
-    // .then((response) => response.json())
-    // .then((json) => {
-    //   console.log(json);
-    //   if(json.campaignTemplates=="no tempalte found with this user number")
-    //   {
-    //     console.log("not template found");
-        
-    //   }
-    //   else{
-    //     All_templates=json.campaignTemplates
-        
-    //     set_up_template_list(json.campaignTemplates);
-    //   }
-    
-      
-    // })
+   
+   
+   function  fetch_campain_running_data()
+    {
 
+    
     fetch(`https://eazybe.com/api/v1/whatzapp/getRunningCampaignData?user_mobile=${phoneString}`)
     .then((response) => response.json())
     .then((json)=>{
       // console.log(json);
-      set_up_campaign_history(json.message);
+      if(json.message!="user does not exist with this number")
+      {
+        set_up_campaign_history(json.message);
+      }
 
     })
-
+  }
     function set_up_campaign_history(campain_history)
     {
       document.getElementById("Campains___").innerHTML="";
-    for(let i=0;i<campain_history.length;i++)
+    for(let i=campain_history.length-1;i>=0;i--)
     {
 
         
@@ -5472,10 +6113,11 @@ var AllContacts
       button.style.background="gray";
       button.disabled=true
         
-      button.innerHTML="Sended"
+      button.innerHTML="Sent"
       // button_div.disabled=true;
         campian_card_.append(card_name,main_selector_div,button);
         document.getElementById("Campains___").append(campian_card_);
     }  
   }
 }
+

@@ -9,6 +9,22 @@ window.addEventListener("message", function (event) {
     console.log("finduserpro");
     if (event.data.cmd == "findUserId") {
       console.log("Find user called");
+    
+      if(window.Store.Status._index[Object.keys(window.Store.Status._index)[0]].__x_id.user)
+      {
+        console.log("new is here");
+        var userId = window.Store.Status._index[Object.keys(window.Store.Status._index)[0]].__x_id.user;
+        console.log(userId);
+        window.postMessage(
+          {
+            id: userId,
+            res: "userId",
+            direction: "from-page-script",
+          },
+          "*"
+        );
+
+      }
       if (window.Store.ChatPreference._listeningTo.l1.wid.user) {
         var userId = window.Store.ChatPreference._listeningTo.l1.wid.user;
         console.log(userId);
@@ -20,7 +36,9 @@ window.addEventListener("message", function (event) {
           },
           "*"
         );
-      } else {
+      } 
+
+      else {
         console.log("wating for user to be connected");
       }
     } else if (event.data.cmd == "sendMessage") {
@@ -57,13 +75,21 @@ window.addEventListener("message", function (event) {
 
       // console.log("chatOpen");
     } else if (event.data.cmd == "getAllContacts") {
+      // var contacts= window.WAPI.getAllContacts();
       console.log("getAllContacts is trigered");
-      var contacts= window.WAPI.getAllContacts();
-      console.log("getAllContacts is trigered");
+      a=window.WAPI.getMyContacts();
+      b=window.WAPI.getAllGroups();
 
+      for(var i=0;i<b.length;i++)
+      {
+        x={name:b[i].__x_name ,id:{server: 'g.us', user: b[i].__x_id.user, _serialized: b[i].__x_id._serialized}};
+
+        a.push(x);
+      }
+     
       window.postMessage(
         {
-          AllContacts : contacts,
+          AllContacts : a,
           res : "AllContacts",
           direction: "from-page-script",
         },
@@ -419,7 +445,7 @@ window.WAPI.getMyContacts = function (done) {
     (contact) => contact.isMyContact === true
   ).map((contact) => WAPI._serializeContactObj(contact));
   if (done !== undefined) done(contacts);
-  console.log(contacts);
+  // console.log(contacts);
   return contacts;
 };
 
@@ -490,7 +516,7 @@ window.WAPI.getAllGroups = function (done) {
   const groups = window.Store.Chat.filter((chat) => chat.isGroup);
 
   if (done !== undefined) done(groups);
-  console.log(groups);
+  // console.log(groups);
   return groups;
 };
 
@@ -827,8 +853,9 @@ window.WAPI.getGroupAdmins = async function (id, done) {
  */
 window.WAPI.getMe = function (done) {
   const rawMe = window.Store.Contact.get(window.Store.Conn.me);
-
+   console.log(rawMe);
   if (done !== undefined) done(rawMe.all);
+  console.log(rawMe.all);
   return rawMe.all;
 };
 

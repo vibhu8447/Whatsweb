@@ -1,5 +1,5 @@
 {
-  "name": "WhatZapp: Schedule Message in Web WhatsApp",
+  "name": "Eazybe: Schedule Message in Web WhatsApp",
   "version": "2.4.6",
   "description": "Schedule Message and Followup features inside Web WhatsApp",
   "permissions": ["tabs", "storage", "https://web.whatsapp.com/*"],
@@ -44,12 +44,13 @@
     "/assets/icons/icon.png"
   ],
   "browser_action": {
-    "default_title": "WhatsApp Spammer",
+    "default_title": "Eazybe",
     "default_popup": "popup1.html"
   },
   "icons": {
     "128": "/assets/icons/icon.png"
   },
   "manifest_version": 2,
+  
   "content_security_policy": "script-src 'self' https://ajax.googleapis.com; object-src 'self' script-src 'self' https://ssl.google-analytics.com; object-src 'self' "
 }
