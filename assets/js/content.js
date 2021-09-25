@@ -1,7 +1,7 @@
 console.log("Content script loaded");
-
+// getTheTagsOFCustomer
 //version of our eazybe extension
-var version = "2.4.6";
+var version = "2.4.7";
 var isRunning = false;
 //global variable to knwo whether we have to show the schedule list or customer followuplist
 // if it is zero we show followup list
@@ -47,6 +47,7 @@ var contact_name="";
 
 //setting up script of wwebjs
 // we append this script again and again
+
 function settingUpWWEbjs(params) {
   var wapiScript = document.createElement("script");
   wapiScript.src = chrome.runtime.getURL("assets/js/wapi.js");
@@ -105,18 +106,26 @@ function listeningtomessages(params) {
           count = 1;
           console.log(phoneString);
         }
+ 
       } else if (event.data.res == "contactInfo") {
         //to set the contact name in the schedule section popup
-        document.getElementsByClassName("contactDisplayName")[0].innerHTML =
-          event.data.contact;
+        console.log(event);
+        document.getElementsByClassName("contactDisplayName")[0].innerHTML = event.data.contact;
+          // document.getElementById("username").value = event.data.contact;
+          // document.getElementById("infoTabChat").style.display = "block";
+          // console.log(document.getElementById("infoTabChat"));
+          console.log("user name");
+     
         if (document.getElementById("username")) {
           document.getElementById("username").value = event.data.contact;
           contact_name=event.data.contact;
         }
 
         console.log(event.data.contact);
+        nameInfo=event.data.contact;
       } else if (event.data.res == "contactId") {
         //this is to set the latest acitve chat id
+        get_the_tags(event.data.id);
         console.log("found popup", event.data.id);
         active_chat_id = event.data.id;
         customerInfoFinder();
@@ -125,52 +134,22 @@ function listeningtomessages(params) {
   });
 }
 
+function get_the_tags(customer_no){
+  
+  customer_no=parseInt(customer_no.substring(0,13));
+  
+  fetch(`https://eazybe.com/api/v1/whatzapp/userCustomerGetInfo?&user_mobile_No=${phoneString}&mobile=${customer_no}`)
+  .then((response)=>response.json())
+  .then((response)=>
+  {
+    console.log(response);
+    getTheTagsOFCustomer(response);
+  })
+}
 listeningtomessages();
 
 //remove the tag/label of a customer
-function removeTheTag(customer_no, tagText) {
-  const no_customer = BigInt(customer_no);
-  const tagVal = tagText.innerHTML;
-  const no_user = BigInt(phoneString);
-  console.log("deleting a tag");
-  fetch(
-    "https://eazybe.com/api/v1/whatzapp/deleteCustomerTag?" +
-      new URLSearchParams({
-        user_mobile_No: no_user,
-        mobile: no_customer,
-      }),
-    {
-      method: "POST",
 
-      body: JSON.stringify({
-        tag: tagVal,
-      }),
-
-      
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    }
-  )
-    .then((response) => response.json())
-    .then((json) => {
-      console.log(json);
-    });
-
-  customerListArray.forEach((element) => {
-    if (element.customer_mobile == no_customer) {
-      var arr = [];
-      element.tags.forEach((newEl) => {
-        if (newEl.TagName != tagVal) {
-          arr.push(newEl);
-        }
-      });
-      element.tags = arr;
-      console.log(element);
-    }
-  });
-  customerArray = customerListArray;
-}
 
 //deleting the info and the customer of a user from the usertocustomer table
 function deleteTheUserCustomer(customer_no, user_no) {
@@ -190,22 +169,25 @@ function deleteTheUserCustomer(customer_no, user_no) {
   document.getElementById("searchTheCustomer").style.display = "block";
 
   document.getElementById("searchTheCustomer2").style.display = "block";
-
-  fetch(
-    "https://eazybe.com/api/v1/whatzapp/deleteUserCustomer?" +
-      new URLSearchParams({
-        user_mobile_No: no_user,
-        mobile: no_customer,
-      })
-  )
-    .then((resp) => resp.json())
-    .then(function (response) {
-      console.log(response);
-      getTheDefaultTags();
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+  fetch(`https://eazybe.com/api/v1/whatzapp/deleteFollowUp?user_mobile_No=${phoneString}&chat_id=${chat_id}`,{
+    method:"DELETE"
+  });
+  getTheDefaultTags();
+  // fetch(
+  //   "https://eazybe.com/api/v1/whatzapp/deleteUserCustomer?" +
+  //     new URLSearchParams({
+  //       user_mobile_No: no_user,
+  //       mobile: no_customer,
+  //     })
+  // )
+  //   .then((resp) => resp.json())
+  //   .then(function (response) {
+  //     console.log(response);
+  //     getTheDefaultTags();
+  //   })
+  //   .catch(function (error) {
+  //     console.log(error);
+  //   });
 }
 
 //function to post the info of a customer into the user to customer table
@@ -215,7 +197,7 @@ function postTheTagsOFCustomer(no_user, no_customer, chat_id) {
   const noteText = document.getElementById("noteinfo").value;
   var followupDate = document.getElementById("followupDate").value;
   var object2 = document.getElementById("Interest-level").value;
-  const nameInfo = document.getElementById("username").value;
+  // const nameInfo = document.getElementById("username").value;
   var srcImage = document.getElementById("demouser").src;
   var emailOfCustomer = "user@gmail.com";
   validityChecker();
@@ -242,6 +224,7 @@ function postTheTagsOFCustomer(no_user, no_customer, chat_id) {
 
   //checking if the user is premium or not
   // if its validity is expired then we limit its followup list to 3
+  isExpired=false
   if (isExpired) {
     if (customerListArray.length >= 3) {
       var ffs = 1;
@@ -262,6 +245,8 @@ function postTheTagsOFCustomer(no_user, no_customer, chat_id) {
       }
     }
   }
+
+
   console.log(  tagText,    notes,     followupDate,     object2,     nameInfo,     srcImage,     emailOfCustomer,);
   fetch(
     "https://eazybe.com/api/v1/whatzapp/userCustomerPostInfo?" +
@@ -291,21 +276,25 @@ function postTheTagsOFCustomer(no_user, no_customer, chat_id) {
     .then((response) => response.json())
 
     .then((json) => {
-      console.log(json);
+      console.log("response of cutomer post info",json);
     });
-
+console.log(phoneString,customer_no);
+ get_the_tags(customer_no);
+  
+  
   setTimeout(() => {
     fetch(
-      "https://eazybe.com/api/v1/whatzapp/customerInfoList?" +
+      "https://eazybe.com/api/v1/whatzapp/allCustomerFollowups?" +
         new URLSearchParams({
           user_mobile_No: no_user,
         })
     )
       .then((resp) => resp.json())
       .then(function (response) {
-        console.log("response of  cutomerInfoList",response.data);
+        console.log(response);
+        console.log("response of  cutomerInfoList",response.userData);
         var object = response.data;
-        customerListArray = object;
+        customerListArray =response.data;
         customerArray = customerListArray;
 
         document.getElementsByClassName("uppertablabel")[1].innerHTML = "";
@@ -313,14 +302,14 @@ function postTheTagsOFCustomer(no_user, no_customer, chat_id) {
           "Followup ";
         document.getElementsByClassName("uppertablabel")[1].innerHTML +=
           "(" + object.length + ")";
-        settingUpTags();
+        // settingUpTags();
         getCustomerList(object);
         document
           .getElementById("upgrade")
           .getElementsByTagName("button")[1].style.display = "none";
-
-        customerListArray.forEach((element) => {
-          if (element.chat_id == chat_id) {
+          
+          response.data.forEach((element) => {
+          if (element.chat_Id == chat_id) {
             getTheTagsOFCustomer(element);
           }
         });
@@ -383,7 +372,7 @@ function searchTheResultPendingFollowUp(filterTagObject, interest_Level) {
   console.log(filteredInterestPendingarr);
 
   getFollowUpPendingList(filteredTagPendingArr);
-
+  get_allcutomer();
   var buttonCross = document.createElement("button");
   buttonCross.innerHTML = "x";
   buttonCross.classList.add("removefilter");
@@ -556,6 +545,7 @@ function getFollowUpPendingList(object1) {
       // we loop through all elements of the list and insert as a customer-card into the ui
       liveArr.forEach((element) => {
         var customerObject = document.createElement("div");
+        customerObject.style.marginLeft="10px";
         var customerImgObject = document.createElement("div");
         var imgObject = document.createElement("img");
         var customerDescObject = document.createElement("div");
@@ -599,18 +589,24 @@ function getFollowUpPendingList(object1) {
           "margin-bottom: 0px; font-size: 12px; color: gray;";
 
         customerNameObject.style =
+
+
           "margin-bottom: 0px; font-size: 15px;line-height: 25px; margin-top: 4px;";
-        if (element.chat_id.length > 18) customerNoObject.innerHTML = "Group";
+          console.log(element);
+        if (element.chat_Id.length > 18) customerNoObject.innerHTML = "Group";
         else {
           customerNoObject.innerHTML = element.customer_mobile;
         }
         customerNameObject.innerHTML = element.name;
 
-        if (element.img_src) imgObject.src = element.img_src;
+        // if (element.img_src) imgObject.src = element.img_src;
 
-        imgObject.onerror = function name(params) {
+        // imgObject.src = element.img_src;
+
+        // imgObject.onerror = function name(params) {
           imgObject.src = chrome.runtime.getURL("demouser.png");
-        };
+        // };
+
 
         customerFollowupObject.classList.add("followupCalender");
         dateDesc.classList.add("dateDescFollowup");
@@ -644,6 +640,8 @@ function getFollowUpPendingList(object1) {
         //adding classes and appending into object
 
         customerFollowupObject.append(monthDesc, dateDesc);
+        customerFollowupObject.style.width="40px";
+        
         customerImgObject.append(imgObject);
         customerDescObject.append(customerNameObject, customerNoObject);
         customerObject.append(
@@ -661,8 +659,8 @@ function getFollowUpPendingList(object1) {
           this.classList.toggle("active");
           console.log("cutomer is clicked");
 
-          var customer_no = element.customer_mobile;
-          var chat_id = customer_no + "@c.us";
+          // var customer_no = element.customer_mobile;
+          var chat_id = element.chat_Id;
           openChat(chat_id);
           setTimeout(() => {
             customerInfoFinder();
@@ -735,7 +733,7 @@ function sortByScheduledDate(objectWithfollowp) {
   // console.log("final", objectWithfollowp);
   return objectWithfollowp;
 }
-
+  // document.getElementsByClassName("_1yNrt").style.order=1000;
 //function to show all the messages scheduled and also the sent ones plus the failed ones
 // we get the object array which is basically the array which stores all the users which have/had message scheduled
 // when we call this function we pass a status which defines
@@ -1050,6 +1048,8 @@ function displayScheduledList(object, status) {
         customerArray.push(element);
         count++;
         var customerObject = document.createElement("div");
+        customerObject.style.backgroundColor="red";
+        customerObject.style.color="red";
         var customerImgObject = document.createElement("div");
         var imgObject = document.createElement("img");
         var customerDescObject = document.createElement("div");
@@ -1079,8 +1079,9 @@ function displayScheduledList(object, status) {
 
         customerStatusObject.classList.add("status");
 
-        customerButtonObject.style = "display: flex; ";
+        customerButtonObject.style = "display: flex;";
         customerObject.classList.add("customer-card");
+        
         customerImgObject.classList.add("customer-card-img");
 
         customerDescObject.style = "margin-left: 12px;";
@@ -1244,7 +1245,7 @@ function getCustomerList(object) {
     var delete_button__ = document.createElement("img");
 
     delete_button__.src = chrome.runtime.getURL("assets/icons/bin_white.png");
-    // imgObject.src = chrome.runtime.getURL("demouser.png");
+    imgObject.src = chrome.runtime.getURL("demouser.png");
     delete_button__.style = "height: 30px; width:30px; margin-top:12px";
 
 
@@ -1261,9 +1262,11 @@ function getCustomerList(object) {
 
     customerButtonObject.style = "display: flex; ";
     customerObject.classList.add("customer-card");
+    customerObject.style.display="flex";
+    customerObject.style.marginLeft="10px";
     customerImgObject.classList.add("customer-card-img");
 
-    customerDescObject.style = "";
+    customerDescObject.style = "width:200px";
     imgObject.style = "height: 46px; width: 47px; margin: 2px 2px;";
 
     customerNoObject.style =
@@ -1271,11 +1274,13 @@ function getCustomerList(object) {
 
     customerNameObject.style =
       "margin-bottom: 0px; font-size: 15px;line-height: 25px; margin-top: 4px;";
-
-    if (element.chat_id.length > 18) customerNoObject.innerHTML = "Group";
+      // 
+    if (element.chat_Id.length > 18) customerNoObject.innerHTML = "Group";
     else {
       customerNoObject.innerHTML = element.customer_mobile;
     }
+
+
     customerNameObject.innerHTML = element.name;
 
     if (element.img_src) imgObject.src = element.img_src;
@@ -1285,11 +1290,14 @@ function getCustomerList(object) {
     };
 
     customerFollowupObject.classList.add("followupCalender");
+    customerFollowupObject.style.width="40px";
+    customerFollowupObject.style.marginLeft="18px";
     dateDesc.classList.add("dateDescFollowup");
     monthDesc.classList.add("monthDescFollowup");
     customerFollowupObject.append(monthDesc, dateDesc);
     // we configure the followup date and pick date and month
     // so that we can show it as a calender
+    console.log(element);
     if (element.follow_up_date) {
       dateDesc.innerHTML = element.follow_up_date.substring(8, 10);
       var months = [
@@ -1306,7 +1314,7 @@ function getCustomerList(object) {
         "Nov",
         "Dec",
       ];
-
+      
       var monthName =
         months[parseInt(element.follow_up_date.substring(5, 7)) - 1];
       monthDesc.innerHTML = monthName;
@@ -1315,17 +1323,22 @@ function getCustomerList(object) {
       customerFollowupObject.style.display = "none";
     }
 
-    //adding classes and appending into object
 
+    //adding classes and appending into object
+    console.log(customerFollowupObject);
     customerImgObject.append(imgObject);
     customerDescObject.append(customerNameObject, customerNoObject);
     customerObject.append(
       customerImgObject,
       customerDescObject,
-      customerFollowupObject,
-      delete_button__
+      delete_button__,
+      customerFollowupObject
+     
     );
     //this is where we append the customer-card
+    
+    
+    
     document.getElementById("customer-list").append(customerObject);
 
     var customer_mobile = element.customer_mobile;
@@ -1348,14 +1361,18 @@ function getCustomerList(object) {
         // console.log(element.customer_mobile, ind);
         if (element.customer_mobile == customer_no) {
           index = ind;
-          chat_id=element.chat_id
-          // console.log("element", element.chat_id);
-          // console.log("customerobject", customerObject);
+          // console.log(element);
+          chat_id=element.chat_Id;
           customerObject.style.display = "none";
-          console.log(phoneString,customer_mobile);
-          // console.log(chat_id,"chat_id");
-          fetch(`https://eazybe.com/api/v1/whatzapp/deleteFollowUp?user_mobile_No=${phoneString}&chat_id=${chat_id}`,
-          {method: "DELETE"});
+          console.log(phoneString,chat_id);
+      
+   
+          fetch(`https://eazybe.com/api/v1/whatzapp/deleteFollowUp?user_mobile_No=${phoneString}&chat_id=${chat_id}`,{
+            method:"DELETE"
+          });
+
+
+
         }
       });
 
@@ -1369,6 +1386,7 @@ function getCustomerList(object) {
       
       var customer_no = element.user_mobile;
       var chat_id = customer_no + "@c.us";
+      chat_id=element.chat_Id;
       openChat(chat_id);
       setTimeout(() => {
         customerInfoFinder();
@@ -1379,6 +1397,7 @@ function getCustomerList(object) {
       console.log(element);
       var customer_no = element.user_mobile;
       var chat_id = customer_no + "@c.us";
+      chat_id=element.chat_Id;
       // console.log(chat_id);
       
       openChat(chat_id);
@@ -1391,6 +1410,7 @@ function getCustomerList(object) {
 
 //setting the default layout of the infosection of the chat
 function getTheDefaultTags(customer_no) {
+  console.log(customer_no);
   document.getElementById("all-custom-tags").innerHTML = "";
   document.getElementById("Interest-level").value = "";
   document.getElementById("deleteCrmData").style.display = "none";
@@ -1398,8 +1418,9 @@ function getTheDefaultTags(customer_no) {
   document.getElementById("followupDateNew").src =
     chrome.runtime.getURL("calender.svg");
 
-  document.getElementById("notesInfo").innerHTML = "";
+  // document.getElementById("notesInfo").innerHTML = "";
   document.getElementById("notesInfo").style.display = "none";
+  document.getElementById("notesInfo").style="max-height: 250px;overflow: scroll;";
 
   document.getElementById("followupDateNew").style.display = "none";
 
@@ -1409,30 +1430,41 @@ function getTheDefaultTags(customer_no) {
   document.getElementById("tagInterestSection").style.display = "flex";
   document.getElementById("editTags").style.display = "none";
   document.getElementById("editTags").src =
+  document.getElementById("editTags").style.order=100;
+  // document.getElementsByClassName("_1yNrt").style.order=1000;
     chrome.runtime.getURL("edit-solid.svg");
   document.getElementById("followupDate").value = "";
-  document.getElementById("noteinfo").value = "";
-  document.getElementById("notesInfo").value = "";
+  // document.getElementById("noteinfo").value = "";
+  // document.getElementById("notesInfo").value = "";
+  document.getElementById("notesInfo").style="max-height: 250px;overflow: scroll;";
+
   if (document.getElementById("followupDateBox"))
     document.getElementById("followupDateBox").style.display = "none";
 }
 // console.log(document.getElementsByClassName("_23P3O")[0].insertBefore(document.getElementById("editTags"),document.getElementsByClassName("_23P3O")[0].childNodes[2]));
 
 // setting the infosection of the chat by filling the details
-function getTheTagsOFCustomer(customer) {
+function getTheTagsOFCustomer(customer_) {
   console.log("getTheTagsOFCustomer is clicked ");
+  console.log(customer_);
+  customerInfoFinder();
+  interest_Level=customer_.userData.interest_Level;
   var tagexist = 0;
+  customer=customer_.tagData;
+  console.log(customer)
+  
+  console.log(interest_Level);
   var interestexist = 0;
   var followupdateexist = 0;
   document.getElementById("deleteCrmData").style.display = "block";
-  document.getElementById("noteinfo").value = "";
+  // document.getElementById("noteinfo").value = "";
   document.getElementById("followupDate").value = "";
   document.getElementById("all-custom-tags").innerHTML = "";
-  document.getElementById("notesInfo").innerHTML = "";
+  // document.getElementById("notesInfo").innerHTML = "";
   document.getElementById("followupDateNew").style.display="none";
   document.getElementById("followupDateNew").src =
     chrome.runtime.getURL("calender.svg");
-  console.log(customer.tags,"vibhu ");
+  console.log(customer.TagName,"vibhu ");
   console.log(document.getElementById("editTags"));
   console.log("fetching the tags of customer");
   document.getElementById("editTags").style.marginRight="30px";      
@@ -1444,8 +1476,13 @@ function getTheTagsOFCustomer(customer) {
 
   element=customer;
   // console.log(element.TagName,"tags of customer");
-  customer.tags.forEach((element) => {
-    
+  // customer={tags:["hello","hi","hey"]};
+  // customer.map((element)=>
+  // {
+  //   console.log(element);
+  // })
+  customer.forEach((element) => {
+    console.log(element);
     var span1 = document.createElement("span");
     var p1 = document.createElement("p");
     var button1 = document.createElement("button");
@@ -1458,7 +1495,7 @@ function getTheTagsOFCustomer(customer) {
 
     if (element.TagName != undefined) p1.innerHTML = element.TagName;
     else p1.innerHTML = element;
-    console.log(span1,p1,button1);
+    // console.log(span1,p1,button1);
     var new_div=document.createElement("div");
     new_div.style.marginRight="45px";
      new_div.style.display="flex";
@@ -1482,14 +1519,14 @@ function getTheTagsOFCustomer(customer) {
 
   
   
-  if (customer.interest_Level != "") {
-    document.getElementById("Interest-level").value = customer.interest_Level;
+  if (interest_Level != "") {
+    document.getElementById("Interest-level").value =interest_Level;
     var span1 = document.createElement("span");
     var p1 = document.createElement("p");
 
     span1.style = "display: flex;";
     p1.classList.add("new-custom-tag");
-    p1.innerHTML = customer.interest_Level;
+    p1.innerHTML = interest_Level;
     document.getElementById("all-custom-tags").appendChild(span1);
 
     document.getElementById("all-custom-tags").append(p1);
@@ -1547,7 +1584,9 @@ function getTheTagsOFCustomer(customer) {
     .querySelectorAll(".x-small-button")
     .forEach((element) => {
       element.addEventListener("click", function () {
-        removeTheTag(customer.customer_mobile, this.previousSibling);
+        console.log(element);
+        console.log(customer);
+        removeTheTag(customer_.userData.customer_mobile, this.previousSibling);
         this.previousSibling.previousSibling.remove();
         this.previousSibling.remove();
         this.remove();
@@ -1558,57 +1597,62 @@ function getTheTagsOFCustomer(customer) {
   var notesOn = 0;
   var count = 0;
   console.log(customer.notes);
-  // customer.notes.forEach((element) => {
-  //   if (element.date && element.note) {
-  //     console.log(element.date, element.note);
-  //     count++;
-  //     notesOn = 1;
-  //     console.log("note");
-  //     var full = element.date;
-  //     var date = "";
-  //     var month = "";
+  customer.notes.forEach((element) => {
+    if (element.date && element.note) {
+      console.log(element.date, element.note);
+      count++;
+      notesOn = 1;
+      console.log("notesss");
+      var full = element.date;
+      var date = "";
+      var month = "";
 
-  //     var j = 0;
-  //     for (var i = 0; i < full.length; i++) {
-  //       if (full[i] == "-") {
-  //         j++;
-  //       } else {
-  //         if (j == 2) date += full[i];
-  //         else if (j == 1) month += full[i];
-  //       }
-  //     }
+      var j = 0;
+      for (var i = 0; i < full.length; i++) {
+        if (full[i] == "-") {
+          j++;
+        } else {
+          if (j == 2) date += full[i];
+          else if (j == 1) month += full[i];
+        }
+      }
 
-  //     var months = [
-  //       "Jan",
-  //       "Feb",
-  //       "Mar",
-  //       "Apr",
-  //       "May",
-  //       "Jun",
-  //       "Jul",
-  //       "Aug",
-  //       "Sep",
-  //       "Oct",
-  //       "Nov",
-  //       "Dec",
-  //     ];
+      var months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
 
-  //     var monthName = months[parseInt(month) - 1];
-  //     var lineInfo = document.createElement("p");
-  //     lineInfo.style.marginBottom = "0.2rem";
-  //     lineInfo.innerHTML = date + "-" + monthName + ":  " + element.note;
+      var monthName = months[parseInt(month) - 1];
+      var lineInfo = document.createElement("p");
+      lineInfo.style.marginBottom = "0.2rem";
+      lineInfo.innerHTML = date + "-" + monthName + ":  " + element.note;
+      document.getElementById("notesInfo").style="max-height: 250px;overflow: scroll;";
 
-  //     document.getElementById("notesInfo").append(lineInfo);
-  //   }
-  // });
+      document.getElementById("notesInfo").append(lineInfo);
+    }
+  });
 
   if (notesOn == 0) {
     document.getElementById("noteinfo").style.borderBottom =
       "2px solid #cccccc";
     document.getElementById("notesInfo").style.display = "none";
+    document.getElementById("notesInfo").style="max-height: 250px;overflow: scroll;";
+
   } else {
     document.getElementById("noteinfo").style.borderBottom = "0px";
     document.getElementById("notesInfo").style.display = "block";
+    document.getElementById("notesInfo").style="max-height: 250px;overflow: scroll;";
+
   }
 }
 
@@ -1636,6 +1680,7 @@ function crmFormFunction() {
           document.getElementById("infoTabChat").style.display = "none";
         }
       });
+      
 
     document
       .getElementById("deleteCrmData")
@@ -1648,6 +1693,7 @@ function crmFormFunction() {
         }
 
         deleteTheUserCustomer(customer_no, phoneString);
+        document.getElementById("infoTabChat").style.display="none";
       });
       document.getElementById("tagInterestSection").style.marginRight="40px";
       document.getElementsByClassName("_23P3O")[0].insertBefore(document.getElementById("tagInterestSection"),document.getElementsByClassName("_23P3O")[0].childNodes[2]);
@@ -1738,8 +1784,9 @@ function crmFormFunction() {
     document
       .getElementById("custom-tag-input")
       .addEventListener("change", function (params) {
+        console.log("custom-tag-input is changing");
         var chat_id = active_chat_id;
-
+        console.log(document.getElementById("custom-tag-input").value);
         var customer_no = chat_id.substring(0, chat_id.length - 5);
         if (customer_no.length > 12) {
           customer_no = customer_no.substring(0, 10);
@@ -1750,6 +1797,9 @@ function crmFormFunction() {
 
         const no_user = BigInt(phoneString);
         postTheTagsOFCustomer(no_user, no_customer, chat_id);
+        
+        console.log(customer_no);
+        get_the_tags(customer_no);
       });
 
     document
@@ -1830,11 +1880,17 @@ function crmFormFunction() {
     //     // postTheTagsOFCustomer(no_user, no_customer);
     //   });
 
+  
+
     document
       .getElementById("submitCrmData")
       .addEventListener("click", function (params) {
+      
+        setupAnalytics(document.getElementById("submitCrmData"));
+        // listenToSaveFollowUp();
+       
         var chat_id = active_chat_id;
-
+        console.log("submitCrmData button is clicked");
         var customer_no = chat_id.substring(0, chat_id.length - 5);
         if (customer_no.length > 12) {
           customer_no = customer_no.substring(0, 10);
@@ -1844,7 +1900,8 @@ function crmFormFunction() {
         var no_customer = BigInt(customer_no);
 
         const no_user = BigInt(phoneString);
-
+       
+        
         if (
           document.getElementById("followupDate").value ||
           document.getElementById("noteinfo").value
@@ -1857,13 +1914,141 @@ function crmFormFunction() {
             document.getElementById("followupDate").value &&
             document.getElementById("noteinfo").value
           ) {
+            document.getElementById("infoTabChat").style.display="none";
             postTheTagsOFCustomer(no_user, no_customer, chat_id);
+            follow_up_date1=document.getElementById("followupDate").value;
+            var customerFollowupObject1 = document.createElement("div")
+            customerFollowupObject1.classList.add("followupCalender");
+            customerFollowupObject1.style="display: flex;width: 60px;height: 38px;";
+
+            var monthDesc1 = document.createElement("div");
+            var dateDesc1 = document.createElement("div");
+             customerFollowupObject1.classList.add("followupCalender");
+                    dateDesc1.classList.add("dateDescFollowup");
+                    monthDesc1.classList.add("monthDescFollowup");
+                    // to show followup date as a calender in the customer card
+                    if (follow_up_date1) {
+                      dateDesc1.innerHTML = follow_up_date1.substring(8, 10);
+                      var months = [
+                        "Jan",
+                        "Feb",
+                        "Mar",
+                        "Apr",
+                        "May",
+                        "Jun",
+                        "Jul",
+                        "Aug",
+                        "Sep",
+                        "Oct",
+                        "Nov",
+                        "Dec",
+                      ];
+            
+                      var monthName =
+                        months[parseInt(follow_up_date1.substring(5, 7)) - 1];
+                      monthDesc1.innerHTML = monthName;
+                      customerFollowupObject1.style.display = "flex";
+                    } else {
+                      customerFollowupObject1.style.display = "none";
+                    }
+            
+                    //adding classes and appending into object
+            
+                    customerFollowupObject1.append(monthDesc1, dateDesc1);
+  // console.log(document.getElementsByClassName("_23P3O")[0].insertBefore(customerFollowupObject1,document.getElementsByClassName("_23P3O")[0].childNodes[6]));
+   
           }
         } else {
+          document.getElementById("infoTabChat").style.display="none";
           postTheTagsOFCustomer(no_user, no_customer, chat_id);
+          follow_up_date1=document.getElementById("followupDate").value;
+          var customerFollowupObject1 = document.createElement("div")
+          customerFollowupObject1.classList.add("followupCalender");
+          customerFollowupObject1.style="display: flex;width: 60px;height: 38px;";
+          var monthDesc1 = document.createElement("div");
+          var dateDesc1 = document.createElement("div");
+           customerFollowupObject1.classList.add("followupCalender");
+                  dateDesc1.classList.add("dateDescFollowup");
+                  monthDesc1.classList.add("monthDescFollowup");
+                  // to show followup date as a calender in the customer card
+                  if (follow_up_date1) {
+                    dateDesc1.innerHTML = follow_up_date1.substring(8, 10);
+                    var months = [
+                      "Jan",
+                      "Feb",
+                      "Mar",
+                      "Apr",
+                      "May",
+                      "Jun",
+                      "Jul",
+                      "Aug",
+                      "Sep",
+                      "Oct",
+                      "Nov",
+                      "Dec",
+                    ];
+          
+                    var monthName =
+                      months[parseInt(follow_up_date1.substring(5, 7)) - 1];
+                    monthDesc1.innerHTML = monthName;
+                    customerFollowupObject1.style.display = "flex";
+                  } else {
+                    customerFollowupObject1.style.display = "none";
+                  }
+          
+                  //adding classes and appending into object
+          
+                  customerFollowupObject1.append(monthDesc1, dateDesc1);
+// console.log(document.getElementsByClassName("_23P3O")[0].insertBefore(customerFollowupObject1,document.getElementsByClassName("_23P3O")[0].childNodes[6]));
+                  
         }
+        console.log(document.getElementById("noteinfo").value, "\is this in the end")
       });
   }
+}
+function removeTheTag(customer_no, tagText) {
+  console.log(customer_no,tagText);
+  const no_customer = BigInt(customer_no);
+  const tagVal = tagText.innerHTML;
+  const no_user = BigInt(phoneString);
+  console.log("deleting a tag");
+  fetch(
+    "https://eazybe.com/api/v1/whatzapp/deleteCustomerTag?" +
+      new URLSearchParams({
+        user_mobile_No: no_user,
+        mobile: no_customer,
+      }),
+    {
+      method: "POST",
+
+      body: JSON.stringify({
+        tag: tagVal,
+      }),
+
+      
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    }
+  )
+    .then((response) => response.json())
+    .then((json) => {
+      console.log(json);
+    });
+    // getTheTagsOFCustomer(customer_no);
+  // customerListArray.forEach((element) => {
+  //   if (element.customer_mobile == no_customer) {
+  //     var arr = [];
+  //     element.tags.forEach((newEl) => {
+  //       if (newEl.TagName != tagVal) {
+  //         arr.push(newEl);
+  //       }
+  //     });
+  //     element.tags = arr;
+  //     console.log(element);
+  //   }
+  // });
+  // customerArray = customerListArray;
 }
 // fucntion of get contact name through chat id
 // it send a post message to wapi script and the wapi script send the name
@@ -1920,6 +2105,7 @@ window.customerInfoFinder = function customerInfoFinder() {
     document.getElementsByClassName("_3HQNh _1Ae7k")[0].append(scheduleButton);
 
     scheduleButton.addEventListener("click", function (params) {
+      setupAnalytics(document.getElementById("schedulingButton"));
       if (isExpired == true) {
         if (customerScheduleArr.length != 0) {
           var fugo = 0;
@@ -1940,6 +2126,7 @@ window.customerInfoFinder = function customerInfoFinder() {
           });
           if (fugo == 0) {
             document.getElementById("scheduleSectionFull").style.display =
+            
               "block";
             document.getElementsByClassName(
               "scheduleOverlay"
@@ -2004,6 +2191,7 @@ window.customerInfoFinder = function customerInfoFinder() {
 
   //appending info section in chats
   if (!document.getElementById("infoSection")) {
+   
     var mainObject = document.getElementById("main");
     var headerFlex = mainObject.getElementsByTagName("header")[0];
 
@@ -2055,10 +2243,68 @@ window.customerInfoFinder = function customerInfoFinder() {
         }
         var faag = 0;
         console.log(customerArray)
+        // customerArray.forEach((element)=>
+        // {
+        //   if(element.chat_id)
+        // })
+
         customerListArray.forEach((element) => {
-          if (element.chat_id == userId) {
+          if (element.chat_Id == userId) {
             faag = 1;
-            console.log(getTheTagsOFCustomer(element),"yes");
+            console.log("yes fixing");
+            element.notes[Object.keys(element.notes)[0]].note; 
+            console.log(element.notes[Object.keys(element.notes)[0]].note );
+            console.log(element.notes.length);
+            if(element.notes.length>=2)
+            {
+              document.getElementById("notesInfo").style.display="block";
+              document.getElementById("notesInfo").style="max-height: 250px;overflow: scroll;";
+           
+              
+              element.notes.forEach((element)=>
+              {
+                if(element.note!=undefined)
+
+                {
+                  p2=document.createElement("p");
+                  p2.classList.add("new-custom-tag");
+                  p2.innerHTML=element.date + ": "+ element.note;
+                  
+                  console.log(element);
+                  console.log(p2);
+                  
+                  document.getElementById("notesInfo").append(p2,document.createElement("br"));
+                }
+           
+              })
+            }
+
+            
+            console.log( document.getElementById("noteinfo").value=element.notes[Object.keys(element.notes)[0]].note);
+             element.notes.forEach((element)=>
+              {
+                if(element.note!=undefined)
+
+                {
+                  p2=document.createElement("p");
+                  p2.classList.add("new-custom-tag");
+                  p2.innerHTML= element.date + ": "+ element.note;
+                  console.log(element);
+                  console.log(p2);
+                  console.
+                  document.getElementById("notesInfo").append(p2,document.createElement("br"));
+                }
+           
+              })
+              console.log(document.getElementById("notesInfo"));
+            if(element.notes[Object.keys(element.notes)[0]].note==undefined)
+            {
+              document.getElementById("noteinfo").value="";
+            }
+            // document.getElementById("noteinfo").innerHTML="testing in library";
+            // console.log(document.getElementById("noteinfo").innerHTML="testing in library");
+
+            // console.log(getTheTagsOFCustomer(element),"yes");
         
           }
         });
@@ -2080,6 +2326,7 @@ window.customerInfoFinder = function customerInfoFinder() {
         infoButton.getElementsByClassName("us699")[0].innerHTML =
           "<svg id='activeSvg' xmlns='http://www.w3.org/2000/svg' x='0px' y='0px'width='48' height='48'viewBox='0 0 172 172'style='fill:#000000;height:25px;/* margin-left: 4px; */width: 25px;margin-left: 4px;'><g fill='none' fill-rule='nonzero' stroke='none' stroke-width='1' stroke-linecap='butt' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' font-family='none' font-weight='none' font-size='none' text-anchor='none' style='mix-blend-mode: normal'><path d='M0,172v-172h172v172z' fill='none'></path><g fill='#ffffff'><path d='M44.79167,21.5c-12.79944,0 -23.29167,10.49222 -23.29167,23.29167v82.41667c0,12.79944 10.49222,23.29167 23.29167,23.29167h82.41667c12.79944,0 23.29167,-10.49222 23.29167,-23.29167v-82.41667c0,-12.79944 -10.49222,-23.29167 -23.29167,-23.29167zM44.79167,32.25h82.41667c6.98772,0 12.54167,5.55394 12.54167,12.54167v5.375h-107.5v-5.375c0,-6.98772 5.55394,-12.54167 12.54167,-12.54167zM32.25,60.91667h107.5v66.29167c0,6.98772 -5.55394,12.54167 -12.54167,12.54167h-82.41667c-6.98772,0 -12.54167,-5.55394 -12.54167,-12.54167zM55.54167,75.25c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833zM86,75.25c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833zM116.45833,75.25c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833zM55.54167,107.5c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833zM86,107.5c-4.94755,0 -8.95833,4.01078 -8.95833,8.95833c0,4.94755 4.01078,8.95833 8.95833,8.95833c4.94755,0 8.95833,-4.01078 8.95833,-8.95833c0,-4.94755 -4.01078,-8.95833 -8.95833,-8.95833z'></path></g></g></svg><span class='MuiBadge-root'><span style='padding: 8px;color:white;'>Followup</span><span class='MuiBadge-badge MuiBadge-anchorOriginTopRightRectangle MuiBadge-colorPrimary MuiBadge-invisible'></span></span>";
       } else {
+
         document.getElementById("infoTabChat").style.display = "none";
         infoButton.style.display="flex";
         infoButton.innerHTML =
@@ -2109,13 +2356,18 @@ function setLayout() {
 }
 // this funtion updates the tags array every time a new tag is added or so
 // we call this function when the postthetagsofcustomer() is called
+
 function settingUpTags() {
-  customerListArray.forEach((element) => {
-    element.tags.forEach((element) => {
-      if (element.TagName) customerTags.push(element.TagName);
-    });
-  });
-  customerTags = [...new Set(customerTags)];
+  console.log(customerListArray);
+  customerListArray=[...customerListArray]
+  console.log(customerListArray);
+  
+  // customerListArray.forEach((element) => {
+  //   element.tags.forEach((element) => {
+  //     if (element.TagName) customerTags.push(element.TagName);
+  //   });
+  // });
+  // customerTags = [...new Set(customerTags)];
 
   // console.log(customerListArray);
   document.getElementById("customertaglist").innerHTML = "";
@@ -2159,6 +2411,7 @@ function settingUpTags() {
 
     var option = document.createElement("option");
     option.innerHTML = element;
+    console.log(option);
     document.getElementById("customertaglist").append(option);
   });
   document.getElementById("taglistcheckbox2").innerHTML = "";
@@ -2320,6 +2573,7 @@ function findnumber() {
   campainBtn.role="button";
   campainBtn.style="padding:8px; ";
   campainBtn.title="campaign";
+  campainBtn.id="campainBtn";
   span=document.createElement("span");
   span.className="material-icons";
   span.style="font-size: 30px;  padding-top: 5px;  color: #0074FC;"
@@ -2401,7 +2655,7 @@ function findnumber() {
 
 
 
-
+        setupAnalytics(document.getElementById("campainBtn"));
 
         document.getElementById("campain").style.display= "block";
         document.getElementsByClassName("scheduleOverlay")[0].style.display ="block";
@@ -2475,6 +2729,7 @@ function findnumber() {
     document.getElementById("searchTheCustomer2").style.display = "block";
     document.getElementsByClassName("underline")[1].style.background =
       "#0074fc";
+    console.log(customerListArray);
     getCustomerList(customerListArray);
   });
 
@@ -2523,10 +2778,11 @@ function findnumber() {
 
   var scheduleOverlay = document.createElement("div");
   scheduleOverlay.classList.add("scheduleOverlay");
+  scheduleOverlay.style.display="block";
   console.log("premium pop up__3");
 
   var premiumPopup = document.getElementById("PremiumPopup");
-
+  var VideoTutorialPopup=document.getElementById("YouTube_Tutorial_Div");
 
   var updatePopup = document.getElementById("updatePopup");
   document.getElementById("updateImg").src = chrome.runtime.getURL(
@@ -2537,11 +2793,21 @@ function findnumber() {
 
   document
     .getElementById("app")
-    .append(scheduleOverlay, premiumPopup, campain, updatePopup);
+    .append(scheduleOverlay, premiumPopup, campain, updatePopup,VideoTutorialPopup);
 
   scheduleOverlay.addEventListener("click", function (params) {
     document.getElementById("scheduleSectionFull").style.display = "none";
     document.getElementById("PremiumPopup").style.display = "none";
+    document.getElementById("YouTube_Tutorial_Div").style.display="none";
+  
+    function stopThis(){
+      var iframe = document.getElementsByTagName("iframe")[0];
+      var url = iframe.getAttribute('src');
+      iframe.setAttribute('src', '');
+      iframe.setAttribute('src', url);
+  }
+  stopThis();
+  
     console.log("premium pop up__4");
 
 
@@ -2662,9 +2928,14 @@ function findnumber() {
     });
 
   const no_user = BigInt(phoneString);
-
+  
+  // setInterval(() => {
+    get_allcutomer();
+  // }, 1000);
+function get_allcutomer()
+{
   fetch(
-    "https://eazybe.com/api/v1/whatzapp/customerInfoList?" +
+    "https://eazybe.com/api/v1/whatzapp/allCustomerFollowups?" +
       new URLSearchParams({
         user_mobile_No: no_user,
       })
@@ -2688,6 +2959,8 @@ function findnumber() {
       console.log(error);
     });
 
+}
+  
   document.getElementById("searchTheCustomer").style.zIndex = 2;
   document.getElementById("searchTheCustomer2").style.zIndex = 1;
 
@@ -2727,7 +3000,7 @@ function findnumber() {
       document.getElementById("searchTheCustomer").style.display = "block";
       document.getElementById("searchTheCustomer2").style.display = "block";
       fetch(
-        "https://eazybe.com/api/v1/whatzapp/customerInfoList?" +
+        "https://eazybe.com/api/v1/whatzapp/allCustomerFollowups?" +
           new URLSearchParams({
             user_mobile_No: no_user,
           })
@@ -2760,7 +3033,7 @@ function findnumber() {
     if (showSc == 1) {
       document.getElementById("searchTheCustomer").style.display = "none";
       document.getElementById("searchTheCustomer2").style.display = "none";
-
+      console.log(customerScheduleArr);
       displayScheduledList(customerScheduleArr, 1);
     } else if (showFol == 1) {
       document.getElementById("searchTheCustomer").style.display = "block";
@@ -2772,15 +3045,15 @@ function findnumber() {
         new Date().toString().split("GMT")[0] + " UTC"
       ).toISOString();
       fetch(
-        "https://eazybe.com/api/v1/whatzapp/customerFollowups?" +
+        "https://eazybe.com/api/v1/whatzapp/pendingCustomerFollowups?" +
           new URLSearchParams({
             user_mobile_No: no_user,
-            follow_up_date: presentDate,
             presentTime: dateTime,
           })
       )
         .then((resp) => resp.json())
         .then(function (response) {
+          console.log(response);
           var object1 = response.data;
 
           customerFollowupList = object1;
@@ -2878,7 +3151,8 @@ function findnumber() {
           fbqEventCatcher("Subscribe");
 
           redraw2();
-          broadcastMessages(customerArray, messageTextBox.value);
+          console.log(customerArray,messageTextBox.value);
+          broadcastMessages_(customerArray, messageTextBox.value);
         }
 
         // document.getElementById("sendMessageAll1").style.display = "none";
@@ -2912,14 +3186,32 @@ function findnumber() {
   return phoneString;
 }
 
+// var stopVideo = function ( element ) {
+
+//   var iframe = element.querySelector( 'iframe');
+   
+//   var video = element.querySelector( 'video' );
+     
+//   if ( iframe ) { 
+//   var iframeSrc = iframe.src; 
+//   iframe.src = iframeSrc;
+//   }
+  
+//  if ( video ) {
+//   video.pause();
+//     }
+
+//   };
 
 
 function display_price()
 {
   console.log("display_price is clicked");
   console.log(document.getElementById("card_container"));
+  
   document.getElementById("PremiumPopup").style.display = "block";
   // document.getElementById("PremiumPopup").style.backgroundImage=url("https://images.pexels.com/photos/40661/tiger-snow-growling-zoo-40661.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500");
+  setupAnalytics(document.getElementById("PremiumPopup"));
   document.getElementById("PremiumPopup").style.height="88%";
   document.getElementById("PremiumPopup").style.overflow="scroll";
   document.getElementById("PremiumPopup").style.position="position: sticky;";    
@@ -3000,7 +3292,7 @@ function display_price()
           for(let j=0;j<all_span_price.length;j++)
           {
             console.log(all_span_price[j]);
-            all_span_price[j].innerHTML=datay[j].amount/12;
+            all_span_price[j].innerHTML=datay[j].amount;
           }
 
           var all_span_duration=document.getElementsByClassName("span_price_duration");
@@ -3149,11 +3441,12 @@ function display_price()
     }
 
     var pay=document.createElement("div");
-    pay.id="pay";
+    pay.id="payNow";
     pay.className="pay"
     pay.style="display: flex;  justify-content: center; margin-top: auto; margin-bottom: 15px; height: 26px;"
     pay_button=document.createElement("button");
-    pay_button.className="btn btn-primary" 
+    pay_button.className="btn btn-primary"
+    pay_button.id="payNow"; 
     pay_button.style= "width: 200px; bottom: 15px; border-radius: 5px; background-color: #546fff; color:#fff;align-self:center";
       if(i==2)
       {
@@ -3166,8 +3459,18 @@ function display_price()
       // }
     pay_button.innerHTML="Pay Now"
     pay_button.addEventListener("click",function(){
-     window.open(`https://eazybe.com/home/${phoneString}?`,'_blank');
-    })
+      window.open(`https://eazybe.com/home/${phoneString}?`,'_blank');
+      
+      listenToPayNow();
+      
+      setupAnalytics(document.getElementById(pay_button.id))
+      
+      })
+    // pay_button.addEventListener("click",function(){
+    //   console.log(pay_button.id);
+    //   setupAnalytics(document.getElementById(pay_button.id));
+    // //  window.open(`https://eazybe.com/home/${phoneString}?`,'_blank');
+    // })
 
     pay.append(pay_button);
     
@@ -3181,6 +3484,28 @@ function display_price()
     }
     document.getElementById("card_container").append(card);
     }
+    show_monthly_plan=false;
+    yearly_button.style.background="#546fff";
+    yearly_button.style.color="#fff";
+    monthly_button.style.background="#fff";
+    monthly_button.style.color="#546fff";
+
+    var all_span_price=document.getElementsByClassName("span_price_amount");
+    // console.log( document.getElementsByClassName("span_price_amount"), document.getElementsByClassNam);
+    for(let j=0;j<all_span_price.length;j++)
+    {
+      console.log(all_span_price[j]);
+      all_span_price[j].innerHTML=datay[j].amount;
+    }
+
+    var all_span_duration=document.getElementsByClassName("span_price_duration");
+
+    console.log(all_span_duration);
+    for(var j=0;j<all_span_duration.length;j++)
+    {
+      all_span_duration[j].innerHTML=" /mo";
+    }
+
     });    
   // }
 
@@ -3193,7 +3518,114 @@ function display_price()
 
 }
 
+function listenToPayNow() { // paynow button analytics
+  const elements = document
+.querySelectorAll("#payNow");
 
+// console.log("alll payynows" , elements)
+
+elements.forEach(element => {
+  // Listen for the event.
+  element.addEventListener('analytics', function (e) {
+
+    console.log('Listening To Pay Now Button');
+    ga('create', 'UA-207023293-1', 'auto');
+    ga('send', 'event', 'PayNow'); 
+  
+  }, false);
+});
+
+}
+
+
+
+
+
+
+function broadcastMessages_(arr, message) {
+  console.log("broadcastMessages_ is working ")
+  if (isExpired) {
+    if (arr.length >= 5) {
+      console.log("premium pop up__6");
+      // document.getElementById("card_container").innerHTML="";
+
+        display_price();
+      // document.getElementById("PremiumPopup").style.display = "block";
+      // document.getElementsByClassName("scheduleOverlay")[0].style.display =
+      //   "block";
+      isRunning = false;
+    } else {
+      console.log(arr);
+
+      var i = 0;
+      var BroadcastInterval = setInterval(() => {
+        var chat_id = arr[i].chat_id;
+        if(arr[i].chat_id)
+        {
+          chat_id = arr[i].chat_id;
+        }
+        else
+        {
+          chat_id = arr[i];
+        }
+console.log("broadcastMessages_ is working",chat_id,message);
+        window.postMessage(
+          {
+            id: chat_id,
+            text: message,
+            cmd: "sendMessage",
+            direction: "from-content-script",
+            message: "Message from the page",
+          },
+          "*"
+        );
+        i++;
+        if (i >= arr.length) {
+          window.clearInterval(BroadcastInterval);
+          isRunning = false;
+        }
+      }, 10000);
+
+      console.log(isSignup);
+      console.log(isExpired);
+      validityChecker();
+    }
+  } else {
+    var i = 0;
+    var BroadcastInterval = setInterval(() => {
+      var chat_id = arr[i].chat_id;
+      
+      if(arr[i].chat_id)
+      {
+        chat_id = arr[i].chat_id;
+      }
+      else
+      {
+        chat_id = arr[i];
+      }
+      console.log("sending broadcast", chat_id);
+      window.postMessage(
+        {
+          id: chat_id,
+          text: message,
+          cmd: "sendMessage",
+          direction: "from-content-script",
+          message: "Message from the page",
+        },
+        "*"
+      );
+      i++;
+      if (i >= arr.length) {
+        window.clearInterval(BroadcastInterval);
+        isRunning = false;
+      }
+    }, 10000);
+
+    console.log(isSignup);
+    console.log(isExpired);
+    validityChecker();
+  }
+}
 function broadcastMessages(arr, message) {
   if (isExpired) {
     if (arr.length >= 5) {
@@ -3254,7 +3686,7 @@ function broadcastMessages(arr, message) {
       {
         chat_id = arr[i];
       }
-      console.log("sending broadcast", chat_id);
+      console.log("sending broadcast", chat_id,message);
       window.postMessage(
         {
           id: chat_id,
@@ -3617,6 +4049,7 @@ function newTool() {
             "none";
           const chat_id = phonenum + "@c.us";
           active_chat_id = chat_id;
+          setupAnalytics(document.getElementById("addNewOkay1"));
           openChat(chat_id);
           setTimeout(() => {
             customerInfoFinder();
@@ -3832,6 +4265,19 @@ function newTool() {
 
   // fb events
 
+
+  setupIntroVideo();
+function setupIntroVideo() {
+  
+  fetch("https://eazybe.com/api/v1/whatzapp/getTutorialLink").
+  then((response)=>response.json())
+  .then((response)=>{
+    console.log(response.tutorialUrl);
+    // document.getElementById("YouTube_Tutorial").src=response.tutorialUrl;
+    // console.log(document.getElementById("YouTube_Tutorial"));
+
+  })
+  }
   var fbScript = document.createElement("script");
   fbScript.src = "https://connect.facebook.net/en_US/fbevents.js";
 
@@ -4088,7 +4534,7 @@ function getScheduledObject(messageText, dateTime, status) {
   var box = document.createElement("div");
   box.classList.add("_2wUmf", "message-out", "scheduled-message", "_EPCuyz9S");
   box.innerHTML =
-    "<div class='jss5983'><div  class='jss5987'><div role='button'><svg style='font-size:1.2em' class='MuiSvgIcon-root MuiSvgIcon-fontSizeInherit' focusable='false' viewBox='0 0 24 24' aria-hidden='true'><path d='M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'></path></svg></div><div></div><div role='button'  class='jss5988'><div></div><div><svg style='font-size:1.2em' class='MuiSvgIcon-root MuiSvgIcon-fontSizeInherit' focusable='false' viewBox='0 0 24 24' aria-hidden='true'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'></path></svg></div></div></div><div class='_1OBJBHT_UEAhW9_x2Nylnj'><div></div></div><div class='jss5985 scMessageInfo'>sd</div><div dir='auto' class='jss5986 scTimeInfo'></div></div>";
+    "<div class='jss5983'><div  class='jss5987'><div role='button'><svg id='edit_message' style='font-size:1.2em' class='MuiSvgIcon-root MuiSvgIcon-fontSizeInherit' focusable='false' viewBox='0 0 24 24' aria-hidden='true'><path d='M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'></path></svg></div><div></div><div role='button'  class='jss5988' id='Delete_Message'><div></div><div><svg style='font-size:1.2em' class='MuiSvgIcon-root MuiSvgIcon-fontSizeInherit' focusable='false' viewBox='0 0 24 24' aria-hidden='true'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'></path></svg></div></div></div><div class='_1OBJBHT_UEAhW9_x2Nylnj'><div></div></div><div class='jss5985 scMessageInfo'>sd</div><div dir='auto' class='jss5986 scTimeInfo'></div></div>";
   box.getElementsByClassName("scMessageInfo")[0].innerText = messageText;
   box.getElementsByClassName("scTimeInfo")[0].innerText = dateTime;
   if (status == -1) {
@@ -4121,7 +4567,8 @@ function getScheduledObject(messageText, dateTime, status) {
     .getElementsByClassName("jss5988")[0]
     .addEventListener("click", function (params) {
       var chat_id = active_chat_id;
-
+      // console.log("setting up google analytics at edit message");
+      setupAnalytics(document.getElementsByClassName("jss5988")[0]);
       const no_user = BigInt(phoneString);
       box.style.display = "none";
       fetch(
@@ -4259,12 +4706,23 @@ const timepast= function(firstTime)
   
 }
 
+function setupAnalytics(element) {
+  // Create the event.
+  const event = document.createEvent('Event');
+  console.log(element);
+  // Define that the event name is 'build'.
+  event.initEvent('analytics', true, true);
+
+  // target can be any Element or other EventTarget.
+  element.dispatchEvent(event);
+  }
+
 //function to set Event Listners of the schedule section popup
 function setEventListenerOfSc(params) {
   document
     .getElementById("scheduleSend")
     .addEventListener("click", function (params) {
-    
+      setupAnalytics(document.getElementById("scheduleSend"));
       var dateTime;
       var messageText = document.getElementById("scheduletext").value;
       var day = document.getElementById("selectedDay").innerText;
@@ -4351,19 +4809,15 @@ function setEventListenerOfSc(params) {
       console.log(dateTime);
       
       
-      // console.log(dateTime.substring(0,10)+"end");
-      // console.log(dateTime.substring(11,19)+"end");
-
       
       present_date=dateTime.substring(0,10);
       present_time=dateTime.substring(11,19);
-      // console.log(timepast(present_time));
-      // console.log(dateInPast(present_date));
+      
       var x=present_date;
       var date_=dateInPast(present_date,0);
       var time_=timepast(present_time) 
-      console.log(date_,time_);
-      console.log(x);
+      // console.log(date_,time_);
+      // console.log(x);
       if(date_==true || (time_==true && dateInPast(x,1)==true ) )
       {
         alert('Time has already passed');
@@ -4381,6 +4835,12 @@ function setEventListenerOfSc(params) {
         repeatTime = getInMinutes();
       else repeatTime = null;
       console.log("repeat tome", repeatTime);
+
+
+
+
+      
+
       fetch(
         "https://eazybe.com/api/v1/whatzapp/customerSchedule?" +
           new URLSearchParams({
@@ -4421,6 +4881,7 @@ function setEventListenerOfSc(params) {
               var object1 = response.data;
               console.log(object1);
               customerScheduleArr = object1;
+              getDateTime();
             })
             .catch(function (error) {
               console.log(error);
@@ -4461,6 +4922,7 @@ function setEventListenerOfSc(params) {
   document
     .getElementById("customRecurrence")
     .addEventListener("change", function (params) {
+    console.log("customRecurrence is working");
       var repeatSection = document.getElementById("repeatTime");
       if (repeatSection.style.visibility == "inherit") {
         repeatSection.style.visibility = "hidden";
@@ -4474,10 +4936,14 @@ function setEventListenerOfSc(params) {
 function scheduleSectionPopup() {
   var scheduleSectionFull = document.createElement("div");
   var timePicker = document.createElement("div");
-  scheduleSectionFull.style.zIndex = 1000220;
+  scheduleSectionFull.style.zIndex = 1000210;
+  scheduleSectionFull.style.height="80%";
+  scheduleSectionFull.style.overflow="scroll";
+
   var calenderdiv = document.createElement("div");
   var calenderstyle = document.createElement("link");
   var calenderscript = document.createElement("script");
+  var googleanalytics= document.createElement("script");
   calenderstyle.setAttribute("rel", "stylesheet");
 
   scheduleSectionFull.setAttribute("id", "scheduleSectionFull");
@@ -4490,10 +4956,15 @@ function scheduleSectionPopup() {
       calenderstyle.href = chrome.runtime.getURL("assets/css/datetime.css");
 
       calenderscript.src = chrome.runtime.getURL("assets/js/datetime.js");
+      googleanalytics.src = chrome.runtime.getURL("assets/js/analytics.js");
+
       document
         .getElementsByTagName("head")[0]
         .append(calenderstyle, calenderscript);
 
+        document
+        .getElementsByTagName("head")[0]
+        .append( googleanalytics);
       scheduleSectionFull.append(calenderdiv);
       document.getElementById("app").append(scheduleSectionFull);
       setEventListenerOfSc();
@@ -4587,40 +5058,6 @@ setInterval(() => {
 }, 3000);
 
 
-// function trackButton() {
-//   // _gaq.push(["_setAccount", "G-SXPDQ5EKSG"]);
-//   // _gaq.push(["_trackPageview"]);
-//   _gaq.push(['_trackEvent', "button", 'clicked']);
-//   console.log("track button is working")
-  
-//     // var pageTracker = _gap._getTracker('G-SXPDQ5EKSG');
-//     // pageTracker._trackPageView();
-
-// };
-//google analytics
-// function settingUpgoogleanalytics(params) {
-//   (function () {
-//     var ga = document.createElement("script");
-//     ga.type = "text/javascript";
-//     ga.async = true;
-//     ga.src = "https://ssl.google-analytics.com/ga.js";
-//     var s = document.getElementsByTagName("script")[0];
-//     s.parentNode.insertBefore(ga, s);
-//   })();
-
-  
-// }
-// trackButton();
-
-// setTimeout(() => {
-//     for(var i=0;i<3;i++)
-//     {
-//       // trackButton();
-//       ga('send', 'event', 'testing'); // Set page, avoiding rejection due to chrome-extension protocol
-
-//     }
-    
-//   }, 10000);
 
 
 // settingUpgoogleanalytics();
@@ -4631,54 +5068,9 @@ setInterval(() => {
   })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
 
-function addingGoogleAnalytics() {
-  var gtagscript = document.createElement("script");
-  var gfunctionscript = document.createElement("script");
-  gtagscript.async = true;
-  gtagscript.src = "https://www.googletagmanager.com/gtag/js?id=UA-207023293-1";
 
-  document.getElementsByTagName("head")[0].append(gtagscript);
 
-  window.dataLayer = window.dataLayer || [];
-  function gtag() {
-    console.log("hello");
-    console.log(arguments);
-    dataLayer.push(arguments);
-  }
-  gtag("js", new Date());
 
-  gtag("config", "G-SXPDQ5EKSG");
-  console.log("Pageview sent");
-  gtag("event", "sign_up", {
-    event_category: "engagement",
-    event_label: "method",
-  });
-}
-
-// (function    () {
-//   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-//   ga.src = 'https://ssl.google-analytics.com/ga.js';
-//   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-// })();
-
-// addingGoogleAnalytics();
-//hans work
-// function getTheHansLeads(params) {
-//   var mobileNo = "+" + phoneString;
-//   fetch(
-//     "https://partner.hansmatrimony.com/api/leadsdetailsbyphone?" +
-//       new URLSearchParams({
-//         mobile: mobileNo,
-//       })
-//   )
-//     .then((resp) => resp.json())
-//     .then(function (response) {
-//       console.log(response);
-//     })
-//     .catch(function (error) {
-//       console.log(error);
-//     });
-// }
 
 // function postTheDataToHansimg(img_src) {
 //   var customer_no = active_chat_id.substring(
@@ -4841,14 +5233,14 @@ function setTheJavascriptincampainPage()
           
           AllContacts=event.data.AllContacts;
           console.log(AllContacts);
-          setuptable_(AllContacts);
+          SetupTable(AllContacts);
           document.getElementById("total_contacts").innerHTML=AllContacts.length;
 
         }
       }
     })
- fetch_All_contacts();
-   function fetch_All_contacts(){
+ FetchAllConatacts();
+   function FetchAllConatacts(){
     window.postMessage(
       {
         cmd: "getAllContacts",
@@ -4863,7 +5255,7 @@ function setTheJavascriptincampainPage()
     // fetching the template data
     let All_lists=[]
     let All_templates=[]
-    function fetch_template()
+    function FetchTemplate()
     {
       console.log()
     
@@ -4879,7 +5271,7 @@ function setTheJavascriptincampainPage()
       else{
         All_templates=json.campaignTemplates
         // console.log(All_templates);
-        set_up_template_list(json.campaignTemplates);
+        SetUpTemplateList(json.campaignTemplates);
       
       }
     
@@ -4893,6 +5285,7 @@ function setTheJavascriptincampainPage()
   document.getElementById("inputGroupSelect022h").addEventListener("input",function()
   {
     s_list_id=document.getElementById("inputGroupSelect022h").value;
+    setupAnalytics(document.getElementById("inputGroupSelect022h"))
     console.log(s_list_id);
     document.getElementById("List__p").style.display="none";
     document.getElementById("List__").style.display="block";
@@ -4910,7 +5303,7 @@ function setTheJavascriptincampainPage()
         document.getElementById("selected_list_size").innerHTML=All_lists[i].chatID_list.length;
         user_List=All_lists[i].chatID_list;
         // document.getElementById("estimated_time").innerHTML=convertHMS(7*All_lists[i].chatID_list.length);
-        set_up_fected_list(All_lists,s_list_id);
+        SetUpFetchedList(All_lists,s_list_id);
         Show=false;
         document.getElementById("flexSwitchCheckChecked").checked=false;
 
@@ -4969,7 +5362,7 @@ function convertHMS(value) {
 }
 
 
-  fetch_template();
+  FetchTemplate();
 
     var selected_List="";
     var selected_Template="";
@@ -4977,7 +5370,7 @@ function convertHMS(value) {
 
 
     // setting up the fetched templates 
-    function set_up_template_list (template_list) {
+    function SetUpTemplateList (template_list) {
       console.log(template_list);
 
       document.getElementById("template_dropdown_content").innerHTML="";
@@ -5031,12 +5424,12 @@ function convertHMS(value) {
           document.getElementById("template_list_name").value=templates[i].innerHTML;
           selected_Template=templates[i].innerHTML;
           selected_Template_id=templates[i].id;
-          set_up_selected_template(template_list,selected_Template,selected_Template_id);
+          SetUpSelectedTemplate(template_list,selected_Template,selected_Template_id);
         })
       }
     
     }
-    function set_up_selected_template(template_list,selected_Template,selected_Template_id )
+    function SetUpSelectedTemplate(template_list,selected_Template,selected_Template_id )
     {
       console.log(template_list,selected_Template_id);
       for(let i=0;i<template_list.length;i++)
@@ -5063,12 +5456,16 @@ function convertHMS(value) {
     {
       
       // console.log(All_templates);
-      if((Plan_id==1 || Plan_id==6 ) && All_templates.length>=5 )
+      // console.log(Plan_id);
+      // Plan_id=2;
+      if((Plan_id==1 || Plan_id==5 ) && All_templates.length>=5 )
       {
         document.getElementById("PremiumPopup").style.zIndex=9999;
         display_price();
         return ;
       }
+      
+      setupAnalytics(document.getElementById("create_new_template"));
       document.getElementById("exampleFormControlTextarea1").value="";
       fetch("https://eazybe.com/api/v1/whatzapp/createCampaignTemplate",{
         method:"POST",
@@ -5095,7 +5492,7 @@ function convertHMS(value) {
           document.getElementById("Template__p").style.display="none";
           document.getElementById("template_list_name").value=document.getElementById("Template_list_name_").value;
           selected_Template_id=res.createdCampaignTemplate.id;
-          fetch_template();
+          FetchTemplate();
 
 
         }
@@ -5138,7 +5535,9 @@ function convertHMS(value) {
       else{
         // name_of_list
         user_List=[]
-        fetch_All_contacts();
+        FetchAllConatacts();
+        console.log("ga listenToCreateList")
+        setupAnalytics(document.getElementById("create_new_list"));
         document.getElementById("input_list_name").value=document.getElementById("input_list_name_").value;
         console.log(phoneString,document.getElementById("input_list_name_").value,[]);
         // document.getElementById("input_list_name").value=document.getElementById("input_list_name").value;
@@ -5160,17 +5559,17 @@ function convertHMS(value) {
           if(res.status==true)
           {
             s_selected_list_id=res.createdChatIdlist.id;
-            console.log(s_selected_list_id);
+            // console.log(s_selected_list_id);
             document.getElementById("table_body").innerHTML="";
-            console.log(document.getElementById("List__p").style.display="none");
+            document.getElementById("List__p").style.display="none";
             fetch_chatid_list();
         
-           fetch_All_contacts();
+           FetchAllConatacts();
            Show=false;
            document.getElementById("flexSwitchCheckChecked").checked=false;
           }
           else{
-            alert("ChatId List Name Must be unique");
+            alert("List Name Must be unique");
           }
           // selected_Template_id=res.createdCampaignTemplate.id;
           
@@ -5248,7 +5647,7 @@ let s_selected_list_id=""
             document.getElementById("input_list_name").value=s_list_name;
             document.getElementById("Selected_contacts").innerHTML=contacts_list.length;
             console.log(contacts_list,selected_List);
-            set_up_fected_list(contacts_list,selected_List);
+            SetUpFetchedList(contacts_list,selected_List);
 
           
             });
@@ -5260,7 +5659,7 @@ let s_selected_list_id=""
 
           
     }
-function set_up_fected_list( c_list,s_list_name_id)
+function SetUpFetchedList( c_list,s_list_name_id)
 {
 
  
@@ -5287,7 +5686,7 @@ function set_up_fected_list( c_list,s_list_name_id)
       
 
 
-           
+    
       temp=[...AllContacts];
       console.log(temp);
       for(let i=0;i<selected_list_contacts.length;i++)
@@ -5369,17 +5768,17 @@ function set_up_fected_list( c_list,s_list_name_id)
   }
   
   console.log(temp,AllContacts);
-setuptable_(temp)
+SetupTable(temp)
 
 }
 var AllContacts
-    function setuptable_(AllContacts_)
+    function SetupTable(AllContacts_)
     {
 
       // document.getElementById("Selected_contacts").innerHTML=0;
       // console.log(table =document.getElementById("table_body"));
       console.log(AllContacts_);
-      for(var i=AllContacts_.length-1;i>0;i--)
+      for(var i=0;i<AllContacts_.length;i++)
       {
         // console.log(AllContacts[i].id);
 
@@ -5444,7 +5843,7 @@ var AllContacts
         row[i].addEventListener("click",function()
         {
         
-          clicked(row[i]);
+          Row_clicked(row[i]);
   
         });
         
@@ -5495,7 +5894,7 @@ var AllContacts
   {
     
   
-    // fetch_All_contacts();
+    // FetchAllConatacts();
 
 		document.getElementById("input_list_name_").value="";
     document.getElementById("List__p").style.display="block";
@@ -5516,12 +5915,13 @@ var AllContacts
   //  chageToTemplatePage >
   document.getElementById("next_list").addEventListener("click",function()
   {
-    fetch_template();
+    FetchTemplate();
     if(document.getElementById("Selected_contacts").innerHTML==0)
     {
       alert("Select contacts to continue");
       return ;
     }
+    setupAnalytics(document.getElementById("next_list"));
       document.getElementById("Template_list_name_").value="";
       document.getElementById("Template__p").style.display="block";
       document.getElementById("List__p").style.display="none";
@@ -5538,7 +5938,7 @@ var AllContacts
 
   document.getElementById("Template").addEventListener("click",function()
   {
-    fetch_template();
+    FetchTemplate();
    
       document.getElementById("Template_list_name_").value="";
       document.getElementById("Template__p").style.display="block";
@@ -5562,8 +5962,9 @@ var AllContacts
       //   alert("Enter the Message ");
       //   return;
       // }
-      fetch_template();
+      FetchTemplate();
       fetch_chatid_list();
+      setupAnalytics(document.getElementById("next_template"));
       document.getElementById("selected_list_size").innerHTML="";
       document.getElementById("estimated_time").innerHTML="";
       document.getElementById("List__p").style.display="none";
@@ -5587,7 +5988,7 @@ var AllContacts
     //   return;
     // }
 
-    fetch_template();
+    FetchTemplate();
     fetch_chatid_list();
     document.getElementById("selected_list_size").innerHTML="";
     document.getElementById("estimated_time").innerHTML="";
@@ -5665,12 +6066,12 @@ var AllContacts
     console.log(document.getElementById("myInput"));
     document.getElementById("myInput").addEventListener("input",function()
     {
-      myFunction();
+      SeachContact();
     })
 
 		// funtion to implement a search 
 
-		function myFunction() {
+		function SeachContact() {
 		  // console.log("vibhu");
 		  var input, filter, table, tr, td, i, txtValue;
 		  input = document.getElementById("myInput");
@@ -5694,7 +6095,7 @@ var AllContacts
   
    
 
-		function clicked( event)
+		function Row_clicked( event)
 		{
       console.log(event);
 			// console.log(event,document.getElementById(event).style.background)
@@ -5708,7 +6109,7 @@ var AllContacts
 			}
 			else
 			{
-        if((Plan_id==1 ||Plan_id==6) && user_List.length>=10)
+        if((Plan_id==1 ||Plan_id==5) && user_List.length>=10)
         {
           display_price();
           return ;
@@ -5747,7 +6148,8 @@ var AllContacts
 		}
 
     document.getElementById("inputGroupSelect023h").addEventListener("change", function(){
-      console.log("inputGroupSelect023h is clicked");
+      // console.log("inputGroupSelect023h is clicked");
+      setupAnalytics(document.getElementById("inputGroupSelect023h"));
      console.log( document.getElementById("inputGroupSelect023h").value);
       selected_Template_id= document.getElementById("inputGroupSelect023h").value;
      console.log(All_templates);
@@ -5787,7 +6189,7 @@ var AllContacts
 
       })
 
-      fetch_template();
+      FetchTemplate();
     
     })
     // All_temmplate_h =document.getElementsByClassName("campain_template_optionh");
@@ -5852,7 +6254,7 @@ var AllContacts
             document.getElementById("selected_list_size").innerHTML=All_lists[i].chatID_list.length;
             user_List=All_lists[i].chatID_list;
 
-            document.getElementById("estimated_time").innerHTML=convertHMS(7*All_lists[i].chatID_list.length);
+            document.getElementById("estimated_time").innerHTML=convertHMS(12*All_lists[i].chatID_list.length);
           }
         }
 
@@ -5920,9 +6322,10 @@ var AllContacts
         else{
             
             // redraw3();
+            setupAnalytics(document.getElementById("send_btn"));
             document.getElementById("send_btn").style.display="none";
             console.log(user_List,message);
-          // broadcastMessages(user_List, message);
+          broadcastMessages(user_List, message);
               
       console.log(s_list,s_temp,document.getElementById("campain_input").value);
       // console.log(message);
@@ -5944,7 +6347,7 @@ var AllContacts
             // document.getElementById("send_btn_btn").innerHTML="sending ...";
             // document.getElementById("send_btn_btn").disabled=true
             // document.getElementById("send_btn_btn").style.background="gray";
-          parts=100/(7*2*10*user_List.length);
+          parts=100/(12*2*10*user_List.length);
           cur=0;
           
         var   progressbar=  setInterval(() => {
@@ -6025,7 +6428,7 @@ var AllContacts
     setInterval(() => {
       fetch_campain_running_data();
       // fetch_chatid_list();
-      // fetch_template();
+      // FetchTemplate();
     }, 2000);
     }
 

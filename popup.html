@@ -796,7 +796,7 @@ z-index: 1100;">
        <div style="display: flex; justify-content: center; font-size: 26px; margin-bottom: 10px; transition: all 0.3s ease 0s;">
          <div style="display: flex; border: 1px solid rgb(84, 111, 255); border-radius: 6px; justify-content: center; margin-bottom: 16px; padding: 2px; width: 208px; height: 46px; font-size: 14px;">
              
-            <div role="group" id="monthly_button"  style="color: rgb(255, 255, 255); border-radius: 6px;background: rgb(84, 111, 255); height: 38px; width: 103px; align-items: center; display: flex; justify-content: center; margin-right: 2.5px;" type="button" value ="monthly" aria_pressed="true">
+            <div role="group" id="monthly_button"  style="color: rgb(84, 111, 255); border-radius: 6px;background: rgb(255, 255, 255); height: 38px; width: 103px; align-items: center; display: flex; justify-content: center; margin-right: 2.5px;" type="button" value ="monthly" aria_pressed="true">
                 <span>
                    <span style="text-align: right;">Monthly</span>
                 </span>
@@ -804,7 +804,7 @@ z-index: 1100;">
      
              </div>
              
-             <div id="yearly_button" role="group" type="button" style=" color: rgb(84, 111, 255);background: rgb(255, 255, 255); border-radius: 6px; padding: 5px 5px 5px 15px;  width: 93px; height: 38px; display: flex; align-items: center; margin-left: 2.5px; justify-content: center;" value ="Yearly" aria_pressed="true">
+             <div id="yearly_button" role="group" type="button" style=" color: rgb(255, 255, 255);  background: rgb(84, 111, 255); border-radius: 6px; padding: 5px 5px 5px 15px;  width: 93px; height: 38px; display: flex; align-items: center; margin-left: 2.5px; justify-content: center;" value ="Yearly" aria_pressed="true">
                 <span>
                    <span>Yearly</span>
                 </span>
@@ -1104,14 +1104,15 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
           
          </div>	
       </div>
-
-
+    
+      <meta charset="UTF-8">
+      
 	<!--  message input filed -->
 	<div class="container" style=" background-color: #FFF; padding: 30px; height: 100%; max-width: 1000px; margin-top: 30px;" >
 		
 				<div class="mb-3" >
 					  <label for="exampleFormControlTextarea1" class="form-label">Message</label>
-					  <textarea class="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
+					  <textarea charset="utf8mb4"  class="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
 				</div>	
 
 				<!-- <div style="display:flex; justify-content: space-between; margin-top: 50px;" >
@@ -1147,7 +1148,7 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
 		</h2>
 
 <div class="campain_card"  style=" margin-bottom: 20px;   display: flex; flex-direction: column; background-color: #FFF; width: 80%; margin-left: 10%;height: 300px">
-   <input type="text" class="form__filed"  id="campain_input" style="margin-bottom: 40px; color: black ; font-weight: 500;align-self: center;" placeholder="Campaign Name "  required  autocomplete="off"> 	
+   <input  charset="utf8mb4" type="text" class="form__filed"  id="campain_input" style="margin-bottom: 40px; color: black ; font-weight: 500;align-self: center;" placeholder="Campaign Name "  required  autocomplete="off"> 	
 
 	<div >
 		<div style=" display: flex; flex-direction: row ; margin-left: 24px;"  >
@@ -1198,3 +1199,9 @@ border-radius: 16px;">We strongly recommend to download the update to use the fe
 </div>
 </div>
 
+
+      <div id="YouTube_Tutorial_Div" style="display: block;">
+         <!-- <iframe  style="display: block;" id="YouTube_Tutorial_Div"   width="560" height="315" src="https://www.youtube.com/embed/KKOmnlXmqjU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
+         <iframe id="YouTube_Tutorial" style="display: block;" width="560" height="315" src="https://www.youtube.com/embed/KKOmnlXmqjU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+<!-- 

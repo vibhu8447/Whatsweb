@@ -1,6 +1,6 @@
 {
   "name": "Eazybe: Schedule Message in Web WhatsApp",
-  "version": "2.4.6",
+  "version": "2.4.7",
   "description": "Schedule Message and Followup features inside Web WhatsApp",
   "permissions": ["tabs", "storage", "https://web.whatsapp.com/*"],
   "background": {
@@ -17,6 +17,7 @@
     "popup.html",
     "infoTab.html",
     "assets/js/datetime.js",
+    "assets/js/analytics.js",
     "assets/css/datetime.css",
     "datetime.html",
     "assets/css/popup.css",
@@ -37,7 +38,6 @@
     "calender.svg",
     "filter.svg",
     "plus.png",
-    "b_price.png",
     "upload.svg",
     "edit-solid.svg",
     "expanded.html",
