@@ -2,6 +2,8 @@ console.log("Content script loaded");
 // getTheTagsOFCustomer
 //version of our eazybe extension
 var version = "2.4.7";
+{/* <script type="text/javascript" lang="javascript" src="https://unpkg.com/read-excel-file@4.x/bundle/read-excel-file.min.js"  ></script> */}
+
 var isRunning = false;
 //global variable to knwo whether we have to show the schedule list or customer followuplist
 // if it is zero we show followup list
@@ -105,11 +107,13 @@ function listeningtomessages(params) {
 
           count = 1;
           console.log(phoneString);
+          setupyoutube();
+          
         }
  
       } else if (event.data.res == "contactInfo") {
         //to set the contact name in the schedule section popup
-        console.log(event);
+        // console.log(event);
         document.getElementsByClassName("contactDisplayName")[0].innerHTML = event.data.contact;
           // document.getElementById("username").value = event.data.contact;
           // document.getElementById("infoTabChat").style.display = "block";
@@ -133,7 +137,48 @@ function listeningtomessages(params) {
     }
   });
 }
+function setupyoutube()
+{
 
+  no=parseInt(phoneString.substr(2,12));
+  // console.log(no);
+
+  fetch("https://eazybe.com/api/v1/whatzapp/basicInfo",
+    {
+      method: "POST",
+
+      body: JSON.stringify({
+        "mobile": no,
+        "name":"",
+        "country_code":parseInt(phoneString.substr(0,2))
+      }),
+
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    }
+  ) .then((response)=>response.json())
+  .then((response)=>
+  {
+    console.log(response);
+    if(response.message!="Invalid request")
+    {
+      document.getElementById("YouTube_Tutorial_Div").style.display="block";
+    }
+    
+  })
+
+}
+function FetchAllConatacts(){
+  window.postMessage(
+    {
+      cmd: "getAllContacts",
+      direction: "from-content-script",
+    },
+    "*"
+  );
+
+  }
 function get_the_tags(customer_no){
   
   customer_no=parseInt(customer_no.substring(0,13));
@@ -143,6 +188,7 @@ function get_the_tags(customer_no){
   .then((response)=>
   {
     console.log(response);
+    
     getTheTagsOFCustomer(response);
   })
 }
@@ -202,7 +248,7 @@ function postTheTagsOFCustomer(no_user, no_customer, chat_id) {
   var emailOfCustomer = "user@gmail.com";
   validityChecker();
   console.log(customerArray);
-  if(customerArray.length>=3 && (Plan_id==1 || Plan_id==6) )
+  if(customerArray.length>=3 && (Plan_id==1 || Plan_id==5) )
   {
     display_price();
     return ;
@@ -246,7 +292,12 @@ function postTheTagsOFCustomer(no_user, no_customer, chat_id) {
     }
   }
 
-
+  // console.log( dateInPast(followupDate));
+  if(dateInPast(followupDate))
+  {
+    alert("Date has already passed");
+    return ;
+  }
   console.log(  tagText,    notes,     followupDate,     object2,     nameInfo,     srcImage,     emailOfCustomer,);
   fetch(
     "https://eazybe.com/api/v1/whatzapp/userCustomerPostInfo?" +
@@ -1048,9 +1099,10 @@ function displayScheduledList(object, status) {
         customerArray.push(element);
         count++;
         var customerObject = document.createElement("div");
-        customerObject.style.backgroundColor="red";
-        customerObject.style.color="red";
+        // customerObject.style.backgroundColor="red";
+        customerObject.style.display="flex";
         var customerImgObject = document.createElement("div");
+        
         var imgObject = document.createElement("img");
         var customerDescObject = document.createElement("div");
         var customerNameObject = document.createElement("p");
@@ -1064,6 +1116,11 @@ function displayScheduledList(object, status) {
         var timeInfo = document.createElement("div");
         var timedesc = document.createElement("p");
         var timeSvg = document.createElement("div");
+        var EditFailedScheduledMessaege=document.createElement("img");
+        EditFailedScheduledMessaege.id="EditFailedScheduledMessaege";
+        // EditFailedScheduledMessaege.src="https://img.icons8.com/external-kiranshastry-lineal-color-kiranshastry/64/000000/external-edit-interface-kiranshastry-lineal-color-kiranshastry-2.png";
+        EditFailedScheduledMessaege.src="https://img.icons8.com/external-kiranshastry-lineal-kiranshastry/64/000000/external-edit-interface-kiranshastry-lineal-kiranshastry.png";
+        EditFailedScheduledMessaege.style="height: 30px;  justify-self: center; align-self: center;"
         timeInfo.style.display = "flex";
         timedesc.style.margin = "0px";
 
@@ -1084,7 +1141,7 @@ function displayScheduledList(object, status) {
         
         customerImgObject.classList.add("customer-card-img");
 
-        customerDescObject.style = "margin-left: 12px;";
+        customerDescObject.style = "margin-left: 12px; width:135px";
         imgObject.style =
           "height: 46px; width: 47px; margin: 4px ;margin-left:6px;";
 
@@ -1127,7 +1184,7 @@ function displayScheduledList(object, status) {
           timeSvg.innerHTML =
             "<svg style='    color: black;height: 1em; width: 1em;' aria-hidden='true' focusable='false' data-prefix='fas' data-icon='clock' class='svg-inline--fa fa-clock fa-w-16' role='img' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='currentColor' d='M256,8C119,8,8,119,8,256S119,504,256,504,504,393,504,256,393,8,256,8Zm92.49,313h0l-20,25a16,16,0,0,1-22.49,2.5h0l-67-49.72a40,40,0,0,1-15-31.23V112a16,16,0,0,1,16-16h32a16,16,0,0,1,16,16V256l58,42.5A16,16,0,0,1,348.49,321Z'></path></svg>";
         }
-
+        customerFollowupObject.style="width:125px";
         //adding classes and appending into object
         customerFollowupObject.classList.add("scheduledCalender");
         dateDesc.classList.add("dateDescFollowup");
@@ -1156,10 +1213,16 @@ function displayScheduledList(object, status) {
             customerImgObject,
             customerDescObject,
             customerFollowupObject,
+            EditFailedScheduledMessaege,
             customerStatusObject
           );
         }
-
+        EditFailedScheduledMessaege.addEventListener("click",function(){
+          // console.log("EditFailedScheduledMessaege is clicked");
+          document.getElementById("scheduleSectionFull").style.display = "block";
+          document.getElementsByClassName("scheduleOverlay")[0].style.display =
+            "block";
+        })
         document.getElementById("failedMsgList").append(customerObject);
 
         customerObject.addEventListener("click", function (params) {
@@ -1297,7 +1360,7 @@ function getCustomerList(object) {
     customerFollowupObject.append(monthDesc, dateDesc);
     // we configure the followup date and pick date and month
     // so that we can show it as a calender
-    console.log(element);
+    // console.log(element);
     if (element.follow_up_date) {
       dateDesc.innerHTML = element.follow_up_date.substring(8, 10);
       var months = [
@@ -1325,7 +1388,7 @@ function getCustomerList(object) {
 
 
     //adding classes and appending into object
-    console.log(customerFollowupObject);
+    // console.log(customerFollowupObject);
     customerImgObject.append(imgObject);
     customerDescObject.append(customerNameObject, customerNoObject);
     customerObject.append(
@@ -1420,7 +1483,7 @@ function getTheDefaultTags(customer_no) {
 
   // document.getElementById("notesInfo").innerHTML = "";
   document.getElementById("notesInfo").style.display = "none";
-  document.getElementById("notesInfo").style="max-height: 250px;overflow: scroll;";
+  document.getElementById("notesInfo").style="max-height: 250px;overflow: scroll; overflow-wrap: anywhere;";
 
   document.getElementById("followupDateNew").style.display = "none";
 
@@ -1436,7 +1499,7 @@ function getTheDefaultTags(customer_no) {
   document.getElementById("followupDate").value = "";
   // document.getElementById("noteinfo").value = "";
   // document.getElementById("notesInfo").value = "";
-  document.getElementById("notesInfo").style="max-height: 250px;overflow: scroll;";
+  document.getElementById("notesInfo").style="max-height: 250px;overflow: scroll;    overflow-wrap: anywhere;";
 
   if (document.getElementById("followupDateBox"))
     document.getElementById("followupDateBox").style.display = "none";
@@ -1636,7 +1699,7 @@ function getTheTagsOFCustomer(customer_) {
       var lineInfo = document.createElement("p");
       lineInfo.style.marginBottom = "0.2rem";
       lineInfo.innerHTML = date + "-" + monthName + ":  " + element.note;
-      document.getElementById("notesInfo").style="max-height: 250px;overflow: scroll;";
+      document.getElementById("notesInfo").style="max-height: 250px;overflow: scroll;     overflow-wrap: anywhere;";
 
       document.getElementById("notesInfo").append(lineInfo);
     }
@@ -1646,12 +1709,12 @@ function getTheTagsOFCustomer(customer_) {
     document.getElementById("noteinfo").style.borderBottom =
       "2px solid #cccccc";
     document.getElementById("notesInfo").style.display = "none";
-    document.getElementById("notesInfo").style="max-height: 250px;overflow: scroll;";
+    document.getElementById("notesInfo").style="max-height: 250px;overflow: scroll;     overflow-wrap: anywhere;";
 
   } else {
     document.getElementById("noteinfo").style.borderBottom = "0px";
     document.getElementById("notesInfo").style.display = "block";
-    document.getElementById("notesInfo").style="max-height: 250px;overflow: scroll;";
+    document.getElementById("notesInfo").style="max-height: 250px;overflow: scroll;     overflow-wrap: anywhere;";
 
   }
 }
@@ -1880,8 +1943,7 @@ function crmFormFunction() {
     //     // postTheTagsOFCustomer(no_user, no_customer);
     //   });
 
-  
-
+ 
     document
       .getElementById("submitCrmData")
       .addEventListener("click", function (params) {
@@ -1915,97 +1977,36 @@ function crmFormFunction() {
             document.getElementById("noteinfo").value
           ) {
             document.getElementById("infoTabChat").style.display="none";
-            postTheTagsOFCustomer(no_user, no_customer, chat_id);
-            follow_up_date1=document.getElementById("followupDate").value;
-            var customerFollowupObject1 = document.createElement("div")
-            customerFollowupObject1.classList.add("followupCalender");
-            customerFollowupObject1.style="display: flex;width: 60px;height: 38px;";
+            
+            
+            // *********************
 
-            var monthDesc1 = document.createElement("div");
-            var dateDesc1 = document.createElement("div");
-             customerFollowupObject1.classList.add("followupCalender");
-                    dateDesc1.classList.add("dateDescFollowup");
-                    monthDesc1.classList.add("monthDescFollowup");
-                    // to show followup date as a calender in the customer card
-                    if (follow_up_date1) {
-                      dateDesc1.innerHTML = follow_up_date1.substring(8, 10);
-                      var months = [
-                        "Jan",
-                        "Feb",
-                        "Mar",
-                        "Apr",
-                        "May",
-                        "Jun",
-                        "Jul",
-                        "Aug",
-                        "Sep",
-                        "Oct",
-                        "Nov",
-                        "Dec",
-                      ];
-            
-                      var monthName =
-                        months[parseInt(follow_up_date1.substring(5, 7)) - 1];
-                      monthDesc1.innerHTML = monthName;
-                      customerFollowupObject1.style.display = "flex";
-                    } else {
-                      customerFollowupObject1.style.display = "none";
-                    }
-            
-                    //adding classes and appending into object
-            
-                    customerFollowupObject1.append(monthDesc1, dateDesc1);
-  // console.log(document.getElementsByClassName("_23P3O")[0].insertBefore(customerFollowupObject1,document.getElementsByClassName("_23P3O")[0].childNodes[6]));
+            var followupDate = document.getElementById("followupDate").value;
+          
+            console.log(followupDate);
+            // console.log( dateInPast(followupDate));
+            if(dateInPast(followupDate))
+            {
+              alert("Date has already passed");
+              return ;
+            }
+                        //************* */
+            postTheTagsOFCustomer(no_user, no_customer, chat_id);      
+            SetupFollowupHeader(document.getElementById("followupDate").value);
    
           }
         } else {
           document.getElementById("infoTabChat").style.display="none";
-          postTheTagsOFCustomer(no_user, no_customer, chat_id);
-          follow_up_date1=document.getElementById("followupDate").value;
-          var customerFollowupObject1 = document.createElement("div")
-          customerFollowupObject1.classList.add("followupCalender");
-          customerFollowupObject1.style="display: flex;width: 60px;height: 38px;";
-          var monthDesc1 = document.createElement("div");
-          var dateDesc1 = document.createElement("div");
-           customerFollowupObject1.classList.add("followupCalender");
-                  dateDesc1.classList.add("dateDescFollowup");
-                  monthDesc1.classList.add("monthDescFollowup");
-                  // to show followup date as a calender in the customer card
-                  if (follow_up_date1) {
-                    dateDesc1.innerHTML = follow_up_date1.substring(8, 10);
-                    var months = [
-                      "Jan",
-                      "Feb",
-                      "Mar",
-                      "Apr",
-                      "May",
-                      "Jun",
-                      "Jul",
-                      "Aug",
-                      "Sep",
-                      "Oct",
-                      "Nov",
-                      "Dec",
-                    ];
-          
-                    var monthName =
-                      months[parseInt(follow_up_date1.substring(5, 7)) - 1];
-                    monthDesc1.innerHTML = monthName;
-                    customerFollowupObject1.style.display = "flex";
-                  } else {
-                    customerFollowupObject1.style.display = "none";
-                  }
-          
-                  //adding classes and appending into object
-          
-                  customerFollowupObject1.append(monthDesc1, dateDesc1);
-// console.log(document.getElementsByClassName("_23P3O")[0].insertBefore(customerFollowupObject1,document.getElementsByClassName("_23P3O")[0].childNodes[6]));
-                  
+              postTheTagsOFCustomer(no_user, no_customer, chat_id);
+     
+              SetupFollowupHeader(document.getElementById("followupDate").value);                  
         }
+       
         console.log(document.getElementById("noteinfo").value, "\is this in the end")
       });
   }
 }
+
 function removeTheTag(customer_no, tagText) {
   console.log(customer_no,tagText);
   const no_customer = BigInt(customer_no);
@@ -2233,7 +2234,7 @@ window.customerInfoFinder = function customerInfoFinder() {
 
         settingUpTags();
         console.log("appended info");
-        console.log(headerFlex);
+        // console.log(headerFlex);
         if (headerFlex.getElementsByTagName("img")[0]) {
           document.getElementById("demouser").src =
             headerFlex.getElementsByTagName("img")[0].src;
@@ -2251,6 +2252,8 @@ window.customerInfoFinder = function customerInfoFinder() {
         customerListArray.forEach((element) => {
           if (element.chat_Id == userId) {
             faag = 1;
+            console.log(element);
+            SetupFollowupHeader(element.follow_up_date);
             console.log("yes fixing");
             element.notes[Object.keys(element.notes)[0]].note; 
             console.log(element.notes[Object.keys(element.notes)[0]].note );
@@ -2258,7 +2261,8 @@ window.customerInfoFinder = function customerInfoFinder() {
             if(element.notes.length>=2)
             {
               document.getElementById("notesInfo").style.display="block";
-              document.getElementById("notesInfo").style="max-height: 250px;overflow: scroll;";
+              document.getElementById("notesInfo").style="max-height: 250px;overflow: scroll;    overflow-wrap: anywhere;";
+
            
               
               element.notes.forEach((element)=>
@@ -2358,7 +2362,7 @@ function setLayout() {
 // we call this function when the postthetagsofcustomer() is called
 
 function settingUpTags() {
-  console.log(customerListArray);
+  // console.log(customerListArray);
   customerListArray=[...customerListArray]
   console.log(customerListArray);
   
@@ -2411,7 +2415,7 @@ function settingUpTags() {
 
     var option = document.createElement("option");
     option.innerHTML = element;
-    console.log(option);
+    // console.log(option);
     document.getElementById("customertaglist").append(option);
   });
   document.getElementById("taglistcheckbox2").innerHTML = "";
@@ -2593,7 +2597,8 @@ function findnumber() {
         .getElementsByTagName("span")[0].firstChild
     );
 
-    setTheJavascriptincampainPage();
+    SetUpCampainPage();
+   
     campainBtn.addEventListener("click",function()
       {
         // chat_id="919911747454@c.us"
@@ -2654,12 +2659,19 @@ function findnumber() {
         // console.log(contact_name);
 
 
-
+        FetchAllConatacts();
         setupAnalytics(document.getElementById("campainBtn"));
 
         document.getElementById("campain").style.display= "block";
+        document.getElementById("List__p").style.display="block";
+        
         document.getElementsByClassName("scheduleOverlay")[0].style.display ="block";
      
+    document.getElementById("List").style="background-color: #0b7dda";
+    document.getElementById("Template").style="background-color: #EDEDED";
+    document.getElementById("Campains").style="background-color: #EDEDED";
+    document.getElementById("List").style.opacity="0.5";
+
 
       });
 
@@ -2695,10 +2707,44 @@ function findnumber() {
         .getElementsByClassName("_1QVfy _3UaCz")[0]
         .getElementsByTagName("span")[0].childNodes[0]
     );
+    function isSubstring(string, substring){
+      substringIndex = 0;
+  
+      // loop through string
+      for(let i = 0; i< string.length; i++){
+  
+         //check the current substring index if it matches 
+         if(string[i] === substring[substringIndex]){
+             substringIndex++
+            //continue searching... Would i then have to call another function recursively?
+         }
+  
+      }
+  
+  }
+
+
   scheduleSectionPopup();
   console.log(document.getElementsByClassName("_1ljzS pnYZD")[0]);
 
   addUserSvg.addEventListener("click", function (params) {
+
+    var phonecode=phoneString.substr(0,phoneString.length-10);
+    // phonecode="41";
+  for(var i=0;i<document.getElementById("gflag").options.length;i++)
+  {
+   
+    if(document.getElementById("gflag").options[i].value==phonecode)
+    {
+      document.getElementById("gflag").options[i].selected=true;
+      document.getElementById("newPhone").value="";
+      document.getElementById("newPhone").value=phonecode
+    console.log(document.getElementById("gflag").options[i].innerHTML);
+      
+    }
+
+  }
+
     document.getElementById("newUserMobile").style.display = "flex";
     document.getElementById("overlayPhone").style.display = "block";
     document.getElementById("textInfoNewUser").style.display = "block";
@@ -2778,7 +2824,7 @@ function findnumber() {
 
   var scheduleOverlay = document.createElement("div");
   scheduleOverlay.classList.add("scheduleOverlay");
-  scheduleOverlay.style.display="block";
+  // scheduleOverlay.style.display="block";
   console.log("premium pop up__3");
 
   var premiumPopup = document.getElementById("PremiumPopup");
@@ -2791,6 +2837,7 @@ function findnumber() {
 
   campain=document.getElementById("campain");
 
+  
   document
     .getElementById("app")
     .append(scheduleOverlay, premiumPopup, campain, updatePopup,VideoTutorialPopup);
@@ -2892,7 +2939,6 @@ function findnumber() {
       console.log("adding user automatically");
       fetch(
         "https://eazybe.com/api/v1/whatzapp/autosignup?",
-
         {
           method: "POST",
 
@@ -2932,6 +2978,14 @@ function findnumber() {
   // setInterval(() => {
     get_allcutomer();
   // }, 1000);
+  
+
+
+
+// document.getElementById('button').addEventListener("click", () => {
+   
+// });
+
 function get_allcutomer()
 {
   fetch(
@@ -3166,7 +3220,11 @@ function get_allcutomer()
     document.getElementById("isRegistered").action;
 
   console.log(phoneString);
-
+  if(document.getElementsByClassName("_2BYrr"))
+  {
+    document.getElementsByClassName("ldL67 _2i3T7 _191H_")[0].style="flex:33%";
+    // console.log(document.getElementsByClassName("ldL67 _2i3T7 _191H_"));
+  }
   fetch(
     "https://eazybe.com/api/v1/whatzapp/getCustomerSchedule?" +
       new URLSearchParams({
@@ -4559,6 +4617,7 @@ function getScheduledObject(messageText, dateTime, status) {
     .getElementsByClassName("jss5987")[0]
     .getElementsByTagName("div")[0]
     .addEventListener("click", function (params) {
+      console.log("edit message is clicked");
       document.getElementById("scheduleSectionFull").style.display = "block";
       document.getElementsByClassName("scheduleOverlay")[0].style.display =
         "block";
@@ -4604,15 +4663,6 @@ function getScheduledObject(messageText, dateTime, status) {
   console.log(box);
   return box;
 }
-// const dateInPast = function(firstDate,secondDate) {
-//   // const secondDate=new Date() ;
-//   // const today = new Date();
-//   if (firstDate.setHours(0, 0, 0, 0) <= secondDate.setHours(0, 0, 0, 0)) {
-//     return true;
-//   }
-
-//   return false;
-// };
 
 function dateInPast(time, p)
 {
@@ -4936,9 +4986,9 @@ function setEventListenerOfSc(params) {
 function scheduleSectionPopup() {
   var scheduleSectionFull = document.createElement("div");
   var timePicker = document.createElement("div");
-  scheduleSectionFull.style.zIndex = 1000210;
-  scheduleSectionFull.style.height="80%";
-  scheduleSectionFull.style.overflow="scroll";
+  scheduleSectionFull.style.zIndex = 1000220;
+  // scheduleSectionFull.style.height="80%";
+  // scheduleSectionFull.style.overflow="scroll";
 
   var calenderdiv = document.createElement("div");
   var calenderstyle = document.createElement("link");
@@ -5213,15 +5263,15 @@ setInterval(() => {
 
 
 // global varible of Show_Selected button
-function setTheJavascriptincampainPage()
+function SetUpCampainPage()
 {
 
-  console.log("setTheJavascriptincampainPage");
+  console.log("SetUpCampainPage");
   	// global varible of Show_Selected button
     var Show=false;
     var s_list_name
 		// selected user list
-    var  user_List=[];
+   
     // All contacts List;
     var AllContacts;
 
@@ -5232,24 +5282,15 @@ function setTheJavascriptincampainPage()
         {
           
           AllContacts=event.data.AllContacts;
-          console.log(AllContacts);
+          // console.log(AllContacts);
           SetupTable(AllContacts);
           document.getElementById("total_contacts").innerHTML=AllContacts.length;
 
         }
       }
     })
- FetchAllConatacts();
-   function FetchAllConatacts(){
-    window.postMessage(
-      {
-        cmd: "getAllContacts",
-        direction: "from-content-script",
-      },
-      "*"
-    );
 
-    }
+
 
 
     // fetching the template data
@@ -5277,11 +5318,12 @@ function setTheJavascriptincampainPage()
     
       
     })
-    .catch(console.log("not template found"));
+  
 
        
   }
-
+  var  user_List=[];
+  let s_selected_list_id=""
   document.getElementById("inputGroupSelect022h").addEventListener("input",function()
   {
     s_list_id=document.getElementById("inputGroupSelect022h").value;
@@ -5313,7 +5355,139 @@ function setTheJavascriptincampainPage()
     
   })
 
+ 
+  function Row_clicked( event)
+  {
+    console.log(event);
+    // console.log(event,document.getElementById(event).style.background)
+    if((event).style.background=="skyblue")
+    {
+      (event).style.background="white";
+      const index=user_List.findIndex((element)=> element==event.id)
+      user_List.splice(index,1);
+      console.log(event.id,"unselected");
+      document.getElementById("Selected_contacts").innerHTML=user_List.length;
+    }
+    else
+    {
+      if((Plan_id==1 ||Plan_id==5) && user_List.length>=10)
+      {
+        display_price();
+        return ;
+      }
+      (event).style.background="skyblue";
+      user_List.push(event.id);
+      user_List=new Set(user_List)
+      user_List=[...user_List]
+      // const letters = new Set(["a","b","c"]);
+      console.log(event.id,"selected");
+      document.getElementById("Selected_contacts").innerHTML=user_List.length;
+
+    }
+    console.log(s_selected_list_id)
+    console.log(phoneString);
+    console.log(document.getElementById("input_list_name").value);
+    console.log(user_List);
+    if(document.getElementById("input_list_name").value!=undefined)
+    {
+      fetch("https://eazybe.com/api/v1/whatzapp/updateCampaignChatIdList",{
+      method:'POST',
+      body:JSON.stringify({
+        "id":s_selected_list_id,
+        "user_mobile":phoneString,
+        "listName":document.getElementById("input_list_name").value,
+        "chatID_list":user_List
+
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+      
+
+
+    })
+    }
+    
+      
+  }
+  document.getElementById("importContact").addEventListener("click",function()
+  {
+    
+   document.getElementById("importContactFile").click();
+
+  })
+  let selectedFile;
+console.log(window.XLSX);
+document.getElementById('importContactFile').addEventListener("input", (event) => {
+    selectedFile = event.target.files[0];
+    let data=[{
+      "name":"jayanth",
+      "data":"scd",
+      "abc":"sdef"
+  }]
+  XLSX.utils.json_to_sheet(data, 'out.xlsx');
+  if(selectedFile){
+      let fileReader = new FileReader();
+      fileReader.readAsBinaryString(selectedFile);
+      fileReader.onload = (event)=>{
+       let data = event.target.result;
+       let workbook = XLSX.read(data,{type:"binary"});
+      //  console.log(workbook);
+      //  console.log(  workbook.SheetNames);
+       workbook.SheetNames.forEach(sheet => {
+            let rowObject = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheet]);
+            console.log(rowObject);
+            document.getElementById("table_body").innerHTML="";
+            rowObject.forEach((element)=>
+            {
+              
+              table_row=document.createElement("tr");
+              // var obj = { first: 'someVal' };
+              element[Object.keys(element)[0]];
+              var contact_name=element[Object.keys(element)[0]];
+              var contact_no= element[Object.keys(element)[1]]
+              console.log(contact_name,contact_no) 
+              table_row.id=element[Object.keys(element)[1]]+"@c.us";
+              table_row.style="background: white; display: table-row;"
+              table_row.value=contact_name;
+              td1=document.createElement("td");
+              td1.innerHTML=contact_name;
+      
+              td2=document.createElement("td");
+              // td2.innerHTML=AllContacts[j].pushname;
+              td2.innerHTML=""
+              td3=document.createElement("td");
+              // td3.innerHTML=AllContacts[j].user;
+              td3.innerHTML="";
+      
+              td4=document.createElement("td");
+              // td4.innerHTML=AllContacts[j].name;
+              td4.innerHTML=contact_no;
+              // console.log(AllContacts[j].name,AllContacts[])
+              table_row.append(td1,td2,td3,td4)
+              console.log(table_row);
+            
+              document.getElementById("table_body").append(table_row);
+              
+            })
+            row=document.getElementsByTagName("tr");
+            for(let i=1;i<row.length;i++)
+            {
+              // console.log(row[i],"is clicked");
+              row[i].addEventListener("click",function()
+              {
+              
+                Row_clicked(row[i]);
+        
+              });
+              
+            }
+            // document.getElementById("jsondata").innerHTML = JSON.stringify(rowObject,undefined,4)
+       });
+      }
+  }
   
+})
  
 
 function convertHMS(value) {
@@ -5371,7 +5545,7 @@ function convertHMS(value) {
 
     // setting up the fetched templates 
     function SetUpTemplateList (template_list) {
-      console.log(template_list);
+      // console.log(template_list);
 
       document.getElementById("template_dropdown_content").innerHTML="";
       document.getElementById("inputGroupSelect023").innerHTML="" ;
@@ -5535,7 +5709,7 @@ function convertHMS(value) {
       else{
         // name_of_list
         user_List=[]
-        FetchAllConatacts();
+        // FetchAllConatacts();
         console.log("ga listenToCreateList")
         setupAnalytics(document.getElementById("create_new_list"));
         document.getElementById("input_list_name").value=document.getElementById("input_list_name_").value;
@@ -5564,7 +5738,7 @@ function convertHMS(value) {
             document.getElementById("List__p").style.display="none";
             fetch_chatid_list();
         
-           FetchAllConatacts();
+          //  FetchAllConatacts();
            Show=false;
            document.getElementById("flexSwitchCheckChecked").checked=false;
           }
@@ -5588,7 +5762,7 @@ function convertHMS(value) {
     });
 
 
-let s_selected_list_id=""
+
     function set_contacts_lists(contacts_list)
     {   
         // console.log(contacts_list);
@@ -5665,7 +5839,7 @@ function SetUpFetchedList( c_list,s_list_name_id)
  
 
   let selected_list_contacts
-  console.log(c_list,s_list_name_id);
+  // console.log(c_list,s_list_name_id);
   document.getElementById("table_body").innerHTML="";
   for(var i=0;i<c_list.length;i++)
   {
@@ -5679,7 +5853,7 @@ function SetUpFetchedList( c_list,s_list_name_id)
       s_list_name=c_list[i].listName;
 
 
-      console.log(AllContacts);
+      // console.log(AllContacts);
      
       document.getElementById("Selected_contacts").innerHTML=selected_list_contacts.length;
       console.log(document.getElementById("Selected_contacts"));
@@ -5688,10 +5862,10 @@ function SetUpFetchedList( c_list,s_list_name_id)
 
     
       temp=[...AllContacts];
-      console.log(temp);
+      // console.log(temp);
       for(let i=0;i<selected_list_contacts.length;i++)
       {
-        console.log(selected_list_contacts[i]);
+        // console.log(selected_list_contacts[i]);
        
         // row=document.getElementsByTagName("tr");
         // console.log(row);
@@ -5707,7 +5881,7 @@ function SetUpFetchedList( c_list,s_list_name_id)
           if(AllContacts[j].id._serialized==selected_list_contacts[i])
           {
             find=true;
-            console.log("yes",AllContacts[j].id._serialized,selected_list_contacts[i]);
+            // console.log("yes",AllContacts[j].id._serialized,selected_list_contacts[i]);
             table_row=document.createElement("tr");
         table_row.id=AllContacts[j].id._serialized;
         table_row.style="background: skyblue; display: table-row;"
@@ -5767,7 +5941,7 @@ function SetUpFetchedList( c_list,s_list_name_id)
     }
   }
   
-  console.log(temp,AllContacts);
+  // console.log(temp,AllContacts);
 SetupTable(temp)
 
 }
@@ -5777,7 +5951,7 @@ var AllContacts
 
       // document.getElementById("Selected_contacts").innerHTML=0;
       // console.log(table =document.getElementById("table_body"));
-      console.log(AllContacts_);
+      // console.log(AllContacts_);
       for(var i=0;i<AllContacts_.length;i++)
       {
         // console.log(AllContacts[i].id);
@@ -6063,7 +6237,7 @@ var AllContacts
 
 		}
 
-    console.log(document.getElementById("myInput"));
+    // console.log(document.getElementById("myInput"));
     document.getElementById("myInput").addEventListener("input",function()
     {
       SeachContact();
@@ -6095,57 +6269,7 @@ var AllContacts
   
    
 
-		function Row_clicked( event)
-		{
-      console.log(event);
-			// console.log(event,document.getElementById(event).style.background)
-			if((event).style.background=="skyblue")
-			{
-				(event).style.background="white";
-				const index=user_List.findIndex((element)=> element==event.id)
-				user_List.splice(index,1);
-				console.log(event.id,"unselected");
-        document.getElementById("Selected_contacts").innerHTML=user_List.length;
-			}
-			else
-			{
-        if((Plan_id==1 ||Plan_id==5) && user_List.length>=10)
-        {
-          display_price();
-          return ;
-        }
-				(event).style.background="skyblue";
-				user_List.push(event.id);
-				console.log(event.id,"selected");
-        document.getElementById("Selected_contacts").innerHTML=user_List.length;
-
-      }
-      console.log(s_selected_list_id)
-      console.log(phoneString);
-      console.log(document.getElementById("input_list_name").value);
-			console.log(user_List);
-      if(document.getElementById("input_list_name").value!=undefined)
-      {
-        fetch("https://eazybe.com/api/v1/whatzapp/updateCampaignChatIdList",{
-        method:'POST',
-        body:JSON.stringify({
-          "id":s_selected_list_id,
-          "user_mobile":phoneString,
-          "listName":document.getElementById("input_list_name").value,
-          "chatID_list":user_List
-
-        }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-        
-
-
-      })
-      }
-      
-				
-		}
+	
 
     document.getElementById("inputGroupSelect023h").addEventListener("change", function(){
       // console.log("inputGroupSelect023h is clicked");
@@ -6169,7 +6293,48 @@ var AllContacts
           document.getElementById("Template__p").style.display="none";
       }    
     })
+    function readImage(file) {
+      // Check if the file is an image.
+      if (file.type && !file.type.startsWith('image/')) {
+        console.log('File is not an image.', file.type, file);
+        return;
+      }
+    
+      const reader = new FileReader();
+      reader.addEventListener('load', (event) => {
+        // img.src = event.target.result;
+        
+        console.log(phoneString);
+        // console.log(chat_id);
 
+        // path= document.getElementById("template_file").value;
+        window.postMessage(
+          { id:"918368092418@c.us" , cmd: "sendMedia",path:document.getElementById("template_file").value, direction: "from-content-script" },
+          "*"
+        );
+        console.log(event.target.result);
+        
+      });
+      reader.readAsDataURL(file);
+    }
+    document.getElementById("template_file").addEventListener("input",function(file)
+    {
+      console.log("template file is changed");
+      var input =document.getElementById("template_file").files[0];
+      console.log(input);
+      readImage(input);
+      // openFile();
+      //       function openFile(){
+      //         console.log("openFile is working");
+     
+      //     // var output = document.getElementById('output');
+      //     // output.src = dataURL;
+      
+      //   // reader.readAsDataURL(input.files[0]);
+      // };
+    
+
+    })
     document.getElementById("exampleFormControlTextarea1").addEventListener("input" ,function(){
       console.log(selected_Template_id);
       console.log(document.getElementById("template_list_name").value,);
@@ -6326,6 +6491,7 @@ var AllContacts
             document.getElementById("send_btn").style.display="none";
             console.log(user_List,message);
           broadcastMessages(user_List, message);
+          fetch_campain_running_data();
               
       console.log(s_list,s_temp,document.getElementById("campain_input").value);
       // console.log(message);
@@ -6375,7 +6541,7 @@ var AllContacts
             // }, 1000);
             
             
-            setTimeout(sayHi,7000*user_List.length );
+            setTimeout(sayHi,12000*user_List.length );
 
         }
   
@@ -6425,11 +6591,11 @@ var AllContacts
       getCustomerList(customerListArray);
     }
   }
-    setInterval(() => {
-      fetch_campain_running_data();
-      // fetch_chatid_list();
-      // FetchTemplate();
-    }, 2000);
+    // setInterval(() => {
+    //   fetch_campain_running_data();
+    //   // fetch_chatid_list();
+    //   // FetchTemplate();
+    // }, 2000);
     }
 
    
@@ -6524,3 +6690,117 @@ var AllContacts
   }
 }
 
+ function SetupFollowupHeader(follow_up_date1){
+    // follow_up_date1=document.getElementById("followupDate").value;
+    // console.log(" SetupFollowupHeader is clicked");
+    if(document.getElementById("followHeader"))
+     {
+      console.log("followHeader is present")
+    document.getElementById("followHeader").style.display="none";
+    }
+    var customerFollowupObject1 = document.createElement("div")
+    customerFollowupObject1.classList.add("followupCalender");
+    customerFollowupObject1.style="display: flex;width: 50px;height: 38px;min-width:50px";
+
+    var monthDesc1 = document.createElement("div");
+    var dateDesc1 = document.createElement("div");
+    customerFollowupObject1.id="followHeader";
+     customerFollowupObject1.classList.add("followupCalender");
+            dateDesc1.classList.add("dateDescFollowup");
+            monthDesc1.classList.add("monthDescFollowup");
+            // to show followup date as a calender in the customer card
+            if (follow_up_date1) {
+              dateDesc1.innerHTML = follow_up_date1.substring(8, 10);
+              var months = [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec",
+              ];
+    
+              var monthName =
+                months[parseInt(follow_up_date1.substring(5, 7)) - 1];
+              monthDesc1.innerHTML = monthName;
+              customerFollowupObject1.style.display = "flex";
+            } else {
+              customerFollowupObject1.style.display = "none";
+            }
+    
+            //adding classes and appending into object
+    
+            customerFollowupObject1.append(monthDesc1, dateDesc1);
+            mainObject = document.getElementById("main");
+            var headerFlex = mainObject.getElementsByTagName("header")[0];
+            infosection = headerFlex.getElementsByClassName("_1QVfy _3UaCz")[0];
+            infosection.insertBefore(customerFollowupObject1, infosection.firstChild);
+            document.getElementById("infoSection").style.display="none";
+            customerFollowupObject1.addEventListener("click",function(){
+              console.log("customerFollowupObject1 is clicked");
+              if (document.getElementById("infoTabChat").style.display == "none") {
+                document.getElementById("infoTabChat").style.display = "block";
+              } else {
+                document.getElementById("infoTabChat").style.display = "none";
+              }
+            })
+    
+
+  }
+  function Row_clicked( event)
+  {
+    console.log(event);
+    // console.log(event,document.getElementById(event).style.background)
+    if((event).style.background=="skyblue")
+    {
+      (event).style.background="white";
+      const index=user_List.findIndex((element)=> element==event.id)
+      user_List.splice(index,1);
+      console.log(event.id,"unselected");
+      document.getElementById("Selected_contacts").innerHTML=user_List.length;
+    }
+    else
+    {
+      if((Plan_id==1 ||Plan_id==5) && user_List.length>=10)
+      {
+        display_price();
+        return ;
+      }
+      (event).style.background="skyblue";
+      user_List.push(event.id);
+      console.log(event.id,"selected");
+      document.getElementById("Selected_contacts").innerHTML=user_List.length;
+
+    }
+    console.log(s_selected_list_id)
+    console.log(phoneString);
+    console.log(document.getElementById("input_list_name").value);
+    console.log(user_List);
+    if(document.getElementById("input_list_name").value!=undefined)
+    {
+      fetch("https://eazybe.com/api/v1/whatzapp/updateCampaignChatIdList",{
+      method:'POST',
+      body:JSON.stringify({
+        "id":s_selected_list_id,
+        "user_mobile":phoneString,
+        "listName":document.getElementById("input_list_name").value,
+        "chatID_list":user_List
+
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+      
+
+
+    })
+    }
+    
+      
+  }

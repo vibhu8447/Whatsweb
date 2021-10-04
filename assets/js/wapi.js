@@ -52,6 +52,7 @@ window.addEventListener("message", function (event) {
           chatId=event.data.id;
         }
         // WAPI.sendMessageToID(chatId, event.data.text);
+        console.log(chatId,event.data.text);
         let chat = Store.FindChat.findChat(Store.WidFactory.createWid(chatId));
         WAPI.sendMessage(chatId, event.data.text);
 
@@ -148,6 +149,17 @@ window.addEventListener("message", function (event) {
           );
         }
       });
+    }
+    else if(event.data.cmd=="sendMedia")
+    {
+      console.log("sending media ")
+      console.log(event.data.id,event.data.path)
+      // function send_media(path,chatid,captipn) 
+      console.log(send_media(event.data.path,event.data.id,"hello"));     
+      // send_media(event.data.path,event.data.id,"");
+      
+      // window.WAPI.sendImage( id,);
+      // window.WAPI.sendImage = function (imgBase64, chatid, filename, caption, done)
     }
   }
 });
@@ -275,6 +287,16 @@ window.WAPI._serializeRawObj = (obj) => {
  * @param rawChat Chat object
  * @returns {{}}
  */
+
+  function send_media(path,chatid,captipn)
+  {
+    console.log("send_media is clicked");
+    img64=self.convert_to_base64(path[-1])
+    console.log("send_media is clicked 2 ");
+  
+    filename=os.path.split(path)[-1];
+    return window.WAPI.sendImage(imgBase64,chatid,filename,captipn);
+  }
 
 window.WAPI._serializeChatObj = (obj) => {
   if (obj == undefined) {

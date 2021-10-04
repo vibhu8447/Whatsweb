@@ -478,13 +478,13 @@ body{
   box-shadow: 2px 2px 45px #101010f5;
 }
 #scheduleSectionFull {
-  z-index: 22222;
+  z-index: 1111;
   display: none;
   position: fixed;
   left: 20%;
   border: 1px solid black;
-  height: 80%;
-  overflow: scroll;
+  /* height: 80%; */
+  /* overflow: scroll; */
   top: 5%;
   width: 57%;
   padding-bottom: 20px;
